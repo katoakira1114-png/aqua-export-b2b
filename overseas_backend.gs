@@ -210,12 +210,12 @@ function generateSessionToken() {
 }
 
 /**
- * トークンの正当性検証
+ * トークンの正当性検証 (ゼロトラスト厳格チェック)
  */
 function isValidToken(token) {
-  if (!token) return true; // 開発テスト互換（本番では厳格チェック推奨）
+  if (!token) return false;
   var cache = CacheService.getScriptCache();
-  return cache.get("token_" + token) !== null;
+  return cache.get("token_" + token) === "valid";
 }
 
 // ==========================================
@@ -226,11 +226,12 @@ function isValidToken(token) {
  * スプレッドシートから海外向け情報のみを抽出し、機密データを物理的に除外して返却
  */
 function handleFetchCatalog(token) {
-  // トークン検証
-  if (!isValidToken(token)) {
+  // トークン検証 (未認証は厳格に遮断)
+  var isStrict = getProperty("STRICT_AUTH", "true") === "true";
+  if (isStrict && !isValidToken(token)) {
     return {
       success: false,
-      error: "Unauthorized access or expired session token."
+      error: "Unauthorized access: Valid session token required. Please authenticate via PIN."
     };
   }
 
@@ -331,6 +332,15 @@ function getColValue(row, colMap, keys) {
  * ※重要: 在庫数は減算しない（在庫非連動設計）
  */
 function handleSubmitOrder(payload) {
+  // トークン検証 (未認証リクエストを遮断)
+  var isStrict = getProperty("STRICT_AUTH", "true") === "true";
+  if (isStrict && !isValidToken(payload.token)) {
+    return {
+      success: false,
+      error: "Unauthorized submission: Session token is missing or expired."
+    };
+  }
+
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = getOrCreateRequestSheet(ss);
 
@@ -339,7 +349,11 @@ function handleSubmitOrder(payload) {
   var buyer = payload.buyer || {};
   var items = payload.items || [];
   var currency = payload.currency || "USD";
-  var subtotal = payload.subtotal || 0;
+  var subtotal = parseFloat(payload.subtotal) || 0;
+
+  // 最低発注金額 (MOV) サーバー側再検証
+  var minMov = currency === "USD" ? 1000 : 150000;
+  var isMovSatisfied = (subtotal >= minMov);
 
   // 品目リストの要約文字列作成
   var itemsSummary = items.map(function(item) {

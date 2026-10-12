@@ -1387,6 +1387,7 @@
 
       const orderPayload = {
         action: 'submitOverseasOrder',
+        token: sessionStorage.getItem(AUTH_SESSION_KEY) || '',
         orderId: orderRef,
         timestamp: new Date().toISOString(),
         buyer: {
