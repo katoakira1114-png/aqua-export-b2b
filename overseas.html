@@ -712,7 +712,7 @@
     const MAX_FAILED_ATTEMPTS = 5;
     const LOCKOUT_MINUTES = 15;
     const AUTH_SESSION_KEY = "isg_export_auth_token";
-    const LOCKOUT_STORAGE_KEY = "isg_export_lockout_v3";
+    const LOCKOUT_STORAGE_KEY = "isg_export_lockout_v5";
     const LANG_STORAGE_KEY = "isg_export_lang_pref";
     const GAS_ENDPOINT_STORAGE_KEY = "aqua_export_gas_endpoint";
     // 石垣島観賞魚 本番スプレッドシート連携用 GAS Web App エンドポイント
@@ -1553,11 +1553,12 @@
       const alertBox = document.getElementById('lockoutAlert');
       const timerText = document.getElementById('lockoutTimerText');
       const btn = document.getElementById('btnVerifyPin');
-      alertBox.classList.remove('hidden');
-      btn.disabled = true;
+      if (alertBox) alertBox.classList.remove('hidden');
+      if (btn) btn.disabled = true;
 
       clearInterval(lockoutTimer);
       let s = sec;
+      const lang = appState.lang || 'ja';
       lockoutTimer = setInterval(() => {
         s--;
         if (s <= 0) {
@@ -1568,15 +1569,22 @@
         }
         const m = Math.floor(s / 60).toString().padStart(2, '0');
         const sc = (s % 60).toString().padStart(2, '0');
-        timerText.textContent = `試行回数超過。ロック解除まで ${m}:${sc}`;
+        const lockMsg = (lang === 'ja') ? `試行回数超過。ロック解除まで ${m}:${sc}` :
+                        (lang === 'en') ? `Too many attempts. Lockout remaining ${m}:${sc}` :
+                        (lang === 'zh-TW') ? `嘗試次數過多。解鎖倒數 ${m}:${sc}` :
+                        `尝试次数过多。解锁倒计时 ${m}:${sc}`;
+        if (timerText) timerText.textContent = lockMsg;
       }, 1000);
     }
 
     function hideLockoutUI() {
       clearInterval(lockoutTimer);
-      document.getElementById('lockoutAlert').classList.add('hidden');
-      document.getElementById('btnVerifyPin').disabled = false;
-      document.getElementById('pinErrorMessage').textContent = '';
+      const alertBox = document.getElementById('lockoutAlert');
+      const btn = document.getElementById('btnVerifyPin');
+      const err = document.getElementById('pinErrorMessage');
+      if (alertBox) alertBox.classList.add('hidden');
+      if (btn) btn.disabled = false;
+      if (err) err.textContent = '';
     }
 
     function registerFailedAttempt() {
@@ -1585,6 +1593,7 @@
       if (ex) { try { info = JSON.parse(ex); } catch(e){} }
       info.attempts = (info.attempts || 0) + 1;
 
+      const lang = appState.lang || 'ja';
       if (info.attempts >= MAX_FAILED_ATTEMPTS) {
         info.lockedUntil = Date.now() + (LOCKOUT_MINUTES * 60 * 1000);
         localStorage.setItem(LOCKOUT_STORAGE_KEY, JSON.stringify(info));
@@ -1592,30 +1601,60 @@
       } else {
         localStorage.setItem(LOCKOUT_STORAGE_KEY, JSON.stringify(info));
         const rem = MAX_FAILED_ATTEMPTS - info.attempts;
-        document.getElementById('pinErrorMessage').textContent = `PINコードが違います。残り ${rem} 回で15分間ロックされます。`;
+        const msg = (lang === 'ja') ? `PINコードが違います。残り ${rem} 回で15分間ロックされます。` :
+                    (lang === 'en') ? `Invalid PIN. ${rem} attempts remaining before 15-min lockout.` :
+                    (lang === 'zh-TW') ? `PIN 碼錯誤。剩餘 ${rem} 次嘗試機會後將鎖定 15 分鐘。` :
+                    `PIN 码错误。剩余 ${rem} 次尝试机会后将锁定 15 分钟。`;
+        const errEl = document.getElementById('pinErrorMessage');
+        if (errEl) errEl.textContent = msg;
       }
     }
 
     function setupPinInputs() {
-      // Clear legacy lockout key if present
+      // Clear all legacy and erroneous lockout records
       localStorage.removeItem("aqua_export_lockout_info");
       localStorage.removeItem("aqua_export_lockout_info_v2");
+      localStorage.removeItem("isg_export_lockout_v3");
+      localStorage.removeItem("isg_export_lockout_v4");
 
       const inputs = document.querySelectorAll('.pin-digit');
       inputs.forEach((input, index) => {
+        // Handle input with full-width conversion (e.g. Japanese IME ９８７６ -> 9876)
         input.addEventListener('input', (e) => {
-          if (input.value.length >= 1) {
-            input.value = input.value.slice(-1);
+          let val = input.value
+            .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+            .replace(/\D/g, '');
+
+          if (val.length > 1) {
+            // Autocomplete or multi-character paste distribution
+            const chars = val.split('');
+            chars.forEach((c, i) => {
+              if (inputs[index + i]) inputs[index + i].value = c;
+            });
+            const nextIdx = Math.min(inputs.length - 1, index + chars.length);
+            inputs[nextIdx].focus();
+          } else if (val.length === 1) {
+            input.value = val;
             if (index < inputs.length - 1) {
               inputs[index + 1].focus();
             }
+          } else {
+            input.value = '';
           }
+
           let pin = '';
-          inputs.forEach(inp => pin += inp.value);
+          inputs.forEach(inp => {
+            const digit = inp.value
+              .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+              .replace(/\D/g, '');
+            pin += digit;
+          });
+
           if (pin.length === 4) {
             handlePinSubmit();
           }
         });
+
         input.addEventListener('keydown', (e) => {
           if (e.key === 'Backspace' && !input.value && index > 0) {
             inputs[index - 1].focus();
@@ -1623,12 +1662,16 @@
             handlePinSubmit();
           }
         });
+
         input.addEventListener('paste', (e) => {
           e.preventDefault();
           const paste = (e.clipboardData || window.clipboardData).getData('text').trim();
-          if (paste.length >= 4) {
+          const cleanPaste = paste
+            .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+            .replace(/\D/g, '');
+          if (cleanPaste.length >= 4) {
             for (let i = 0; i < 4; i++) {
-              if (inputs[i]) inputs[i].value = paste[i];
+              if (inputs[i]) inputs[i].value = cleanPaste[i];
             }
             inputs[3].focus();
             handlePinSubmit();
@@ -1642,53 +1685,67 @@
       if (checkLockoutStatus()) return;
 
       const inputs = document.querySelectorAll('.pin-digit');
-      let enteredPin = '';
-      inputs.forEach(inp => enteredPin += inp.value);
+      let rawPin = '';
+      inputs.forEach(inp => rawPin += inp.value);
+
+      // Clean full-width numbers from Japanese input to standard half-width digits
+      const enteredPin = rawPin
+        .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+        .replace(/\D/g, '')
+        .trim();
 
       if (enteredPin.length !== 4) {
-        document.getElementById('pinErrorMessage').textContent = '4桁すべて入力してください。';
+        const lang = appState.lang || 'ja';
+        const msg = (lang === 'ja') ? '4桁すべて入力してください。' :
+                    (lang === 'en') ? 'Please enter all 4 digits.' :
+                    (lang === 'zh-TW') ? '請輸入完整 4 位數驗證碼。' :
+                    '请输入完整 4 位数验证码。';
+        document.getElementById('pinErrorMessage').textContent = msg;
         return;
       }
 
-      // Check if GAS endpoint configured
-      if (appState.gasEndpoint) {
-        try {
-          const btn = document.getElementById('btnVerifyPin');
-          btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> サーバー検証中...';
-          btn.disabled = true;
-
-          const res = await fetch(`${appState.gasEndpoint}?action=verifyPin&pin=${encodeURIComponent(enteredPin)}`);
-          const data = await res.json();
-          btn.innerHTML = '<span data-i18n="btn_auth">認証してカタログを開く</span><i class="fa-solid fa-arrow-right text-xs"></i>';
-          btn.disabled = false;
-
-          if (data && data.success) {
-            localStorage.removeItem(LOCKOUT_STORAGE_KEY);
-            sessionStorage.setItem(AUTH_SESSION_KEY, data.token || "VALID_SESSION");
-            grantAccess();
-            return;
-          } else {
-            registerFailedAttempt();
-            inputs.forEach(inp => inp.value = '');
-            inputs[0].focus();
-            return;
-          }
-        } catch (err) {
-          console.warn("GAS verification offline/fallback:", err);
-        }
-      }
-
-      // Zero-Trust Client Hash Comparison (SHA-256 for 9876)
+      // 1. Zero-Trust SHA-256 Hash Comparison (Target: 9876)
       const enteredHash = await sha256(enteredPin);
       if (enteredHash === PIN_HASH_SHA256) {
         localStorage.removeItem(LOCKOUT_STORAGE_KEY);
         sessionStorage.setItem(AUTH_SESSION_KEY, "VALID_SESSION_" + Date.now());
+        hideLockoutUI();
         grantAccess();
-      } else {
-        registerFailedAttempt();
-        inputs.forEach(inp => inp.value = '');
-        inputs[0].focus();
+        return;
       }
+
+      // 2. Optional: Check custom GAS endpoint if configured with overseas verification
+      if (appState.gasEndpoint && appState.gasEndpoint !== DEFAULT_GAS_ENDPOINT) {
+        try {
+          const btn = document.getElementById('btnVerifyPin');
+          if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> サーバー検証中...';
+            btn.disabled = true;
+          }
+
+          const res = await fetch(`${appState.gasEndpoint}?action=verifyPin&pin=${encodeURIComponent(enteredPin)}`);
+          const data = await res.json();
+          if (btn) {
+            btn.innerHTML = '<span data-i18n="btn_auth">認証してカタログを開く</span><i class="fa-solid fa-arrow-right text-xs"></i>';
+            btn.disabled = false;
+          }
+
+          if (data && data.success) {
+            localStorage.removeItem(LOCKOUT_STORAGE_KEY);
+            sessionStorage.setItem(AUTH_SESSION_KEY, data.token || ("VALID_SESSION_" + Date.now()));
+            hideLockoutUI();
+            grantAccess();
+            return;
+          }
+        } catch (err) {
+          console.warn("GAS verification fallback:", err);
+        }
+      }
+
+      // If invalid, register failed attempt and clear inputs
+      registerFailedAttempt();
+      inputs.forEach(inp => inp.value = '');
+      if (inputs[0]) inputs[0].focus();
     }
 
     function grantAccess() {
