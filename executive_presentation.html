@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>海外向けB2B受発注システム 経営説明スライド | 石垣島観賞魚</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif;
+    }
+    .slide {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    .slide.active {
+      display: flex;
+      opacity: 1;
+    }
+    @media print {
+      body { background: white !important; color: black !important; }
+      .no-print { display: none !important; }
+      .slide { display: block !important; opacity: 1 !important; page-break-after: always; height: auto !important; min-height: 100vh; }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between select-none">
+
+  <!-- Top Header Navigation -->
+  <header class="no-print border-b border-slate-800 bg-slate-900/80 backdrop-blur px-6 py-3 flex items-center justify-between z-20">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-400">
+        <i class="fa-solid fa-earth-asia"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-sm text-white tracking-wide">石垣島観賞魚（川畑水産）海外向けB2Bポータル</h1>
+        <p class="text-[11px] text-slate-400 font-mono">EXECUTIVE BRIEFING SLIDES • ZERO-TRUST ARCHITECTURE</p>
+      </div>
+    </div>
+
+    <!-- Slide Indicators & Controls -->
+    <div class="flex items-center space-x-4">
+      <div class="text-xs font-mono text-slate-400">
+        <span id="currentSlideNum" class="text-white font-bold text-sm">1</span> / <span id="totalSlidesNum">8</span>
+      </div>
+      <div class="flex items-center space-x-1.5 bg-slate-950 border border-slate-800 rounded-xl p-1">
+        <button id="btnPrev" onclick="prevSlide()" class="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-chevron-left text-xs"></i>
+        </button>
+        <button id="btnNext" onclick="nextSlide()" class="w-8 h-8 rounded-lg bg-sky-500 hover:bg-sky-400 text-white flex items-center justify-center transition shadow-lg shadow-sky-500/20">
+          <i class="fa-solid fa-chevron-right text-xs"></i>
+        </button>
+      </div>
+      <button onclick="toggleFullScreen()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-xl font-medium transition flex items-center space-x-1.5">
+        <i class="fa-solid fa-expand text-xs"></i>
+        <span class="hidden sm:inline">全画面表示</span>
+      </button>
+      <button onclick="window.print()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-xl font-medium transition flex items-center space-x-1.5">
+        <i class="fa-solid fa-print text-xs"></i>
+        <span class="hidden sm:inline">印刷 / PDF保存</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Slide Container -->
+  <main class="flex-1 flex items-center justify-center p-4 sm:p-8 max-w-6xl w-full mx-auto">
+
+    <!-- SLIDE 1: 表紙 -->
+    <section id="slide-1" class="slide active w-full flex-col justify-center items-center text-center py-12">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-mono font-semibold mb-6">
+        <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+        <span>EXECUTIVE PRESENTATION • 2026</span>
+      </div>
+      <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight max-w-3xl">
+        海外バイヤー向け B2B<br>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-teal-300 to-indigo-400">オンライン受発注リクエストシステム</span>
+      </h2>
+      <p class="text-slate-400 text-base sm:text-lg mt-4 max-w-2xl mx-auto leading-relaxed">
+        既存の国内店舗用スプレッドシート資産を最大活用し、<br class="hidden sm:inline">
+        <span class="text-white font-bold">「開発費・サーバー代 0円」</span> かつ <span class="text-white font-bold">「社内情報漏洩・在庫減算リスク ゼロ」</span> で実現した海外直接卸売基盤
+      </p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-10 w-full max-w-3xl text-left">
+        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+          <div class="text-sky-400 text-xs font-mono font-bold">MONTHLY COST</div>
+          <div class="text-2xl font-black text-white mt-1">¥0 / 月</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">GitHub Pages + GAS無料枠</div>
+        </div>
+        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+          <div class="text-emerald-400 text-xs font-mono font-bold">SECURITY</div>
+          <div class="text-2xl font-black text-white mt-1">ゼロトラスト</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">国内情報・仕入値 完全隠蔽</div>
+        </div>
+        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+          <div class="text-amber-400 text-xs font-mono font-bold">STOCK ACCURACY</div>
+          <div class="text-2xl font-black text-white mt-1">在庫減算なし</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">受発注リクエスト制で事故防止</div>
+        </div>
+        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+          <div class="text-indigo-400 text-xs font-mono font-bold">GLOBAL READY</div>
+          <div class="text-2xl font-black text-white mt-1">4言語 / USD</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">日・英・繁体・簡体 + 為替繰上</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: 開発目的と経営課題の解決 -->
+    <section id="slide-2" class="slide w-full flex-col justify-center py-6">
+      <div class="flex items-center space-x-2 text-sky-400 text-xs font-mono font-semibold uppercase mb-2">
+        <i class="fa-solid fa-bullseye"></i>
+        <span>Background & Business Strategy</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black text-white">1. 開発目的と経営課題の解決</h2>
+      <p class="text-slate-400 text-sm mt-1 mb-6">円安の追い風を活かし、海外アクアリウムバイヤーへの販路拡大を「低コスト・低リスク」で実現する</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
+        <!-- 従来のリスクと課題 -->
+        <div class="bg-red-950/20 border border-red-900/40 rounded-2xl p-5 space-y-3">
+          <div class="flex items-center space-x-2 text-red-400 font-bold text-sm">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>海外取引で生じる特有のリスク（性悪説設計の必要性）</span>
+          </div>
+          <ul class="space-y-2 text-xs text-slate-300">
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 font-bold">•</span>
+              <span><strong>データ漏洩リスク</strong>: 国内向けスプレッドシートをそのまま見せると、国内卸価格や仕入れ値、顧客情報が流出する。</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 font-bold">•</span>
+              <span><strong>誤発注・在庫混乱</strong>: 海外バイヤーの気まぐれな発注で国内在庫が減算されてしまうと、国内店舗への納品がパンクする。</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 font-bold">•</span>
+              <span><strong>国際法務・CITESトラブル</strong>: 条約該当品（サンゴ・シャコガイ）の空輸費用や許可証取得の責任所在が曖昧になり、バイヤーと揉める。</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-red-400 font-bold">•</span>
+              <span><strong>小口注文による空輸赤字</strong>: 数千円〜数万円の注文では、発泡スチロール梱包や航空便チャーターの固定費を賄えず赤字になる。</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 本システムの解決策 -->
+        <div class="bg-emerald-950/20 border border-emerald-900/40 rounded-2xl p-5 space-y-3">
+          <div class="flex items-center space-x-2 text-emerald-400 font-bold text-sm">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>本システムによる完全防衛 & 収益化アプローチ</span>
+          </div>
+          <ul class="space-y-2 text-xs text-slate-300">
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 font-bold">✔</span>
+              <span><strong>社内情報の物理的遮断（BFF構造）</strong>: 海外公開用データのみをフィルタリングして配信。社内シート構造や仕入値は絶対に露出しません。</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 font-bold">✔</span>
+              <span><strong>在庫「非連動」の受発注リクエスト制</strong>: 在庫数を自動減算せず、見積依頼書（Proforma Request）として記録。確定は現地の確認後。</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 font-bold">✔</span>
+              <span><strong>CITES・国際空輸 法的免責3条項の強制同意</strong>: チェックを入れないと発注できない仕組みで、運賃別請求・許可証日程・通関責任を法的に担保。</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <span class="text-emerald-400 font-bold">✔</span>
+              <span><strong>最低注文額（MOV: 15万円 / $1,000）強制バー</strong>: 最低注文金額に達するまで注文を送信させない仕様で、黒字取引のみを厳選。</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: 全体アーキテクチャとデータ連携の仕組み -->
+    <section id="slide-3" class="slide w-full flex-col justify-center py-6">
+      <div class="flex items-center space-x-2 text-sky-400 text-xs font-mono font-semibold uppercase mb-2">
+        <i class="fa-solid fa-network-wired"></i>
+        <span>System Architecture & Data Pipeline</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black text-white">2. システム構造・仕組み（アーキテクチャ）</h2>
+      <p class="text-slate-400 text-sm mt-1 mb-6">社内資産を安全にプロキシ化し、完全無料枠（Free Tier）で完結させたハイブリッド構造</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+        <!-- フロントエンド -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-lg mb-3">
+              <i class="fa-solid fa-desktop"></i>
+            </div>
+            <h3 class="font-bold text-base text-white">① 高速フロントエンド</h3>
+            <div class="text-xs font-mono text-sky-400 mt-0.5">GitHub Pages (CDN配信)</div>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              海外からのアクセスでもミリ秒単位で高速ロード。サーバー管理やセキュリティパッチ当ての手間が一切不要で、維持費は0円です。
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 space-y-1 font-mono">
+            <div>• 4桁PINゲートウェイ (暗号化)</div>
+            <div>• 自動為替換算 (USD / JPY)</div>
+            <div>• jsPDF 即時見積書生成</div>
+          </div>
+        </div>
+
+        <!-- BFF プロキシ -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center text-lg mb-3">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3 class="font-bold text-base text-white">② 防衛BFF（プロキシ）</h3>
+            <div class="text-xs font-mono text-teal-400 mt-0.5">Google Apps Script Web App</div>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              フロントエンドと社内シートの中間に立ち、不審なリクエストをブロック。海外に公開して良い項目だけを抽出・サニタイズして返します。
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 space-y-1 font-mono">
+            <div>• スプレッドシートIDの完全隠蔽</div>
+            <div>• レートリミット (連続失敗遮断)</div>
+            <div>• 仕入値・顧客列の物理除外</div>
+          </div>
+        </div>
+
+        <!-- 本番データベース & 通知 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-lg mb-3">
+              <i class="fa-solid fa-database"></i>
+            </div>
+            <h3 class="font-bold text-base text-white">③ 本番DB ＆ 即時通知</h3>
+            <div class="text-xs font-mono text-indigo-400 mt-0.5">Google Spreadsheet ＆ Gmail/Discord</div>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              現場スタッフが普段使っている「石垣島観賞魚 本番シート」の在庫数をリアルタイム参照。注文は別シートに自動追記され管理者へ即通知。
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 space-y-1 font-mono">
+            <div>• 111品のライブ在庫を自動同期</div>
+            <div>• 「海外注文リクエスト」に自動追記</div>
+            <div>• 管理者Gmail＆Discord即時通知</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: セキュリティ上の強み (ゼロトラスト設計) -->
+    <section id="slide-4" class="slide w-full flex-col justify-center py-6">
+      <div class="flex items-center space-x-2 text-sky-400 text-xs font-mono font-semibold uppercase mb-2">
+        <i class="fa-solid fa-lock"></i>
+        <span>Zero-Trust Security Features</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black text-white">3. セキュリティ上の強み（ゼロトラスト設計）</h2>
+      <p class="text-slate-400 text-sm mt-1 mb-6">「性善説が通用しない海外市場」を前提に、外部からの不正侵入とデータ流出を多重防衛</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+        <!-- 認証セキュリティ -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-key"></i>
+            </div>
+            <h3 class="font-bold text-sm text-white">4桁PINコードの暗号化</h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            ソースコード内にPIN「9876」を平文で記述せず、<strong>SHA-256 不可逆ハッシュ値</strong>で照合。ブラウザの開発者ツールを開かれても暗証番号は特定されません。
+          </p>
+          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-300">
+            <strong>ブルートフォース攻撃対策:</strong><br>
+            5回連続で間違えると15分間自動ロックアウト。総当たり攻撃を完全にシャットアウトします。
+          </div>
+        </div>
+
+        <!-- データ隔離セキュリティ -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-eye-slash"></i>
+            </div>
+            <h3 class="font-bold text-sm text-white">社内機密データの完全隔離</h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            スプレッドシートへの直接アクセスURLやAPIキーはフロントエンドに一切渡しません。中間GASプログラムが防波堤となり、社外へデータを一切漏らしません。
+          </p>
+          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-300">
+            <strong>物理除外項目:</strong><br>
+            国内店舗名、過去取引履歴、仕入れ原価、粗利率列はAPIレスポンスから物理的に削除して返却。
+          </div>
+        </div>
+
+        <!-- 在庫事故防止 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-box-archive"></i>
+            </div>
+            <h3 class="font-bold text-sm text-white">在庫減算ゼロ（事故防止）</h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            一般的なECのように「注文＝在庫自動引き落とし」にすると、未入金キャンセル時に国内在庫が狂います。本システムは<strong>「受発注リクエスト」</strong>として記録。
+          </p>
+          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-300">
+            <strong>安全な商流設計:</strong><br>
+            在庫数は減算せず社内確認後に正式手配。国内実店舗の運営に1ミリも悪影響を与えません。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: 海外バイヤー向けに設計した5大ポイント -->
+    <section id="slide-5" class="slide w-full flex-col justify-center py-6">
+      <div class="flex items-center space-x-2 text-sky-400 text-xs font-mono font-semibold uppercase mb-2">
+        <i class="fa-solid fa-globe"></i>
+        <span>Overseas Buyer Optimizations</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black text-white">4. 海外バイヤー向けに特化した5大機能</h2>
+      <p class="text-slate-400 text-sm mt-1 mb-6">国際取引の商慣習・利益確保・トラブル防止を網羅した独自のB2B卸売仕様</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+        <!-- ポイント 1 & 2 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-mono text-xs font-bold mt-0.5">01</span>
+            <div>
+              <h4 class="font-bold text-sm text-white">最低注文金額（MOV）プログレスバー</h4>
+              <p class="text-xs text-slate-400 mt-1">
+                小口注文による空輸赤字を防ぐため、<strong>「15万円（1,000 USD）」未満は発注ボタンを無効化</strong>。「あと〇〇円で発注可能」とバーで視覚表示し、大口注文（まとめ買い）を強力に促進します。
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-3 pt-2 border-t border-slate-800/80">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-xs font-bold mt-0.5">02</span>
+            <div>
+              <h4 class="font-bold text-sm text-white">為替リスクヘッジ（保守的USDレート自動算定）</h4>
+              <p class="text-xs text-slate-400 mt-1">
+                「その日の円安最高値の1の位を繰り上げた安全レート（例: 153.2円 ➔ 160円）」でドル換算。為替変動リスクをバイヤー側で吸収させ、<strong>自社の為替差損リスクをゼロ</strong>に抑えます。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ポイント 3 & 4 & 5 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-mono text-xs font-bold mt-0.5">03</span>
+            <div>
+              <h4 class="font-bold text-sm text-white">在庫数以上の「採集リクエスト」受託機能</h4>
+              <p class="text-xs text-slate-400 mt-1">
+                生簀在庫が3匹しかない商品に10匹の注文が入った場合、エラーにせず「生簀在庫3匹＋残り7匹は現地ダイバーへの採集リクエスト」として自動受託。<strong>販売機会の損失を防止</strong>します。
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-3 pt-2 border-t border-slate-800/80">
+            <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-mono text-xs font-bold mt-0.5">04</span>
+            <div>
+              <h4 class="font-bold text-sm text-white">CITES・国際空輸免責 3条項の強制合意</h4>
+              <p class="text-xs text-slate-400 mt-1">
+                ①運賃・箱代は別途、②CITES輸出許可証は数週間要する、③輸入国通関責任は買主にある、の3点にチェックを入れないと確定できないモーダルを実装。<strong>国際法務トラブルを完全予防</strong>。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ポイント 5（下部バナー） -->
+      <div class="mt-4 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm flex-shrink-0">
+            <i class="fa-solid fa-file-pdf"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-xs sm:text-sm text-white">⑤ 国際標準 Proforma Order Request (PDF) 即時自動発行</h4>
+            <p class="text-[11px] text-slate-400">注文完了の瞬間にブラウザ上でPDFを自動生成。バイヤー社名、到着空港コード(IATA)、品目、金額が記載され即座に保存可能。</p>
+          </div>
+        </div>
+        <span class="px-3 py-1 bg-purple-950 text-purple-300 border border-purple-800 text-[10px] font-mono font-bold rounded-lg whitespace-nowrap">
+          IATA LAR規格準拠
+        </span>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: 多言語・学名辞書 & 写真なし設計 -->
+    <section id="slide-6" class="slide w-full flex-col justify-center py-6">
+      <div class="flex items-center space-x-2 text-sky-400 text-xs font-mono font-semibold uppercase mb-2">
+        <i class="fa-solid fa-language"></i>
+        <span>Taxonomy & Specimen Presentation</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black text-white">5. 生物学名対応 ＆ 写真管理のこだわり</h2>
+      <p class="text-slate-400 text-sm mt-1 mb-6">海外アクアリウム市場で通用する専門性と、誤解を招かない誠実なカタログ設計</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
+        <!-- 学名・4言語辞書 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-book-atlas"></i>
+            </div>
+            <h3 class="font-bold text-sm text-white">46種の石垣島固有種 学名・4言語辞書を内蔵</h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            海外バイヤーは日本語の通称名では仕入れ判断ができません。本システムは本番シートの全46魚種に対して、<strong>国際学名（Scientific Name）</strong>、<strong>英名</strong>、<strong>繁体字</strong>、<strong>簡体字</strong>の翻訳データベースを独自構築・内蔵しています。
+          </p>
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs font-mono space-y-1">
+            <div class="text-slate-400">例: ミナミハタタテダイ</div>
+            <div class="text-sky-300">EN: Pennant Coralfish</div>
+            <div class="text-emerald-300">Sci: <em>Heniochus chrysostomus</em></div>
+            <div class="text-amber-300">TW: 南方立旗鯛 (關刀)</div>
+          </div>
+        </div>
+
+        <!-- 暫定写真の排除とNO PHOTO設計 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-camera"></i>
+            </div>
+            <h3 class="font-bold text-sm text-white">ダミー写真を廃止し「写真なし」を明示</h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            無料のネット拾い画像や暫定写真を貼ると、「写真と違う個体が届いた」という国際クレームの火種になります。そのため、<strong>実写真が無い商品は堂々と「NO PHOTO」と表示するB2B卸標準の設計</strong>を採用しました。
+          </p>
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-1.5">
+            <div class="flex items-center text-emerald-400 font-bold">
+              <i class="fa-solid fa-check mr-1.5"></i>スプレッドシートに実写真がある場合:
+            </div>
+            <div class="text-slate-300 text-[11px] pl-4">川畑水産の生簀写真（Google Drive）を高画質で直結表示</div>
+            <div class="flex items-center text-slate-400 font-bold mt-2">
+              <i class="fa-solid fa-ban mr-1.5"></i>写真が無い場合:
+            </div>
+            <div class="text-slate-300 text-[11px] pl-4">シックな「NO PHOTO（写真準備中）」枠で統一し、誇大広告を防止</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: 運用コスト 0円の財務的メリット -->
+    <section id="slide-7" class="slide w-full flex-col justify-center py-6">
+      <div class="flex items-center space-x-2 text-sky-400 text-xs font-mono font-semibold uppercase mb-2">
+        <i class="fa-solid fa-coins"></i>
+        <span>Financial ROI & Operational Cost</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black text-white">6. 財務メリット：ランニングコスト完全0円</h2>
+      <p class="text-slate-400 text-sm mt-1 mb-6">専用サーバーや月額有料SaaSを一切契約せず、永続的に無料枠で運用可能</p>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden w-full">
+        <div class="grid grid-cols-4 bg-slate-950 p-4 text-xs font-bold text-slate-400 border-b border-slate-800">
+          <div>項目</div>
+          <div>一般的な外部ECシステム</div>
+          <div>本システム（開発仕様）</div>
+          <div class="text-right">コスト削減効果</div>
+        </div>
+
+        <div class="divide-y divide-slate-800 text-xs">
+          <div class="grid grid-cols-4 p-4 items-center">
+            <div class="font-bold text-white">WEBサーバー費用</div>
+            <div class="text-slate-400">月額 5,000円〜20,000円 (AWS/VPS)</div>
+            <div class="text-emerald-400 font-bold font-mono">¥0 (GitHub Pages)</div>
+            <div class="text-right text-emerald-400 font-bold">年 6〜24万円 削減</div>
+          </div>
+
+          <div class="grid grid-cols-4 p-4 items-center">
+            <div class="font-bold text-white">データベース・API費用</div>
+            <div class="text-slate-400">月額 10,000円〜 (Cloud DB)</div>
+            <div class="text-emerald-400 font-bold font-mono">¥0 (Google Apps Script)</div>
+            <div class="text-right text-emerald-400 font-bold">年 12万円 削減</div>
+          </div>
+
+          <div class="grid grid-cols-4 p-4 items-center">
+            <div class="font-bold text-white">B2B決済/EC月額利用料</div>
+            <div class="text-slate-400">月額 30,000円〜 + 取引手数料3〜5%</div>
+            <div class="text-emerald-400 font-bold font-mono">¥0 (手数料0%)</div>
+            <div class="text-right text-emerald-400 font-bold">年 36万円+手数料 削減</div>
+          </div>
+
+          <div class="grid grid-cols-4 p-4 items-center bg-slate-950/60">
+            <div class="font-bold text-sky-400">合計ランニングコスト</div>
+            <div class="text-red-400 font-bold font-mono">年額 54万円〜 ＋ 手数料</div>
+            <div class="text-emerald-300 font-black text-sm font-mono">完全 0 円 / 永久無料</div>
+            <div class="text-right text-emerald-300 font-black text-sm">利益率 最大化</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 p-3 bg-sky-950/40 border border-sky-800/60 rounded-xl text-xs text-sky-300 flex items-center space-x-2">
+        <i class="fa-solid fa-lightbulb text-base"></i>
+        <span><strong>経営判断のポイント:</strong> 固定費のリスクが一切ないため、海外からの注文が月1件でも、100件でも、純粋な利益として会社に残ります。</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: 実際の受注運用フロー & 社長への総括 -->
+    <section id="slide-8" class="slide w-full flex-col justify-center py-6">
+      <div class="flex items-center space-x-2 text-sky-400 text-xs font-mono font-semibold uppercase mb-2">
+        <i class="fa-solid fa-clipboard-check"></i>
+        <span>Workflow & Executive Summary</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black text-white">7. 今後の受発注フロー ＆ 社長への総括</h2>
+      <p class="text-slate-400 text-sm mt-1 mb-6">現場スタッフの負担を増やさず、安全確実に海外売上を立てる運用サイクル</p>
+
+      <!-- 4ステップ運用フロー -->
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 w-full">
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl relative">
+          <div class="text-sky-400 font-mono text-xs font-bold">STEP 01</div>
+          <h4 class="font-bold text-sm text-white mt-1">バイヤーが申請</h4>
+          <p class="text-xs text-slate-400 mt-1">MOV（15万円）超の注文を組み、CITES免責に同意して送信。PDFを即時受領。</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl relative">
+          <div class="text-teal-400 font-mono text-xs font-bold">STEP 02</div>
+          <h4 class="font-bold text-sm text-white mt-1">管理者へ自動通知</h4>
+          <p class="text-xs text-slate-400 mt-1">Gmail / Discord に即時通知。注文リクエストシートに自動で1行追記。</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl relative">
+          <div class="text-amber-400 font-mono text-xs font-bold">STEP 03</div>
+          <h4 class="font-bold text-sm text-white mt-1">空輸便 & 許可確認</h4>
+          <p class="text-xs text-slate-400 mt-1">フォワーダーへ航空便スペースを確認し、CITES該当品の経済産業省申請を準備。</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl relative">
+          <div class="text-emerald-400 font-mono text-xs font-bold">STEP 04</div>
+          <h4 class="font-bold text-sm text-white mt-1">正式請求 & 輸出</h4>
+          <p class="text-xs text-slate-400 mt-1">運賃・箱代を加算した正式請求書を送付。事前入金確認後に石垣島から空輸出荷。</p>
+        </div>
+      </div>
+
+      <!-- 社長へのメッセージまとめ -->
+      <div class="mt-6 bg-gradient-to-r from-sky-950/60 to-slate-900 border border-sky-800/80 rounded-2xl p-5 text-left">
+        <h3 class="font-bold text-white text-base flex items-center space-x-2">
+          <i class="fa-solid fa-trophy text-amber-400"></i>
+          <span>社長へのご提案・総括</span>
+        </h3>
+        <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+          本システムは、<strong>「国内の日常業務を1ミリも邪魔せず、社内機密を鉄壁に守りながら、固定費ゼロで世界中のアクアリウム問屋・水族館から外貨を獲得できる基盤」</strong> として完成いたしました。<br>
+          海外向けカタログのURLとPIN（9876）を海外の有望バイヤーに案内するだけで、即座に安全な海外卸売ビジネスをスタートできます。
+        </p>
+        <div class="mt-3 flex flex-wrap gap-2 text-[11px] font-mono text-sky-300">
+          <span class="bg-sky-900/60 px-2 py-0.5 rounded">公開サイト: https://katoakira1114-png.github.io/aqua-export-b2b/</span>
+          <span class="bg-sky-900/60 px-2 py-0.5 rounded">初期PIN: 9876</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation Bar -->
+  <footer class="no-print border-t border-slate-800 bg-slate-900/80 backdrop-blur px-6 py-3 flex items-center justify-between text-xs text-slate-400 z-20">
+    <div class="flex items-center space-x-2">
+      <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+      <span>石垣島観賞魚（川畑水産）海外輸出受発注基盤</span>
+    </div>
+
+    <!-- Quick Thumbnails / Jump buttons -->
+    <div class="hidden md:flex items-center space-x-1 font-mono">
+      <button onclick="goToSlide(1)" class="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 slide-tab">01 表紙</button>
+      <button onclick="goToSlide(2)" class="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 slide-tab">02 目的</button>
+      <button onclick="goToSlide(3)" class="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 slide-tab">03 仕組み</button>
+      <button onclick="goToSlide(4)" class="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 slide-tab">04 防衛</button>
+      <button onclick="goToSlide(5)" class="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 slide-tab">05 海外仕様</button>
+      <button onclick="goToSlide(6)" class="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 slide-tab">06 学名・写真</button>
+      <button onclick="goToSlide(7)" class="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 slide-tab">07 コスト0円</button>
+      <button onclick="goToSlide(8)" class="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 slide-tab">08 総括</button>
+    </div>
+
+    <div class="text-[11px] text-slate-500 font-mono">
+      [←] 前へ / [→] 次へ
+    </div>
+  </footer>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 8;
+
+    function showSlide(n) {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.remove('active');
+        if (idx + 1 === n) {
+          s.classList.add('active');
+        }
+      });
+      document.getElementById('currentSlideNum').textContent = n;
+      document.getElementById('btnPrev').disabled = (n === 1);
+      document.getElementById('btnNext').disabled = (n === totalSlides);
+
+      document.querySelectorAll('.slide-tab').forEach((tab, idx) => {
+        if (idx + 1 === n) {
+          tab.classList.add('bg-sky-500', 'text-white', 'font-bold');
+          tab.classList.remove('text-slate-300');
+        } else {
+          tab.classList.remove('bg-sky-500', 'text-white', 'font-bold');
+          tab.classList.add('text-slate-300');
+        }
+      });
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+
+    function goToSlide(n) {
+      currentSlide = n;
+      showSlide(currentSlide);
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key >= '1' && e.key <= '8') {
+        goToSlide(parseInt(e.key, 10));
+      }
+    });
+
+    // Initialize
+    showSlide(1);
+  </script>
+</body>
+</html>
