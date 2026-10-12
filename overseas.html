@@ -330,15 +330,30 @@
           </div>
         </div>
 
-        <!-- CATEGORY PILLS (石垣島スプレッドシート準拠 6大カテゴリ) -->
-        <div class="flex items-center space-x-2 overflow-x-auto pb-1 custom-scroll" id="categoryFilterContainer">
-          <button onclick="filterCategory('ALL')" class="category-pill active whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-500 text-white transition touch-btn">すべて (All)</button>
-          <button onclick="filterCategory('魚')" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🐟 魚 (Fish)</button>
-          <button onclick="filterCategory('貝')" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🐚 貝 (Shells)</button>
-          <button onclick="filterCategory('シャコガイ')" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🦪 シャコガイ (Clams)</button>
-          <button onclick="filterCategory('イソギンチャク')" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🌸 イソギンチャク (Anemones)</button>
-          <button onclick="filterCategory('サンゴ')" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🪸 サンゴ (Corals)</button>
-          <button onclick="filterCategory('その他')" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🦀 その他 (Others)</button>
+        <!-- CATEGORY & LIVE SYNC STATUS BAR -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-1">
+          <!-- CATEGORY PILLS (石垣島スプレッドシート準拠 6大カテゴリ) -->
+          <div class="flex items-center space-x-2 overflow-x-auto pb-1 custom-scroll flex-1" id="categoryFilterContainer">
+            <button onclick="filterCategory('ALL', this)" class="category-pill active whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-500 text-white transition touch-btn">すべて (All)</button>
+            <button onclick="filterCategory('魚', this)" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🐟 魚 (Fish)</button>
+            <button onclick="filterCategory('貝', this)" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🐚 貝 (Shells)</button>
+            <button onclick="filterCategory('シャコガイ', this)" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🦪 シャコガイ (Clams)</button>
+            <button onclick="filterCategory('イソギンチャク', this)" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🌸 イソギンチャク (Anemones)</button>
+            <button onclick="filterCategory('サンゴ', this)" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🪸 サンゴ (Corals)</button>
+            <button onclick="filterCategory('その他', this)" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🦀 その他 (Others)</button>
+          </div>
+
+          <!-- Live Inventory Status Badge & Refresh -->
+          <div class="flex items-center space-x-2 flex-shrink-0">
+            <div id="liveStockBadge" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-mono">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="liveStockCountText">スプレッドシート在庫 読込中...</span>
+            </div>
+            <button onclick="loadCatalog()" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white text-xs font-mono transition flex items-center space-x-1 touch-btn" title="最新在庫を同期">
+              <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
+              <span>更新</span>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -411,11 +426,11 @@
       </h3>
       
       <div class="my-4 p-4 rounded-2xl bg-slate-900 border border-slate-800 text-left text-xs space-y-2">
-        <p class="text-slate-300 leading-relaxed" id="collectModalMessage">
-          現在の生簀在庫数は <strong class="text-amber-400 font-bold" id="collectModalStockNum">0</strong> 匹ですが、これ以上の数量は八重山諸島の海での【採集リクエスト】として受け付けます。よろしいですか？
+        <p class="text-slate-300 leading-relaxed font-medium" id="collectModalMessage">
+          （現在の在庫数は <strong class="text-amber-400 font-bold" id="collectModalStockNum">0</strong> 匹ですが、これ以上の注文は八重山諸島での採集リクエストとして受け付けます）
         </p>
         <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-900/50 text-[11px] text-amber-300/90 leading-tight">
-          <i class="fa-solid fa-circle-info mr-1"></i> 天候や潮位により、海での採集・検疫に数日〜2週間程度お時間をいただく場合がございます。
+          <i class="fa-solid fa-circle-info mr-1"></i> OKを押すとそのまま数量を増やせます。現地ダイバーによる捕獲・検疫手配を行います。
         </div>
       </div>
 
@@ -424,7 +439,7 @@
           キャンセル
         </button>
         <button id="btnConfirmCollection" onclick="confirmCollectionAdd()" class="py-3 px-4 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg shadow-amber-500/20 touch-btn">
-          採集リクエストとして追加
+          OK（採集リクエスト）
         </button>
       </div>
     </div>
@@ -697,6 +712,11 @@
     const LOCKOUT_STORAGE_KEY = "isg_export_lockout_v3";
     const LANG_STORAGE_KEY = "isg_export_lang_pref";
     const GAS_ENDPOINT_STORAGE_KEY = "aqua_export_gas_endpoint";
+    // 石垣島観賞魚 本番スプレッドシート連携用 GAS Web App エンドポイント
+    const DEFAULT_GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxIYsPdreUjaOFutfshhQIwOLb_Ke1JprcDZj_LAT9oZnc-l-3jZLsPAsFd_QdQJAQ4eA/exec";
+
+    // 採集リクエスト承認済み商品IDの記録（OK押下後は連続追加を許可）
+    const approvedCollectionProducts = new Set();
 
     // Application State
     let appState = {
@@ -710,10 +730,84 @@
       currentCategory: 'ALL',
       searchQuery: '',
       catalog: [],
-      pendingCollectionProduct: null,
+      pendingCollection: null, // { productId, product, targetQty, source }
       lastGeneratedOrder: null,
-      gasEndpoint: localStorage.getItem(GAS_ENDPOINT_STORAGE_KEY) || ""
+      gasEndpoint: localStorage.getItem(GAS_ENDPOINT_STORAGE_KEY) || DEFAULT_GAS_ENDPOINT
     };
+
+    // Google Drive 画像URL変換ヘルパー (lh3.googleusercontent.com 経由で直接埋め込み)
+    function formatDriveImage(url) {
+      if (!url) return '';
+      const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+      return (match && match[1]) ? `https://lh3.googleusercontent.com/d/${match[1]}` : url;
+    }
+
+    // カテゴリ別フォールバック高画質写真
+    const categoryFallbackImages = {
+      '魚': 'https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80',
+      '貝': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80',
+      'シャコガイ': 'https://images.unsplash.com/photo-1520315342629-6ea920342047?auto=format&fit=crop&w=600&q=80',
+      'イソギンチャク': 'https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=600&q=80',
+      'サンゴ': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80',
+      'その他': 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80'
+    };
+
+    // 石垣島 生物名・学名・英名辞書
+    const ISHIGAKI_SPECIES_DICT = {
+      'ミナミハタタテダイ': { en: 'Pennant Coralfish', sci: 'Heniochus chrysostomus' },
+      'ハタタテダイ': { en: 'Longfin Bannerfish', sci: 'Heniochus acuminatus' },
+      'ツノダシ': { en: 'Moorish Idol', sci: 'Zanclus cornutus' },
+      'ヒメアイゴ': { en: 'White-Spotted Spinefoot', sci: 'Siganus canaliculatus' },
+      'ミカヅキツバメウオ': { en: 'Golden Batfish', sci: 'Platax boersii' },
+      'トゲチョウチョウウオ': { en: 'Threadfin Butterflyfish', sci: 'Chaetodon auriga' },
+      'フウライチョウチョウウオ': { en: 'Vagabond Butterflyfish', sci: 'Chaetodon vagabundus' },
+      'アミチョウチョウウオ': { en: 'Latticed Butterflyfish', sci: 'Chaetodon rafflesii' },
+      'クラカケチョウチョウウオ': { en: 'Panda Butterflyfish', sci: 'Chaetodon adiergastos' },
+      'セグロチョウチョウウオ': { en: 'Saddle Butterflyfish', sci: 'Chaetodon ephippium' },
+      'カクレクマノミ': { en: 'Ocellaris Clownfish', sci: 'Amphiprion ocellaris' },
+      'ハマクマノミ': { en: 'Tomato Clownfish', sci: 'Amphiprion frenatus' },
+      'クマノミ': { en: 'Clarkii Clownfish', sci: 'Amphiprion clarkii' },
+      'サザナミヤッコ': { en: 'Semicircle Angelfish', sci: 'Pomacanthus semicirculatus' },
+      'タテジマキンチャクダイ': { en: 'Emperor Angelfish', sci: 'Pomacanthus imperator' },
+      'デバスズメダイ': { en: 'Blue Green Chromis', sci: 'Chromis viridis' },
+      'ヒメジャコガイ': { en: 'Crocea Clam (Ultra Blue)', sci: 'Tridacna crocea' },
+      'シラナミガイ': { en: 'Maxima Clam (Color Pattern)', sci: 'Tridacna maxima' },
+      'カラーシラナミガイ': { en: 'Color Maxima Clam', sci: 'Tridacna maxima' },
+      'ヒレジャコガイ': { en: 'Fluted Giant Clam', sci: 'Tridacna squamosa' },
+      'カラーヒレジャコガイ': { en: 'Color Fluted Clam', sci: 'Tridacna squamosa' },
+      'ヒレナシジャコ': { en: 'Smooth Giant Clam', sci: 'Tridacna derasa' },
+      'トガリシラナミ': { en: 'Noah Giant Clam', sci: 'Tridacna noae' },
+      'マガキガイ': { en: 'Strawberry Conch', sci: 'Strombus luhuanus' },
+      'タカセガイ': { en: 'Giant Trochus Shell', sci: 'Trochus niloticus' },
+      'クマサカガイ': { en: 'Carrier Shell', sci: 'Xenophora pallidula' },
+      'ハタゴイソギンチャク': { en: 'Carpet Sea Anemone', sci: 'Stichodactyla gigantea' },
+      'サンゴイソギンチャク': { en: 'Bubble Tip Anemone', sci: 'Entacmaea quadricolor' },
+      'シライトイソギンチャク': { en: 'Ritteri Sea Anemone', sci: 'Heteractis magnifica' },
+      'オキナワミドリイシ': { en: 'Acropora Branching Coral', sci: 'Acropora sp.' },
+      'ナグラカタトサカ': { en: 'Soft Coral Leather Tree', sci: 'Sinularia flexibilis' },
+      'クサビライシ': { en: 'Plate Coral', sci: 'Fungia sp.' },
+      'スベスベサンゴヤドカリ': { en: 'Blue-Eyed Hermit Crab', sci: 'Calcinus tubularis' },
+      'コブヒトデ': { en: 'Chocolate Chip Sea Star', sci: 'Protoreaster nodosus' }
+    };
+
+    function getSpeciesEnAndSci(name) {
+      if (!name) return { en: 'Ishigaki Marine Specimen', sci: '' };
+      if (ISHIGAKI_SPECIES_DICT[name]) return ISHIGAKI_SPECIES_DICT[name];
+      for (const key in ISHIGAKI_SPECIES_DICT) {
+        if (name.includes(key)) {
+          const base = ISHIGAKI_SPECIES_DICT[key];
+          let prefix = '';
+          if (name.includes('最高峰')) prefix = 'Grade AAA ';
+          else if (name.includes('スペシャル')) prefix = 'Special Selection ';
+          else if (name.includes('ｲﾚｷﾞｭﾗｰﾊﾞﾝﾄﾞ')) prefix = 'Irregular Band ';
+          return {
+            en: prefix + base.en,
+            sci: base.sci
+          };
+        }
+      }
+      return { en: name, sci: '' };
+    }
 
     /* --------------------------------------------------------
        2. ISHIGAKIJIMA NATIVE SPECIMENS (6 CATEGORIES)
@@ -1246,32 +1340,87 @@
     }
 
     /* --------------------------------------------------------
-       7. CATALOG LOADING (GAS BFF or ISHIGAKI NATIVE FALLBACK)
+       7. CATALOG LOADING (GAS SPREADSHEET LIVE INVENTORY)
+       - Fetches live 111 items from Google Spreadsheet: 1ZiNel8TGJ-e7JMolkRagVOSnr1UczvQzpTa-F-s4p3o
     -------------------------------------------------------- */
     async function loadCatalog() {
       const loading = document.getElementById('catalogLoading');
-      loading.classList.remove('hidden');
+      const badgeText = document.getElementById('liveStockCountText');
+      if (loading) loading.classList.remove('hidden');
+      if (badgeText) badgeText.textContent = "スプレッドシート在庫 取得中...";
 
-      if (appState.gasEndpoint) {
-        try {
-          const token = sessionStorage.getItem(AUTH_SESSION_KEY) || "";
-          const res = await fetch(`${appState.gasEndpoint}?action=fetchOverseasCatalog&token=${encodeURIComponent(token)}`);
+      let successLoaded = false;
+      const endpoint = appState.gasEndpoint || DEFAULT_GAS_ENDPOINT;
+
+      try {
+        const res = await fetch(`${endpoint}?action=getStockList`);
+        if (res.ok) {
           const data = await res.json();
-          if (data && data.success && Array.isArray(data.catalog) && data.catalog.length > 0) {
-            appState.catalog = data.catalog;
-            renderProducts();
-            loading.classList.add('hidden');
-            return;
+          if (data && data.status === 'success' && Array.isArray(data.items) && data.items.length > 0) {
+            appState.catalog = data.items.map((item, idx) => {
+              let cat = (item.category || 'その他').trim();
+              if (cat === '擬岩') cat = 'その他';
+              if (!['魚', '貝', 'シャコガイ', 'イソギンチャク', 'サンゴ', 'その他'].includes(cat)) {
+                cat = 'その他';
+              }
+
+              const defaultCategoryPrice = {
+                '魚': 2800,
+                '貝': 1200,
+                'シャコガイ': 6500,
+                'イソギンチャク': 4800,
+                'サンゴ': 9500,
+                'その他': 1800
+              };
+
+              const rawPrice = parseFloat(item.price);
+              const priceJpy = (rawPrice && rawPrice > 0) ? rawPrice : (defaultCategoryPrice[cat] || 2500);
+              const stockNum = parseInt(item.stock, 10);
+              const safeStock = isNaN(stockNum) ? 0 : Math.max(0, stockNum);
+
+              let img = item.img ? formatDriveImage(item.img) : '';
+              if (!img || img.trim() === '') {
+                img = categoryFallbackImages[cat] || categoryFallbackImages['その他'];
+              }
+
+              let sizeStr = String(item.size || '').trim();
+              if (!sizeStr) sizeStr = '規格おまかせ';
+              else if (!sizeStr.includes('cm') && !sizeStr.includes('mm') && /^\d/.test(sizeStr)) {
+                sizeStr += ' cm';
+              }
+
+              const cites = (cat === 'シャコガイ' || cat === 'サンゴ') ? 'CITES App. II' : 'Non-CITES';
+              const names = getSpeciesEnAndSci(item.name);
+
+              return {
+                id: String(item.id || ('ISG-' + (idx + 1))),
+                name: String(item.name || '石垣島生体'),
+                name_en: names.en,
+                scientific_name: names.sci,
+                category: cat,
+                size: sizeStr,
+                stock: safeStock,
+                price_jpy: priceJpy,
+                cites: cites,
+                image_url: img
+              };
+            });
+
+            successLoaded = true;
+            if (badgeText) badgeText.textContent = `本番在庫: ${appState.catalog.length} 種 同期中`;
           }
-        } catch (err) {
-          console.warn("GAS catalog fetch error, using Ishigakijima native catalog:", err);
         }
+      } catch (err) {
+        console.warn("GAS getStockList failed, fallback:", err);
       }
 
-      // Fallback to Ishigakijima 6-category catalog
-      appState.catalog = [...ISHIGAKI_DEFAULT_CATALOG];
+      if (!successLoaded) {
+        appState.catalog = ISHIGAKI_DEFAULT_CATALOG.map(p => ({ ...p, id: String(p.id) }));
+        if (badgeText) badgeText.textContent = `オフライン (基本カタログ)`;
+      }
+
       renderProducts();
-      loading.classList.add('hidden');
+      if (loading) loading.classList.add('hidden');
     }
 
     /* --------------------------------------------------------
@@ -1289,7 +1438,7 @@
           p.name.toLowerCase().includes(q) || 
           (p.name_en && p.name_en.toLowerCase().includes(q)) || 
           (p.scientific_name && p.scientific_name.toLowerCase().includes(q)) ||
-          p.id.toLowerCase().includes(q);
+          String(p.id).toLowerCase().includes(q);
         return matchCat && matchSearch;
       });
 
@@ -1301,12 +1450,17 @@
       }
 
       filtered.forEach(p => {
+        const pId = String(p.id);
         const isCites = (p.cites && p.cites.includes('CITES'));
         const priceFormatted = formatPrice(p.price_jpy);
         
         // Find if already in cart to reflect current count
-        const cartItem = appState.cart.find(c => c.product.id === p.id);
+        const cartItem = appState.cart.find(c => String(c.product.id) === pId);
         const inCartQty = cartItem ? cartItem.quantity : 0;
+        const initialCardVal = inCartQty > 0 ? inCartQty : 1;
+        const initialOverStock = initialCardVal > p.stock ? (initialCardVal - p.stock) : 0;
+
+        const fallbackImg = categoryFallbackImages[p.category] || categoryFallbackImages['その他'];
 
         const card = document.createElement('div');
         card.className = "bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-slate-700 transition flex flex-col group shadow-lg";
@@ -1314,7 +1468,9 @@
         card.innerHTML = `
           <!-- Image -->
           <div class="relative h-44 sm:h-48 bg-slate-950 overflow-hidden">
-            <img src="${p.image_url}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
+            <img src="${p.image_url}" alt="${p.name}" 
+              onerror="this.onerror=null; this.src='${fallbackImg}';"
+              class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
             
             <!-- Badges -->
@@ -1338,7 +1494,7 @@
                 </span>
               ` : `
                 <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-amber-950/90 text-amber-300 border border-amber-800">
-                  採集リクエスト受付
+                  採集リクエスト受付 (在庫0)
                 </span>
               `}
             </div>
@@ -1361,7 +1517,7 @@
             </div>
 
             <!-- Price & Quantity Stepper & Add Button -->
-            <div class="mt-4 pt-3 border-t border-slate-800/80 space-y-3">
+            <div class="mt-4 pt-3 border-t border-slate-800/80 space-y-2.5">
               <div class="flex items-baseline justify-between">
                 <span class="text-[10px] text-slate-500 uppercase font-mono">卸売単価</span>
                 <span class="text-base sm:text-lg font-black text-white font-mono">${priceFormatted}</span>
@@ -1371,21 +1527,27 @@
               <div class="flex items-center space-x-2">
                 <!-- Stepper -->
                 <div class="flex items-center bg-slate-950 border border-slate-700 rounded-xl p-0.5">
-                  <button onclick="decrementCardQty('${p.id}')" class="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 text-sm flex items-center justify-center touch-btn">
+                  <button type="button" onclick="decrementCardQty('${pId}')" class="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 text-sm flex items-center justify-center touch-btn">
                     <i class="fa-solid fa-minus text-xs"></i>
                   </button>
-                  <input type="number" id="card-qty-${p.id}" value="1" min="1" 
+                  <input type="number" id="card-qty-${pId}" value="${initialCardVal}" min="1" 
+                    onchange="handleCardInputDirectChange('${pId}')"
                     class="w-10 text-center text-xs font-mono font-bold bg-transparent text-white focus:outline-none">
-                  <button onclick="incrementCardQty('${p.id}')" class="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 text-sm flex items-center justify-center touch-btn">
+                  <button type="button" onclick="incrementCardQty('${pId}')" class="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 text-sm flex items-center justify-center touch-btn">
                     <i class="fa-solid fa-plus text-xs"></i>
                   </button>
                 </div>
 
                 <!-- Add to Cart Button -->
-                <button onclick="handleAddToCart('${p.id}')" class="flex-1 py-2.5 px-3 bg-sky-500 hover:bg-sky-400 active:scale-95 text-white font-bold rounded-xl text-xs transition flex items-center justify-center space-x-1.5 touch-btn shadow-lg shadow-sky-500/20">
+                <button type="button" onclick="handleAddToCart('${pId}')" class="flex-1 py-2.5 px-3 bg-sky-500 hover:bg-sky-400 active:scale-95 text-white font-bold rounded-xl text-xs transition flex items-center justify-center space-x-1.5 touch-btn shadow-lg shadow-sky-500/20">
                   <i class="fa-solid fa-cart-plus text-sm"></i>
                   <span data-i18n="btn_add">カートに追加</span>
                 </button>
+              </div>
+
+              <!-- Card Collection badge status if exceeds stock -->
+              <div id="card-badge-${pId}" class="text-[10px] text-amber-400 text-center font-mono font-semibold min-h-[14px]">
+                ${initialOverStock > 0 ? `★ 採集リクエスト: +${initialOverStock}匹 含む` : ''}
               </div>
 
               <!-- Cart badge status inside card if present -->
@@ -1401,15 +1563,17 @@
       });
     }
 
-    function filterCategory(cat) {
+    function filterCategory(cat, btn) {
       appState.currentCategory = cat;
       const pills = document.querySelectorAll('.category-pill');
       pills.forEach(p => {
         p.classList.remove('active', 'bg-sky-500', 'text-white');
         p.classList.add('bg-slate-900', 'text-slate-300');
       });
-      event.target.classList.add('active', 'bg-sky-500', 'text-white');
-      event.target.classList.remove('bg-slate-900', 'text-slate-300');
+      if (btn) {
+        btn.classList.add('active', 'bg-sky-500', 'text-white');
+        btn.classList.remove('bg-slate-900', 'text-slate-300');
+      }
       renderProducts();
     }
 
@@ -1420,74 +1584,144 @@
 
     /* --------------------------------------------------------
        9. CARD QUANTITY STEPPER & COLLECTION REQUEST LOGIC
+       - 在庫数以上の注文時はモーダル表示
+       - OKを押すとそのまま数を増やせる（連続+クリック可能）
     -------------------------------------------------------- */
+    function updateCardBadge(pId, qty, stock) {
+      const badge = document.getElementById(`card-badge-${pId}`);
+      if (!badge) return;
+      if (qty > stock) {
+        const extra = qty - stock;
+        badge.innerHTML = `★ 採集リクエスト: +${extra}匹 含む`;
+      } else {
+        badge.innerHTML = ``;
+      }
+    }
+
     function decrementCardQty(productId) {
-      const inp = document.getElementById(`card-qty-${productId}`);
-      let v = parseInt(inp.value, 10) || 1;
+      const pId = String(productId);
+      const product = appState.catalog.find(p => String(p.id) === pId);
+      if (!product) return;
+
+      const inp = document.getElementById(`card-qty-${pId}`);
+      let v = parseInt(inp ? inp.value : "1", 10) || 1;
       if (v > 1) {
-        inp.value = v - 1;
+        const nextV = v - 1;
+        if (inp) inp.value = nextV;
+        updateCardBadge(pId, nextV, product.stock);
       }
     }
 
     function incrementCardQty(productId) {
-      const inp = document.getElementById(`card-qty-${productId}`);
-      const product = appState.catalog.find(p => p.id === productId);
+      const pId = String(productId);
+      const product = appState.catalog.find(p => String(p.id) === pId);
       if (!product) return;
 
-      let v = parseInt(inp.value, 10) || 1;
+      const inp = document.getElementById(`card-qty-${pId}`);
+      let v = parseInt(inp ? inp.value : "1", 10) || 1;
       const nextV = v + 1;
 
-      // Check if exceeds stock
-      if (nextV > product.stock) {
-        showCollectionRequestModal(product, nextV);
+      // 在庫数以上、かつまだ未承認の場合のみモーダル表示
+      if (nextV > product.stock && !approvedCollectionProducts.has(pId)) {
+        showCollectionRequestModal(product, nextV, 'card');
       } else {
-        inp.value = nextV;
+        // すでにOK承認済み、または在庫内の場合はそのままスムーズに増加
+        if (inp) inp.value = nextV;
+        updateCardBadge(pId, nextV, product.stock);
+      }
+    }
+
+    function handleCardInputDirectChange(productId) {
+      const pId = String(productId);
+      const product = appState.catalog.find(p => String(p.id) === pId);
+      if (!product) return;
+
+      const inp = document.getElementById(`card-qty-${pId}`);
+      let v = parseInt(inp ? inp.value : "1", 10) || 1;
+      if (v < 1) { v = 1; if (inp) inp.value = 1; }
+
+      if (v > product.stock && !approvedCollectionProducts.has(pId)) {
+        showCollectionRequestModal(product, v, 'card');
+      } else {
+        updateCardBadge(pId, v, product.stock);
       }
     }
 
     /* --------------------------------------------------------
        10. COLLECTION REQUEST MODAL HANDLING
-       - 「現在の在庫数は〇〇ですが、これ以上の注文は採集リクエストとして受け付けます」
+       - 「（現在の在庫数は〇〇ですが、これ以上の注文は採集リクエストとして受け付けます）」
+       - OKを押すとそのまま数を増やす
     -------------------------------------------------------- */
-    function showCollectionRequestModal(product, targetQty) {
-      appState.pendingCollectionProduct = { product, targetQty };
+    function showCollectionRequestModal(product, targetQty, source = 'card') {
+      const pId = String(product.id);
+      appState.pendingCollection = {
+        productId: pId,
+        product: product,
+        targetQty: targetQty,
+        source: source
+      };
+
       const modal = document.getElementById('collectionRequestModal');
-      document.getElementById('collectModalStockNum').textContent = product.stock;
-      
-      const msg = `「${product.name}」の現在の生簀在庫数は 【${product.stock}】匹 ですが、これ以上の数量（${targetQty}匹目以降）は八重山諸島での【採集リクエスト（捕獲手配）】として受け付けます。数量を追加しますか？`;
-      document.getElementById('collectModalMessage').innerHTML = msg;
+      const stockNum = Math.max(0, product.stock || 0);
+
+      document.getElementById('collectModalStockNum').textContent = stockNum;
+      document.getElementById('collectModalMessage').innerHTML = 
+        `（現在の在庫数は <strong class="text-amber-400 font-bold">${stockNum}</strong> 匹ですが、これ以上の注文は八重山諸島での採集リクエストとして受け付けます）`;
 
       modal.classList.remove('hidden');
     }
 
     function closeCollectionModal() {
       document.getElementById('collectionRequestModal').classList.add('hidden');
-      appState.pendingCollectionProduct = null;
+      appState.pendingCollection = null;
     }
 
     function confirmCollectionAdd() {
-      if (appState.pendingCollectionProduct) {
-        const { product, targetQty } = appState.pendingCollectionProduct;
-        const inp = document.getElementById(`card-qty-${product.id}`);
+      if (!appState.pendingCollection) return;
+      const { productId, product, targetQty, source } = appState.pendingCollection;
+
+      // 承認フラグをセット（次回以降の+ボタンをブロックしない）
+      approvedCollectionProducts.add(productId);
+
+      if (source === 'cart') {
+        // カートドロワー内の数量更新
+        const idx = appState.cart.findIndex(c => String(c.product.id) === productId);
+        if (idx > -1) {
+          appState.cart[idx].quantity = targetQty;
+          appState.cart[idx].isCollectionRequest = (targetQty > product.stock);
+          updateCartUI();
+          renderProducts();
+        }
+      } else {
+        // 商品カード側の数量更新
+        const inp = document.getElementById(`card-qty-${productId}`);
         if (inp) inp.value = targetQty;
-        closeCollectionModal();
-        showToast(`採集リクエスト数量 (${targetQty}匹) を設定しました`);
+        updateCardBadge(productId, targetQty, product.stock);
       }
+
+      closeCollectionModal();
+      showToast(`「${product.name}」採集リクエスト数量（${targetQty}匹）を設定しました`);
     }
 
     /* --------------------------------------------------------
        11. ADD TO CART & CART DRAWER MANAGEMENT
     -------------------------------------------------------- */
     function handleAddToCart(productId) {
-      const product = appState.catalog.find(p => p.id === productId);
+      const pId = String(productId);
+      const product = appState.catalog.find(p => String(p.id) === pId);
       if (!product) return;
 
-      const inp = document.getElementById(`card-qty-${productId}`);
-      const qty = parseInt(inp.value, 10) || 1;
+      const inp = document.getElementById(`card-qty-${pId}`);
+      const qty = parseInt(inp ? inp.value : "1", 10) || 1;
 
-      const existingIdx = appState.cart.findIndex(c => c.product.id === productId);
+      if (qty > product.stock) {
+        approvedCollectionProducts.add(pId);
+      }
+
+      const existingIdx = appState.cart.findIndex(c => String(c.product.id) === pId);
       if (existingIdx > -1) {
         appState.cart[existingIdx].quantity += qty;
+        appState.cart[existingIdx].isCollectionRequest = (appState.cart[existingIdx].quantity > product.stock);
       } else {
         appState.cart.push({
           product,
@@ -1498,11 +1732,12 @@
 
       updateCartUI();
       renderProducts();
-      showToast(`${product.name} を ${qty}匹 カートに追加しました`);
+      showToast(`「${product.name}」を ${qty}匹 カートに追加しました`);
     }
 
     function updateCartItemQty(productId, newQty) {
-      const idx = appState.cart.findIndex(c => c.product.id === productId);
+      const pId = String(productId);
+      const idx = appState.cart.findIndex(c => String(c.product.id) === pId);
       if (idx === -1) return;
 
       if (newQty <= 0) {
@@ -1513,9 +1748,8 @@
       }
 
       const product = appState.cart[idx].product;
-      if (newQty > product.stock && newQty > appState.cart[idx].quantity) {
-        // Exceeding stock warning
-        showCollectionRequestModal(product, newQty);
+      if (newQty > product.stock && newQty > appState.cart[idx].quantity && !approvedCollectionProducts.has(pId)) {
+        showCollectionRequestModal(product, newQty, 'cart');
         return;
       }
 
@@ -1526,7 +1760,8 @@
     }
 
     function removeCartItem(productId) {
-      appState.cart = appState.cart.filter(c => c.product.id !== productId);
+      const pId = String(productId);
+      appState.cart = appState.cart.filter(c => String(c.product.id) !== pId);
       updateCartUI();
       renderProducts();
     }
