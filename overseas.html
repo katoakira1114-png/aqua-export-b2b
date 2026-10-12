@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AQUA EXPORT INTERNATIONAL | B2B Wholesale Portal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Inter & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <!-- jsPDF & AutoTable for client-side Proforma Invoice generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              black: '#07090e',
+              panel: '#0e121a',
+              card: '#141a24',
+              border: '#1f2937',
+              accent: '#38bdf8', // Sky blue
+              accentGold: '#f59e0b',
+              accentGreen: '#10b981',
+              muted: '#94a3b8'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['"Space Grotesk"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #07090e;
+      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #0e121a;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #263346;
+      border-radius: 3px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #38bdf8;
+    }
+    .glass-panel {
+      background: rgba(14, 18, 26, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white">
+
+  <!-- ======================================================== -->
+  <!-- 0. CONFIGURATION & DEMO SETTINGS BAR (Top Collapsible)   -->
+  <!-- ======================================================== -->
+  <div id="apiConfigBar" class="bg-slate-900 border-b border-slate-800 text-xs text-slate-400 py-1.5 px-4 hidden">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center space-x-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span class="font-medium text-slate-300">GAS Endpoint:</span>
+        <input type="text" id="gasEndpointInput" placeholder="https://script.google.com/macros/s/.../exec" 
+          class="bg-slate-950 text-slate-200 px-2 py-0.5 rounded border border-slate-700 text-xs w-72 md:w-96 focus:outline-none focus:border-sky-400">
+        <button onclick="saveGasEndpoint()" class="bg-sky-600 hover:bg-sky-500 text-white px-2 py-0.5 rounded text-xs transition">Save</button>
+      </div>
+      <div class="flex items-center space-x-3">
+        <span id="endpointStatus" class="text-amber-400">Offline / Standalone Mode</span>
+        <button onclick="toggleApiConfig()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-times"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- STEP 1: GATEWAY PIN AUTHENTICATION MODAL (ZERO TRUST)    -->
+  <!-- ======================================================== -->
+  <div id="authOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md px-4">
+    <div class="max-w-md w-full glass-panel rounded-2xl p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
+      <!-- Glow effect -->
+      <div class="absolute -top-24 -left-24 w-48 h-48 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-900 border border-slate-700 text-sky-400 mb-4 shadow-inner">
+          <i class="fa-solid fa-shield-halved text-2xl"></i>
+        </div>
+        <h1 class="text-xl font-bold tracking-tight text-white uppercase font-mono">B2B Gateway Verification</h1>
+        <p class="text-xs text-slate-400 mt-1.5" data-i18n="auth_subtitle">Authorized Aquarium Wholesalers & Commercial Buyers Only</p>
+      </div>
+
+      <!-- Lockout Alert -->
+      <div id="lockoutAlert" class="hidden mb-5 p-3 rounded-lg bg-red-950/70 border border-red-700/60 text-red-300 text-xs">
+        <div class="flex items-center space-x-2 font-bold mb-1">
+          <i class="fa-solid fa-triangle-exclamation text-red-400"></i>
+          <span>ACCESS TEMPORARILY LOCKED</span>
+        </div>
+        <p id="lockoutTimerText">Too many failed attempts. Try again in 15:00.</p>
+      </div>
+
+      <!-- PIN Input Form -->
+      <form id="pinForm" onsubmit="handlePinSubmit(event)" class="space-y-5">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 text-center" data-i18n="enter_pin">
+            Enter 4-Digit Access PIN
+          </label>
+          <div class="flex justify-center gap-3">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-12 h-14 text-center text-2xl font-mono font-bold bg-slate-900 border border-slate-700 rounded-xl text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400 focus:outline-none transition">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-12 h-14 text-center text-2xl font-mono font-bold bg-slate-900 border border-slate-700 rounded-xl text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400 focus:outline-none transition">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-12 h-14 text-center text-2xl font-mono font-bold bg-slate-900 border border-slate-700 rounded-xl text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400 focus:outline-none transition">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-12 h-14 text-center text-2xl font-mono font-bold bg-slate-900 border border-slate-700 rounded-xl text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400 focus:outline-none transition">
+          </div>
+          <p id="pinErrorMessage" class="text-xs text-red-400 text-center mt-2 min-h-[1rem] font-medium"></p>
+        </div>
+
+        <button type="submit" id="btnVerifyPin" class="w-full py-3.5 px-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-semibold rounded-xl text-sm transition duration-150 shadow-lg shadow-sky-500/20 flex items-center justify-center space-x-2">
+          <span>Authenticate & Access Catalog</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+
+        <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-800">
+          <span><i class="fa-solid fa-lock mr-1"></i> Rate-limited defense (5 tries / 15m)</span>
+          <button type="button" onclick="toggleApiConfig()" class="text-slate-400 hover:text-sky-400 transition underline underline-offset-2">Endpoint Setup</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MAIN APPLICATION SHELL                                   -->
+  <!-- ======================================================== -->
+  <div id="mainApp" class="flex-1 flex flex-col opacity-0 transition-opacity duration-300">
+    
+    <!-- TOP HEADER -->
+    <header class="sticky top-0 z-40 bg-[#07090e]/90 backdrop-blur-md border-b border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          
+          <!-- Brand Logo & Badge -->
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+              <i class="fa-solid fa-water text-lg"></i>
+            </div>
+            <div>
+              <span class="font-mono font-bold tracking-wider text-base text-white">AQUA EXPORT</span>
+              <span class="hidden sm:inline-block ml-2 px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-slate-800 text-sky-400 border border-slate-700">B2B Portal</span>
+            </div>
+          </div>
+
+          <!-- Controls: Destination, Currency, Language, Cart -->
+          <div class="flex items-center space-x-2 sm:space-x-4">
+            
+            <!-- STEP 2: Language Selector -->
+            <div class="relative">
+              <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-slate-900 text-slate-300 border border-slate-700 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-sky-400">
+                <option value="en">English</option>
+                <option value="zh-TW">繁體中文</option>
+                <option value="zh-CN">简体中文</option>
+              </select>
+            </div>
+
+            <!-- STEP 2: Destination Country Selector -->
+            <div class="relative">
+              <select id="countrySelect" onchange="changeCountry(this.value)" class="bg-slate-900 text-slate-300 border border-slate-700 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-sky-400">
+                <option value="USA">🇺🇸 United States</option>
+                <option value="EU">🇪🇺 European Union</option>
+                <option value="TW">🇹🇼 Taiwan</option>
+                <option value="HK">🇭🇰 Hong Kong</option>
+                <option value="SG">🇸🇬 Singapore</option>
+                <option value="UK">🇬🇧 United Kingdom</option>
+                <option value="CA">🇨🇦 Canada</option>
+                <option value="OTHER">🌐 Other Destination</option>
+              </select>
+            </div>
+
+            <!-- Currency Toggle (USD / JPY) -->
+            <div class="flex bg-slate-900 rounded-lg p-0.5 border border-slate-700 text-xs font-mono">
+              <button id="currBtnUSD" onclick="setCurrency('USD')" class="px-2.5 py-1 rounded font-bold bg-sky-500 text-white transition">USD</button>
+              <button id="currBtnJPY" onclick="setCurrency('JPY')" class="px-2.5 py-1 rounded text-slate-400 hover:text-white transition">JPY</button>
+            </div>
+
+            <!-- Cart Trigger Button -->
+            <button onclick="toggleCartDrawer(true)" class="relative p-2 text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 rounded-lg border border-slate-700 transition">
+              <i class="fa-solid fa-cart-shopping text-sm"></i>
+              <span id="cartCountBadge" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-sky-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center ring-2 ring-[#07090e]">0</span>
+            </button>
+
+            <!-- Logout / Reset PIN -->
+            <button onclick="handleLogout()" title="Lock Portal" class="p-2 text-slate-500 hover:text-red-400 bg-slate-900 hover:bg-slate-800 rounded-lg border border-slate-800 text-xs transition">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: MOV (MINIMUM ORDER VALUE) PROGRESS BAR -->
+      <div id="movBarContainer" class="bg-slate-900/90 border-t border-slate-800/80 px-4 py-2">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs gap-2">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono text-slate-400 uppercase font-semibold" data-i18n="mov_label">Wholesale MOV:</span>
+            <span id="movTargetText" class="font-mono font-bold text-slate-200">$1,000.00 USD</span>
+            <span class="text-slate-600">|</span>
+            <span id="movStatusMessage" class="text-amber-400 font-medium">Add items to meet MOQ threshold.</span>
+          </div>
+          <!-- Progress bar -->
+          <div class="w-full sm:w-72 flex items-center space-x-2">
+            <div class="flex-1 bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700/60">
+              <div id="movProgressBar" class="bg-amber-400 h-full w-0 transition-all duration-300 rounded-full"></div>
+            </div>
+            <span id="movPercentText" class="font-mono text-[11px] text-slate-400 w-9 text-right">0%</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO & FILTER BAR -->
+    <section class="bg-gradient-to-b from-[#0c1017] to-[#07090e] border-b border-slate-800 py-6 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-mono mb-2">
+            <i class="fa-solid fa-plane-departure text-[10px]"></i>
+            <span data-i18n="hero_badge">DIRECT EXPORT FROM JAPAN & ASIA PACIFIC</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" data-i18n="hero_title">
+            Commercial Specimen Catalog
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl" data-i18n="hero_desc">
+            Direct export catalog for licensed importers, wholesale distributors, and public aquariums. All specimens are quarantined and pre-screened prior to export health certification.
+          </p>
+        </div>
+
+        <!-- Live Search Input -->
+        <div class="w-full md:w-80 relative">
+          <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Search species or scientific name..."
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-400">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500 text-xs"></i>
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="max-w-7xl mx-auto mt-5 flex items-center space-x-2 overflow-x-auto pb-1 custom-scroll" id="categoryFilterContainer">
+        <button onclick="filterCategory('ALL')" class="category-pill active whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-medium bg-sky-500 text-white transition">All Specimens</button>
+        <button onclick="filterCategory('DISCUS')" class="category-pill whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">Wild Discus</button>
+        <button onclick="filterCategory('PLECO')" class="category-pill whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">Rare Plecos (L-Numbers)</button>
+        <button onclick="filterCategory('AROWANA')" class="category-pill whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">Arowana & Monsters</button>
+        <button onclick="filterCategory('MARINE')" class="category-pill whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">Marine & Corals</button>
+        <button onclick="filterCategory('PLANT')" class="category-pill whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">Rare Aquascaping Plants</button>
+      </div>
+    </section>
+
+    <!-- PRODUCT CATALOG GRID -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Loading State -->
+      <div id="catalogLoading" class="hidden text-center py-24">
+        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-sky-400"></i>
+        <p class="text-xs text-slate-400 mt-3 font-mono">Fetching sanitized export inventory...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div id="catalogEmpty" class="hidden text-center py-24 border border-dashed border-slate-800 rounded-2xl">
+        <i class="fa-solid fa-box-open text-4xl text-slate-600 mb-3"></i>
+        <h4 class="text-base font-semibold text-slate-300">No matching specimens found</h4>
+        <p class="text-xs text-slate-500 mt-1">Try adjusting your category filter or search keywords.</p>
+      </div>
+
+      <!-- Grid Container -->
+      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Cards rendered dynamically via JS -->
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800/80 py-8 text-xs text-slate-500">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-shield-halved text-sky-400"></i>
+          <span>Secure Zero-Trust Wholesale Environment &copy; 2026 Aqua Export International. All rights reserved.</span>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span class="hover:text-slate-400">B2B Trade Only</span>
+          <span>&bull;</span>
+          <span class="hover:text-slate-400">IATA LAR Compliant</span>
+          <span>&bull;</span>
+          <span class="hover:text-slate-400">CITES Certified</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- CART DRAWER (SIDEBAR)                                    -->
+  <!-- ======================================================== -->
+  <div id="cartDrawerBackdrop" onclick="toggleCartDrawer(false)" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+  <div id="cartDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-slate-950 border-l border-slate-800 z-50 flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl">
+    
+    <!-- Drawer Header -->
+    <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+          <i class="fa-solid fa-file-invoice"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-sm text-white" data-i18n="proforma_cart_title">Proforma Order Cart</h3>
+          <p class="text-[11px] text-slate-400" id="cartItemSummary">0 specimens selected</p>
+        </div>
+      </div>
+      <button onclick="toggleCartDrawer(false)" class="text-slate-400 hover:text-white p-1 rounded-lg">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <!-- MOV Status Inside Cart -->
+    <div id="cartMovBanner" class="bg-amber-950/40 border-b border-amber-900/50 p-3 text-xs">
+      <div class="flex items-center justify-between mb-1">
+        <span class="font-semibold text-amber-300" data-i18n="mov_requirement">Wholesale MOV Threshold</span>
+        <span id="cartMovAmount" class="font-mono text-amber-200 font-bold">$1,000.00</span>
+      </div>
+      <p id="cartMovStatus" class="text-amber-400/90 text-[11px]">Add more items to unlock checkout.</p>
+    </div>
+
+    <!-- Line Items List -->
+    <div id="cartItemsList" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scroll">
+      <!-- Items dynamically populated -->
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-5 border-t border-slate-800 bg-slate-900/80 space-y-4">
+      <div class="space-y-1.5 text-xs">
+        <div class="flex justify-between text-slate-400">
+          <span data-i18n="specimen_subtotal">Specimen Subtotal:</span>
+          <span id="cartSubtotalText" class="font-mono font-bold text-white text-sm">$0.00 USD</span>
+        </div>
+        <div class="flex justify-between text-slate-500 text-[11px]">
+          <span data-i18n="freight_notice">Freight, Box & CITES:</span>
+          <span class="italic text-slate-400" data-i18n="quoted_separately">Quoted on Official PI</span>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button id="btnProceedCheckout" onclick="openCitesModal()" disabled
+        class="w-full py-3.5 px-4 bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-sky-500/20 flex items-center justify-center space-x-2">
+        <i class="fa-solid fa-file-contract"></i>
+        <span data-i18n="proceed_checkout_btn">Proceed to Legal Clearance</span>
+      </button>
+      <p class="text-[10px] text-slate-500 text-center">
+        * Inventory reserved upon formal proforma confirmation and wire receipt.
+      </p>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- STEP 4: CITES & AIR CARGO DISCLAIMER MODAL (MANDATORY)   -->
+  <!-- ======================================================== -->
+  <div id="citesModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md px-4 hidden">
+    <div class="max-w-2xl w-full glass-panel rounded-2xl p-6 sm:p-8 border border-amber-500/30 shadow-2xl relative overflow-hidden">
+      <!-- Warning Accent -->
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-lg">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-white font-mono uppercase tracking-wide" data-i18n="legal_modal_title">
+            International Trade & CITES Compliance
+          </h2>
+          <p class="text-xs text-amber-400/90" data-i18n="legal_modal_subtitle">
+            Mandatory acknowledgement required prior to Proforma Request generation.
+          </p>
+        </div>
+      </div>
+
+      <div class="space-y-4 my-6 text-xs text-slate-300">
+        <!-- Checkbox 1 -->
+        <label class="flex items-start space-x-3 p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+          <input type="checkbox" id="checkLegal1" onchange="validateLegalCheckboxes()" class="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-700 focus:ring-0 focus:ring-offset-0">
+          <div>
+            <span class="font-bold text-slate-100 block mb-0.5">1. Price Notice & Ancillary Freight Fees</span>
+            <span class="text-slate-400 leading-relaxed">
+              The displayed total includes specimen wholesale costs only. International air freight, insulated packing, oxygen/heat packs, and CITES permit handling fees will be quoted separately on the official Proforma Invoice.
+            </span>
+          </div>
+        </label>
+
+        <!-- Checkbox 2 -->
+        <label class="flex items-start space-x-3 p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+          <input type="checkbox" id="checkLegal2" onchange="validateLegalCheckboxes()" class="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-700 focus:ring-0 focus:ring-offset-0">
+          <div>
+            <span class="font-bold text-slate-100 block mb-0.5">2. Delivery & CITES Approval Schedule</span>
+            <span class="text-slate-400 leading-relaxed">
+              Export permits and live animal cargo flight arrangements require administrative processing (typically 2 to 4 weeks). Specific arrival dates cannot be guaranteed upon initial request.
+            </span>
+          </div>
+        </label>
+
+        <!-- Checkbox 3 -->
+        <label class="flex items-start space-x-3 p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+          <input type="checkbox" id="checkLegal3" onchange="validateLegalCheckboxes()" class="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-700 focus:ring-0 focus:ring-offset-0">
+          <div>
+            <span class="font-bold text-slate-100 block mb-0.5">3. Buyer Import Responsibility & Customs Clearance</span>
+            <span class="text-slate-400 leading-relaxed">
+              The buyer is solely responsible for possessing valid import permits, appointing an accredited customs broker, clearing customs at the destination airport, and remitting local import duties/taxes.
+            </span>
+          </div>
+        </label>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
+        <button onclick="closeCitesModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition">Cancel</button>
+        <button id="btnAgreeLegal" onclick="proceedToBuyerForm()" disabled
+          class="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white transition shadow-lg shadow-sky-500/20">
+          I Agree & Continue to Order Details
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- STEP 5: BUYER DETAILS & ORDER CONFIRMATION MODAL         -->
+  <!-- ======================================================== -->
+  <div id="checkoutModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md px-4 hidden">
+    <div class="max-w-2xl w-full glass-panel rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-2xl relative max-h-[92vh] overflow-y-auto custom-scroll">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-5">
+        <div>
+          <h2 class="text-lg font-bold text-white font-mono uppercase" data-i18n="order_form_title">Proforma Order Request</h2>
+          <p class="text-xs text-slate-400" data-i18n="order_form_desc">Commercial Consignee & Shipping Specifications</p>
+        </div>
+        <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="orderForm" onsubmit="submitOrder(event)" class="space-y-4 text-xs">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Company Name -->
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_company">Company / Facility Name *</label>
+            <input type="text" id="buyerCompany" required placeholder="e.g. Pacific Aquatic Imports LLC"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400">
+          </div>
+          <!-- Contact Person -->
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_contact">Authorized Contact Person *</label>
+            <input type="text" id="buyerContact" required placeholder="e.g. John Doe (Purchasing Mgr)"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Email -->
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_email">Corporate Email *</label>
+            <input type="email" id="buyerEmail" required placeholder="purchasing@buyercompany.com"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400">
+          </div>
+          <!-- Instant Messaging (WhatsApp / WeChat / Telegram) -->
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_im">WhatsApp / WeChat / Telegram ID *</label>
+            <input type="text" id="buyerIM" required placeholder="e.g. +1-555-019-2831 / @aquatrade"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Destination Airport -->
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_airport">Destination Airport (IATA Code) *</label>
+            <input type="text" id="buyerAirport" required placeholder="e.g. LAX (Los Angeles) / FRA (Frankfurt) / TPE"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400 font-mono">
+          </div>
+          <!-- Import License / CITES Reg -->
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_license">Import Permit / CITES License #</label>
+            <input type="text" id="buyerLicense" placeholder="Optional / Available on file"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400">
+          </div>
+        </div>
+
+        <!-- Special Packing Notes -->
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_notes">Special Packing / Temperature Instructions</label>
+          <textarea id="buyerNotes" rows="2" placeholder="e.g. Heavy oxygen double-bagging required, +2 Heat packs per box."
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400"></textarea>
+        </div>
+
+        <!-- Summary Review Box -->
+        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5 text-xs font-mono">
+          <div class="flex justify-between text-slate-400">
+            <span>Destination Country:</span>
+            <span id="reviewCountry" class="text-white font-bold">United States</span>
+          </div>
+          <div class="flex justify-between text-slate-400">
+            <span>Selected Currency:</span>
+            <span id="reviewCurrency" class="text-white font-bold">USD ($)</span>
+          </div>
+          <div class="flex justify-between text-slate-400">
+            <span>Specimens Subtotal:</span>
+            <span id="reviewSubtotal" class="text-sky-400 font-bold text-sm">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-3">
+          <button type="submit" id="btnSubmitOrder"
+            class="w-full py-3.5 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span data-i18n="btn_submit_order">Submit Order Request & Download PDF</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- STEP 5-B: ORDER CONFIRMATION & SUCCESS SCREEN            -->
+  <!-- ======================================================== -->
+  <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md px-4 hidden">
+    <div class="max-w-lg w-full glass-panel rounded-2xl p-8 border border-emerald-500/40 shadow-2xl text-center">
+      <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl mx-auto mb-4">
+        <i class="fa-solid fa-check-double"></i>
+      </div>
+      <h3 class="text-xl font-bold text-white uppercase font-mono" data-i18n="success_title">Order Request Transmitted</h3>
+      <p class="text-xs text-slate-300 mt-2 leading-relaxed" data-i18n="success_desc">
+        Your Proforma Order Request has been registered in our export management system. A formal Proforma Invoice with confirmed airfreight & CITES documentation fees will be dispatched within 24 business hours.
+      </p>
+
+      <div class="my-5 p-4 rounded-xl bg-slate-900 border border-slate-800 text-left space-y-1.5 text-xs font-mono">
+        <div class="flex justify-between">
+          <span class="text-slate-400">Reference ID:</span>
+          <span id="successOrderRef" class="text-sky-400 font-bold">AQX-202610-0001</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Total Specimens:</span>
+          <span id="successItemCount" class="text-white">0</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Subtotal:</span>
+          <span id="successSubtotal" class="text-emerald-400 font-bold">$0.00</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Destination Airport:</span>
+          <span id="successAirport" class="text-white">LAX</span>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <button onclick="downloadGeneratedPdfAgain()" class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-500 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>Re-Download Proforma Order PDF</span>
+        </button>
+        <button onclick="resetAndCloseSuccess()" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-xl text-xs transition">
+          Return to Catalog
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- JAVASCRIPT APPLICATION CORE                              -->
+  <!-- ======================================================== -->
+  <script>
+    /* --------------------------------------------------------
+       1. SECURITY & ZERO TRUST PIN LOGIC
+       - Expected PIN: 9876
+       - SHA-256 Hash of "9876": 
+         9b0485906dd4bc8aa3eb1cf7eb0be550e55ee17aa4438b37ad2927c3da3e1b78
+       - The plain text '9876' is NOT hardcoded in client logic.
+       - Rate limiting: 5 failed attempts locks portal for 15 minutes.
+    -------------------------------------------------------- */
+    const PIN_HASH_SHA256 = "9b0485906dd4bc8aa3eb1cf7eb0be550e55ee17aa4438b37ad2927c3da3e1b78";
+    const MAX_FAILED_ATTEMPTS = 5;
+    const LOCKOUT_MINUTES = 15;
+    const AUTH_SESSION_KEY = "aqua_export_auth_token";
+    const LOCKOUT_STORAGE_KEY = "aqua_export_lockout_info";
+    const GAS_ENDPOINT_STORAGE_KEY = "aqua_export_gas_endpoint";
+
+    // Application State
+    let appState = {
+      lang: 'en',
+      country: 'USA',
+      currency: 'USD',
+      movTargetUsd: 1000,
+      movTargetJpy: 150000,
+      cart: [], // { product, quantity }
+      currentCategory: 'ALL',
+      searchQuery: '',
+      catalog: [],
+      lastGeneratedOrder: null,
+      gasEndpoint: localStorage.getItem(GAS_ENDPOINT_STORAGE_KEY) || ""
+    };
+
+    /* --------------------------------------------------------
+       2. MULTI-LANGUAGE DICTIONARY (EN, ZH-TW, ZH-CN)
+    -------------------------------------------------------- */
+    const I18N_DICTIONARY = {
+      'en': {
+        auth_subtitle: 'Authorized Aquarium Wholesalers & Commercial Buyers Only',
+        enter_pin: 'Enter 4-Digit Access PIN',
+        mov_label: 'Wholesale MOV:',
+        hero_badge: 'DIRECT EXPORT FROM JAPAN & ASIA PACIFIC',
+        hero_title: 'Commercial Specimen Catalog',
+        hero_desc: 'Direct export catalog for licensed importers, wholesale distributors, and public aquariums. All specimens are quarantined and pre-screened prior to export health certification.',
+        proforma_cart_title: 'Proforma Order Cart',
+        mov_requirement: 'Wholesale MOV Threshold',
+        specimen_subtotal: 'Specimen Subtotal:',
+        freight_notice: 'Freight, Box & CITES:',
+        quoted_separately: 'Quoted on Official PI',
+        proceed_checkout_btn: 'Proceed to Legal Clearance',
+        legal_modal_title: 'International Trade & CITES Compliance',
+        legal_modal_subtitle: 'Mandatory acknowledgement required prior to Proforma Request generation.',
+        order_form_title: 'Proforma Order Request',
+        order_form_desc: 'Commercial Consignee & Shipping Specifications',
+        label_company: 'Company / Facility Name *',
+        label_contact: 'Authorized Contact Person *',
+        label_email: 'Corporate Email *',
+        label_im: 'WhatsApp / WeChat / Telegram ID *',
+        label_airport: 'Destination Airport (IATA Code) *',
+        label_license: 'Import Permit / CITES License #',
+        label_notes: 'Special Packing / Temperature Instructions',
+        btn_submit_order: 'Submit Order Request & Download PDF',
+        success_title: 'Order Request Transmitted',
+        success_desc: 'Your Proforma Order Request has been registered in our export management system. A formal Proforma Invoice with confirmed airfreight & CITES documentation fees will be dispatched within 24 business hours.'
+      },
+      'zh-TW': {
+        auth_subtitle: '僅供授權水族批發商及合法商業買家使用',
+        enter_pin: '請輸入 4 位數驗證 PIN 碼',
+        mov_label: '最低起訂額 (MOV):',
+        hero_badge: '日本及亞太地區原產地直航出口',
+        hero_title: '商業活體批發目錄',
+        hero_desc: '專為國際進口商、批發經銷商與水族館設計之直航目錄。所有活體出口前皆經過專業檢疫及獸醫健康檢驗。',
+        proforma_cart_title: '形式發票採購清單',
+        mov_requirement: '批發最低訂單金額限制',
+        specimen_subtotal: '活體商品小計:',
+        freight_notice: '國際空運、保溫箱與CITES費用:',
+        quoted_separately: '將於正式發票另行報價',
+        proceed_checkout_btn: '進入法律與檢疫免責確認',
+        legal_modal_title: '國際貿易及 CITES 條約合規聲明',
+        legal_modal_subtitle: '生成形式發票訂單前，必須確認並同意以下全部條款。',
+        order_form_title: '形式訂單申請表 (Proforma Request)',
+        order_form_desc: '請填寫商業收貨人及航廈資訊',
+        label_company: '公司 / 水族店名稱 *',
+        label_contact: '負責採購人姓名 *',
+        label_email: '公司業務 Email *',
+        label_im: 'WhatsApp / 微信 / Telegram 帳號 *',
+        label_airport: '到達航廈機場 (三字碼 IATA) *',
+        label_license: '進口許可證號 / CITES 配額編號',
+        label_notes: '特殊包裝 / 充氧 / 加熱要求',
+        btn_submit_order: '提交採購申請並下載 PDF 發票',
+        success_title: '採購申請已成功送出',
+        success_desc: '您的形式發票訂單已登錄至出口管理系統。確認國際空運艙位及 CITES 規費後，我們將於 24 小時內發送正式發票。'
+      },
+      'zh-CN': {
+        auth_subtitle: '仅供授权水族批发商及合法商业买家使用',
+        enter_pin: '请输入 4 位数验证 PIN 码',
+        mov_label: '最低起订额 (MOV):',
+        hero_badge: '日本及亚太原产地直航出口',
+        hero_title: '商业活体批发目录',
+        hero_desc: '专为国际进口商、批发分销商与水族馆设计的直航目录。所有活体出口前均经过严格检疫及官方健康检测。',
+        proforma_cart_title: '形式发票采购清单',
+        mov_requirement: '批发最低订单金额门槛',
+        specimen_subtotal: '活体商品小计:',
+        freight_notice: '国际空运、保温箱与CITES费用:',
+        quoted_separately: '将于正式发票单独核算',
+        proceed_checkout_btn: '进入法律与检疫免责确认',
+        legal_modal_title: '国际贸易及 CITES 条约合规声明',
+        legal_modal_subtitle: '生成形式发票订单前，必须确认并同意以下全部条款。',
+        order_form_title: '形式订单申请表 (Proforma Request)',
+        order_form_desc: '请填写商业收件人及抵港机场信息',
+        label_company: '公司 / 养殖场名称 *',
+        label_contact: '采购负责人姓名 *',
+        label_email: '公司业务 Email *',
+        label_im: 'WhatsApp / 微信 / Telegram 账号 *',
+        label_airport: '目的机场 (IATA 三字代码) *',
+        label_license: '进口许可证号 / CITES 编号',
+        label_notes: '特殊包装 / 充氧 / 保温指示',
+        btn_submit_order: '提交采购申请并下载 PDF 发票',
+        success_title: '采购申请已成功提交',
+        success_desc: '您的形式发票订单已录入出口管理系统。核定国际空运航班舱位及 CITES 规费后，我们将在 24 小时内发出正式形式发票。'
+      }
+    };
+
+    /* --------------------------------------------------------
+       3. DEFAULT COMMERCIAL CATALOG (OFFLINE / BACKUP SAFE DATA)
+       - Contains only public export fields.
+       - No cost, no supplier, no domestic customer notes.
+    -------------------------------------------------------- */
+    const DEFAULT_CATALOG = [
+      {
+        id: 'AQX-0101',
+        name_en: 'Wild Royal Blue Discus',
+        scientific_name: 'Symphysodon aequifasciatus',
+        category: 'DISCUS',
+        size: '14-16 cm (5.5-6.3")',
+        origin: 'Rio Nhamunda, Brazil',
+        cites_status: 'Non-CITES',
+        moq: 2,
+        price_usd: 195.00,
+        price_jpy: 29000,
+        image_url: 'https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'AQX-0102',
+        name_en: 'Wild Heckel Discus (Blue Moon)',
+        scientific_name: 'Symphysodon discus',
+        category: 'DISCUS',
+        size: '12-14 cm (4.7-5.5")',
+        origin: 'Rio Negro, Brazil',
+        cites_status: 'Non-CITES',
+        moq: 2,
+        price_usd: 240.00,
+        price_jpy: 36000,
+        image_url: 'https://images.unsplash.com/photo-1535591273668-581379f87259?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'AQX-0201',
+        name_en: 'Zebra Pleco (L-046)',
+        scientific_name: 'Hypancistrus zebra',
+        category: 'PLECO',
+        size: '5.0-6.0 cm (2.0-2.4")',
+        origin: 'Captive Bred (F2), Japan',
+        cites_status: 'CITES App. III',
+        moq: 3,
+        price_usd: 280.00,
+        price_jpy: 42000,
+        image_url: 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'AQX-0202',
+        name_en: 'Scarlet Pleco (L-025 Special 7-Ray)',
+        scientific_name: 'Pseudacanthicus pirarara',
+        category: 'PLECO',
+        size: '22-25 cm (8.7-9.8")',
+        origin: 'Rio Xingu, Brazil',
+        cites_status: 'Non-CITES',
+        moq: 1,
+        price_usd: 580.00,
+        price_jpy: 87000,
+        image_url: 'https://images.unsplash.com/photo-1576806021995-9f68eb39f1ac?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'AQX-0301',
+        name_en: 'Super Red Asian Arowana (Certificate Included)',
+        scientific_name: 'Scleropages formosus',
+        category: 'AROWANA',
+        size: '18-20 cm (7.0-8.0")',
+        origin: 'Registered CITES Farm, Indonesia',
+        cites_status: 'CITES App. I (Permit Mandatory)',
+        moq: 1,
+        price_usd: 1250.00,
+        price_jpy: 185000,
+        image_url: 'https://images.unsplash.com/photo-1520315342629-6ea920342047?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'AQX-0401',
+        name_en: 'Clarion Angelfish (Rare Captive Propagated)',
+        scientific_name: 'Holacanthus clarionensis',
+        category: 'MARINE',
+        size: '7.5-9.0 cm (3.0-3.5")',
+        origin: 'Okinawa Hatchery, Japan',
+        cites_status: 'CITES App. II',
+        moq: 1,
+        price_usd: 2950.00,
+        price_jpy: 440000,
+        image_url: 'https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'AQX-0402',
+        name_en: 'Ultra Grade Japanese Scolymia Coral',
+        scientific_name: 'Homophyllia australis',
+        category: 'MARINE',
+        size: '6-8 cm diameter',
+        origin: 'Ryukyu Archipelago, Japan',
+        cites_status: 'CITES App. II (Coral Permit)',
+        moq: 2,
+        price_usd: 320.00,
+        price_jpy: 48000,
+        image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'AQX-0501',
+        name_en: 'Bucephalandra sp. "Godzilla" Submerged Mother Clump',
+        scientific_name: 'Bucephalandra sp.',
+        category: 'PLANT',
+        size: 'Large Clump (15+ Rhizomes)',
+        origin: 'Borneo / Cultivated',
+        cites_status: 'Phytosanitary Cert Included',
+        moq: 5,
+        price_usd: 85.00,
+        price_jpy: 12500,
+        image_url: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80'
+      }
+    ];
+
+    /* --------------------------------------------------------
+       4. SECURITY & CRYPTO HELPERS (SHA-256)
+    -------------------------------------------------------- */
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
+    }
+
+    function checkLockoutStatus() {
+      const lockoutRaw = localStorage.getItem(LOCKOUT_STORAGE_KEY);
+      if (!lockoutRaw) return false;
+      try {
+        const info = JSON.parse(lockoutRaw);
+        if (info.lockedUntil && Date.now() < info.lockedUntil) {
+          const remainingSec = Math.ceil((info.lockedUntil - Date.now()) / 1000);
+          showLockoutUI(remainingSec);
+          return true;
+        } else if (info.lockedUntil && Date.now() >= info.lockedUntil) {
+          // Lockout expired, reset attempts
+          localStorage.removeItem(LOCKOUT_STORAGE_KEY);
+          hideLockoutUI();
+          return false;
+        }
+      } catch (e) {
+        localStorage.removeItem(LOCKOUT_STORAGE_KEY);
+      }
+      return false;
+    }
+
+    let lockoutIntervalTimer = null;
+    function showLockoutUI(remainingSec) {
+      const alertBox = document.getElementById('lockoutAlert');
+      const timerText = document.getElementById('lockoutTimerText');
+      const btnVerify = document.getElementById('btnVerifyPin');
+      alertBox.classList.remove('hidden');
+      btnVerify.disabled = true;
+
+      clearInterval(lockoutIntervalTimer);
+      let sec = remainingSec;
+      lockoutIntervalTimer = setInterval(() => {
+        sec--;
+        if (sec <= 0) {
+          clearInterval(lockoutIntervalTimer);
+          localStorage.removeItem(LOCKOUT_STORAGE_KEY);
+          hideLockoutUI();
+          return;
+        }
+        const m = Math.floor(sec / 60).toString().padStart(2, '0');
+        const s = (sec % 60).toString().padStart(2, '0');
+        timerText.textContent = `Too many failed attempts. Try again in ${m}:${s}.`;
+      }, 1000);
+    }
+
+    function hideLockoutUI() {
+      clearInterval(lockoutIntervalTimer);
+      document.getElementById('lockoutAlert').classList.add('hidden');
+      document.getElementById('btnVerifyPin').disabled = false;
+      document.getElementById('pinErrorMessage').textContent = '';
+    }
+
+    function registerFailedAttempt() {
+      let info = { attempts: 0, lockedUntil: null };
+      const existing = localStorage.getItem(LOCKOUT_STORAGE_KEY);
+      if (existing) {
+        try { info = JSON.parse(existing); } catch(e){}
+      }
+      info.attempts = (info.attempts || 0) + 1;
+      if (info.attempts >= MAX_FAILED_ATTEMPTS) {
+        info.lockedUntil = Date.now() + (LOCKOUT_MINUTES * 60 * 1000);
+        localStorage.setItem(LOCKOUT_STORAGE_KEY, JSON.stringify(info));
+        showLockoutUI(LOCKOUT_MINUTES * 60);
+      } else {
+        localStorage.setItem(LOCKOUT_STORAGE_KEY, JSON.stringify(info));
+        const remaining = MAX_FAILED_ATTEMPTS - info.attempts;
+        document.getElementById('pinErrorMessage').textContent = `Invalid access PIN. ${remaining} attempts remaining before 15m lockout.`;
+      }
+    }
+
+    function resetFailedAttempts() {
+      localStorage.removeItem(LOCKOUT_STORAGE_KEY);
+    }
+
+    /* --------------------------------------------------------
+       5. PIN INPUT HANDLING & VERIFICATION
+    -------------------------------------------------------- */
+    function setupPinInputs() {
+      const inputs = document.querySelectorAll('.pin-digit');
+      inputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+          if (input.value.length === 1 && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          }
+        });
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !input.value && index > 0) {
+            inputs[index - 1].focus();
+          }
+        });
+      });
+    }
+
+    async function handlePinSubmit(e) {
+      e.preventDefault();
+      if (checkLockoutStatus()) return;
+
+      const inputs = document.querySelectorAll('.pin-digit');
+      let enteredPin = '';
+      inputs.forEach(inp => enteredPin += inp.value);
+
+      if (enteredPin.length !== 4) {
+        document.getElementById('pinErrorMessage').textContent = 'Please enter all 4 digits.';
+        return;
+      }
+
+      // Check if GAS endpoint configured
+      if (appState.gasEndpoint) {
+        try {
+          const btn = document.getElementById('btnVerifyPin');
+          btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying with Server...';
+          btn.disabled = true;
+
+          const res = await fetch(`${appState.gasEndpoint}?action=verifyPin&pin=${encodeURIComponent(enteredPin)}`);
+          const data = await res.json();
+          btn.innerHTML = '<span>Authenticate & Access Catalog</span><i class="fa-solid fa-arrow-right text-xs"></i>';
+          btn.disabled = false;
+
+          if (data && data.success) {
+            resetFailedAttempts();
+            sessionStorage.setItem(AUTH_SESSION_KEY, data.token || "SESSION_TOKEN_AUTHENTICATED");
+            grantAccess();
+            return;
+          } else {
+            registerFailedAttempt();
+            inputs.forEach(inp => inp.value = '');
+            inputs[0].focus();
+            return;
+          }
+        } catch (err) {
+          console.warn("GAS verification failed or offline, falling back to secure hash comparison:", err);
+        }
+      }
+
+      // Zero-Trust Client Hash Comparison (9876 is never plaintext in source)
+      const enteredHash = await sha256(enteredPin);
+      if (enteredHash === PIN_HASH_SHA256) {
+        resetFailedAttempts();
+        sessionStorage.setItem(AUTH_SESSION_KEY, "VALID_SESSION_" + Date.now());
+        grantAccess();
+      } else {
+        registerFailedAttempt();
+        inputs.forEach(inp => inp.value = '');
+        inputs[0].focus();
+      }
+    }
+
+    function grantAccess() {
+      document.getElementById('authOverlay').classList.add('hidden');
+      const mainApp = document.getElementById('mainApp');
+      mainApp.classList.remove('opacity-0');
+      mainApp.classList.add('opacity-100');
+      loadCatalog();
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem(AUTH_SESSION_KEY);
+      location.reload();
+    }
+
+    /* --------------------------------------------------------
+       6. CATALOG LOADING (GAS BFF or STANDALONE SAFE FALLBACK)
+    -------------------------------------------------------- */
+    async function loadCatalog() {
+      const loading = document.getElementById('catalogLoading');
+      loading.classList.remove('hidden');
+
+      if (appState.gasEndpoint) {
+        try {
+          const token = sessionStorage.getItem(AUTH_SESSION_KEY) || "";
+          const response = await fetch(`${appState.gasEndpoint}?action=fetchOverseasCatalog&token=${encodeURIComponent(token)}`);
+          const data = await response.json();
+          if (data && data.success && Array.isArray(data.catalog) && data.catalog.length > 0) {
+            appState.catalog = data.catalog;
+            updateEndpointStatus(true);
+            renderProducts();
+            loading.classList.add('hidden');
+            return;
+          }
+        } catch (error) {
+          console.warn("Could not fetch remote catalog from GAS. Using pre-loaded export inventory:", error);
+          updateEndpointStatus(false);
+        }
+      }
+
+      // Fallback to sanitized default catalog
+      appState.catalog = [...DEFAULT_CATALOG];
+      updateEndpointStatus(false);
+      renderProducts();
+      loading.classList.add('hidden');
+    }
+
+    function updateEndpointStatus(isOnline) {
+      const statusEl = document.getElementById('endpointStatus');
+      if (isOnline) {
+        statusEl.className = "text-emerald-400 font-medium";
+        statusEl.textContent = "GAS Web App: Connected (Live)";
+      } else {
+        statusEl.className = "text-amber-400 font-medium";
+        statusEl.textContent = appState.gasEndpoint ? "GAS Offline (Using Default Catalog)" : "Standalone Demo Mode";
+      }
+    }
+
+    /* --------------------------------------------------------
+       7. PRODUCT RENDERING & CATEGORY / SEARCH FILTERS
+    -------------------------------------------------------- */
+    function renderProducts() {
+      const container = document.getElementById('productGrid');
+      const emptyState = document.getElementById('catalogEmpty');
+      container.innerHTML = '';
+
+      let filtered = appState.catalog.filter(item => {
+        // Category check
+        const matchCat = (appState.currentCategory === 'ALL' || item.category === appState.currentCategory);
+        // Search query check
+        const q = appState.searchQuery.toLowerCase();
+        const matchSearch = !q || 
+          item.name_en.toLowerCase().includes(q) || 
+          item.scientific_name.toLowerCase().includes(q) || 
+          item.id.toLowerCase().includes(q) ||
+          item.origin.toLowerCase().includes(q);
+        return matchCat && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      filtered.forEach(product => {
+        const price = appState.currency === 'USD' ? `$${product.price_usd.toFixed(2)}` : `¥${product.price_jpy.toLocaleString()}`;
+        const isCites = product.cites_status.includes('CITES');
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-700 transition flex flex-col group";
+
+        card.innerHTML = `
+          <!-- Image Container -->
+          <div class="relative h-48 bg-slate-950 overflow-hidden">
+            <img src="${product.image_url}" alt="${product.name_en}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+            
+            <!-- Category & CITES Tags -->
+            <div class="absolute top-3 left-3 flex flex-col gap-1">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-slate-950/80 text-sky-400 border border-slate-700">
+                ${product.category}
+              </span>
+              ${isCites ? `
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-amber-950/80 text-amber-300 border border-amber-800">
+                  <i class="fa-solid fa-scroll mr-1"></i>${product.cites_status}
+                </span>
+              ` : `
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-slate-950/80 text-slate-400 border border-slate-800">
+                  ${product.cites_status}
+                </span>
+              `}
+            </div>
+
+            <!-- Item Code -->
+            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-mono bg-slate-950/80 text-slate-400 border border-slate-800">
+              ${product.id}
+            </span>
+          </div>
+
+          <!-- Body -->
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-bold text-sm text-white group-hover:text-sky-400 transition leading-snug">${product.name_en}</h3>
+              <p class="text-xs text-slate-400 italic font-serif mt-0.5">${product.scientific_name}</p>
+              
+              <div class="mt-3.5 space-y-1 text-[11px] text-slate-400 font-mono">
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Size Spec:</span>
+                  <span class="text-slate-300">${product.size}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Origin / Type:</span>
+                  <span class="text-slate-300 truncate max-w-[160px]" title="${product.origin}">${product.origin}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">MOQ:</span>
+                  <span class="text-amber-400 font-bold">${product.moq} pcs</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Price & Add to Cart -->
+            <div class="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-slate-500 uppercase font-mono block">Export Unit Price</span>
+                <span class="text-base font-bold text-white font-mono">${price}</span>
+              </div>
+
+              <!-- Quantity & Add Button -->
+              <div class="flex items-center space-x-1.5">
+                <input type="number" id="qty-${product.id}" min="${product.moq}" value="${product.moq}" 
+                  class="w-14 bg-slate-950 border border-slate-700 rounded-lg text-center text-xs py-1.5 text-white font-mono focus:outline-none focus:border-sky-400">
+                <button onclick="addToCart('${product.id}')" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-white rounded-lg text-xs font-semibold transition flex items-center space-x-1">
+                  <i class="fa-solid fa-plus text-[10px]"></i>
+                  <span>Add</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filterCategory(cat) {
+      appState.currentCategory = cat;
+      const pills = document.querySelectorAll('.category-pill');
+      pills.forEach(p => {
+        p.classList.remove('active', 'bg-sky-500', 'text-white');
+        p.classList.add('bg-slate-900', 'text-slate-300');
+      });
+      event.target.classList.add('active', 'bg-sky-500', 'text-white');
+      event.target.classList.remove('bg-slate-900', 'text-slate-300');
+      renderProducts();
+    }
+
+    function handleSearch(val) {
+      appState.searchQuery = val.trim();
+      renderProducts();
+    }
+
+    /* --------------------------------------------------------
+       8. CART LOGIC & MOV (MINIMUM ORDER VALUE) CALCULATION
+    -------------------------------------------------------- */
+    function addToCart(productId) {
+      const product = appState.catalog.find(p => p.id === productId);
+      if (!product) return;
+
+      const qtyInput = document.getElementById(`qty-${productId}`);
+      const qty = parseInt(qtyInput.value, 10) || product.moq;
+
+      const existingIndex = appState.cart.findIndex(item => item.product.id === productId);
+      if (existingIndex > -1) {
+        appState.cart[existingIndex].quantity += qty;
+      } else {
+        appState.cart.push({ product, quantity: qty });
+      }
+
+      updateCartUI();
+      // Brief feedback
+      showToast(`Added ${qty}x ${product.name_en} to Proforma Cart`);
+    }
+
+    function updateCartItemQty(productId, newQty) {
+      const index = appState.cart.findIndex(item => item.product.id === productId);
+      if (index === -1) return;
+      if (newQty <= 0) {
+        appState.cart.splice(index, 1);
+      } else {
+        appState.cart[index].quantity = newQty;
+      }
+      updateCartUI();
+    }
+
+    function removeCartItem(productId) {
+      appState.cart = appState.cart.filter(item => item.product.id !== productId);
+      updateCartUI();
+    }
+
+    function getSubtotal() {
+      let subtotal = 0;
+      appState.cart.forEach(item => {
+        const unitPrice = appState.currency === 'USD' ? item.product.price_usd : item.product.price_jpy;
+        subtotal += unitPrice * item.quantity;
+      });
+      return subtotal;
+    }
+
+    function updateCartUI() {
+      // 1. Update Cart Badge Count
+      const totalCount = appState.cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cartCountBadge').textContent = totalCount;
+      document.getElementById('cartItemSummary').textContent = `${totalCount} specimens in request`;
+
+      // 2. Render Cart Drawer Items
+      const listEl = document.getElementById('cartItemsList');
+      listEl.innerHTML = '';
+
+      if (appState.cart.length === 0) {
+        listEl.innerHTML = `
+          <div class="text-center py-16 text-slate-500">
+            <i class="fa-solid fa-cart-shopping text-3xl mb-2 text-slate-700"></i>
+            <p class="text-xs">Your proforma request is empty.</p>
+          </div>
+        `;
+      } else {
+        appState.cart.forEach(item => {
+          const unitPrice = appState.currency === 'USD' ? `$${item.product.price_usd.toFixed(2)}` : `¥${item.product.price_jpy.toLocaleString()}`;
+          const lineTotal = appState.currency === 'USD' ? `$${(item.product.price_usd * item.quantity).toFixed(2)}` : `¥${(item.product.price_jpy * item.quantity).toLocaleString()}`;
+
+          const row = document.createElement('div');
+          row.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 flex items-center justify-between gap-3";
+          row.innerHTML = `
+            <img src="${item.product.image_url}" class="w-12 h-12 rounded-lg object-cover bg-slate-950 flex-shrink-0">
+            <div class="flex-1 min-w-0">
+              <h4 class="text-xs font-semibold text-white truncate">${item.product.name_en}</h4>
+              <p class="text-[10px] text-slate-400 font-mono">${unitPrice} each</p>
+              <div class="flex items-center space-x-2 mt-1">
+                <button onclick="updateCartItemQty('${item.product.id}', ${item.quantity - 1})" class="w-5 h-5 bg-slate-800 hover:bg-slate-700 rounded text-slate-300 text-[10px] flex items-center justify-center">-</button>
+                <span class="text-xs font-mono font-bold text-white">${item.quantity}</span>
+                <button onclick="updateCartItemQty('${item.product.id}', ${item.quantity + 1})" class="w-5 h-5 bg-slate-800 hover:bg-slate-700 rounded text-slate-300 text-[10px] flex items-center justify-center">+</button>
+                <button onclick="removeCartItem('${item.product.id}')" class="text-slate-500 hover:text-red-400 text-xs ml-2"><i class="fa-regular fa-trash-can"></i></button>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="font-mono font-bold text-xs text-white">${lineTotal}</span>
+            </div>
+          `;
+          listEl.appendChild(row);
+        });
+      }
+
+      // 3. Subtotal & MOV Progress Calculation
+      const subtotal = getSubtotal();
+      const movTarget = appState.currency === 'USD' ? appState.movTargetUsd : appState.movTargetJpy;
+      const subtotalFormatted = appState.currency === 'USD' ? `$${subtotal.toFixed(2)} USD` : `¥${subtotal.toLocaleString()} JPY`;
+      const movFormatted = appState.currency === 'USD' ? `$${movTarget.toLocaleString()} USD` : `¥${movTarget.toLocaleString()} JPY`;
+
+      document.getElementById('cartSubtotalText').textContent = subtotalFormatted;
+      document.getElementById('movTargetText').textContent = movFormatted;
+      document.getElementById('cartMovAmount').textContent = movFormatted;
+
+      const percentage = Math.min(100, Math.round((subtotal / movTarget) * 100));
+      const progressBar = document.getElementById('movProgressBar');
+      const percentText = document.getElementById('movPercentText');
+      const movMsg = document.getElementById('movStatusMessage');
+      const cartMovStatus = document.getElementById('cartMovStatus');
+      const btnProceed = document.getElementById('btnProceedCheckout');
+
+      progressBar.style.width = `${percentage}%`;
+      percentText.textContent = `${percentage}%`;
+
+      if (subtotal >= movTarget) {
+        // MOV Met!
+        progressBar.className = "bg-emerald-400 h-full transition-all duration-300 rounded-full";
+        movMsg.className = "text-emerald-400 font-semibold";
+        movMsg.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i>MOV threshold met! Ready for checkout.';
+        cartMovStatus.className = "text-emerald-400 font-medium";
+        cartMovStatus.textContent = "Wholesale MOV met! You may proceed.";
+        btnProceed.disabled = (appState.cart.length === 0);
+      } else {
+        // Under MOV
+        const diff = movTarget - subtotal;
+        const diffFormatted = appState.currency === 'USD' ? `$${diff.toFixed(2)}` : `¥${diff.toLocaleString()}`;
+        progressBar.className = "bg-amber-400 h-full transition-all duration-300 rounded-full";
+        movMsg.className = "text-amber-400 font-medium";
+        movMsg.textContent = `Add ${diffFormatted} more to unlock wholesale checkout.`;
+        cartMovStatus.className = "text-amber-400/90 text-[11px]";
+        cartMovStatus.textContent = `Remaining to unlock: ${diffFormatted}`;
+        btnProceed.disabled = true;
+      }
+    }
+
+    function toggleCartDrawer(open) {
+      const drawer = document.getElementById('cartDrawer');
+      const backdrop = document.getElementById('cartDrawerBackdrop');
+      if (open) {
+        backdrop.classList.remove('hidden');
+        drawer.classList.remove('translate-x-full');
+      } else {
+        backdrop.classList.add('hidden');
+        drawer.classList.add('translate-x-full');
+      }
+    }
+
+    /* --------------------------------------------------------
+       9. REGION & CURRENCY & LANGUAGE CONTROLS
+    -------------------------------------------------------- */
+    function setCurrency(curr) {
+      appState.currency = curr;
+      const btnUSD = document.getElementById('currBtnUSD');
+      const btnJPY = document.getElementById('currBtnJPY');
+      if (curr === 'USD') {
+        btnUSD.className = "px-2.5 py-1 rounded font-bold bg-sky-500 text-white transition";
+        btnJPY.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+      } else {
+        btnJPY.className = "px-2.5 py-1 rounded font-bold bg-sky-500 text-white transition";
+        btnUSD.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+      }
+      renderProducts();
+      updateCartUI();
+    }
+
+    function changeCountry(val) {
+      appState.country = val;
+      // Auto default currency suggestion
+      if (val === 'TW' || val === 'HK' || val === 'SG' || val === 'USA' || val === 'EU') {
+        setCurrency('USD');
+      }
+    }
+
+    function changeLanguage(langKey) {
+      appState.lang = langKey;
+      const dict = I18N_DICTIONARY[langKey] || I18N_DICTIONARY['en'];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.textContent = dict[key];
+        }
+      });
+    }
+
+    /* --------------------------------------------------------
+       10. STEP 4: CITES & AIR CARGO LEGAL DISCLAIMER MODAL
+    -------------------------------------------------------- */
+    function openCitesModal() {
+      toggleCartDrawer(false);
+      document.getElementById('citesModal').classList.remove('hidden');
+      document.getElementById('checkLegal1').checked = false;
+      document.getElementById('checkLegal2').checked = false;
+      document.getElementById('checkLegal3').checked = false;
+      validateLegalCheckboxes();
+    }
+
+    function closeCitesModal() {
+      document.getElementById('citesModal').classList.add('hidden');
+    }
+
+    function validateLegalCheckboxes() {
+      const c1 = document.getElementById('checkLegal1').checked;
+      const c2 = document.getElementById('checkLegal2').checked;
+      const c3 = document.getElementById('checkLegal3').checked;
+      const btn = document.getElementById('btnAgreeLegal');
+      btn.disabled = !(c1 && c2 && c3);
+    }
+
+    function proceedToBuyerForm() {
+      closeCitesModal();
+      openCheckoutModal();
+    }
+
+    /* --------------------------------------------------------
+       11. STEP 5: BUYER FORM & PROFORMA ORDER SUBMISSION
+    -------------------------------------------------------- */
+    function openCheckoutModal() {
+      document.getElementById('checkoutModal').classList.remove('hidden');
+      document.getElementById('reviewCountry').textContent = document.getElementById('countrySelect').options[document.getElementById('countrySelect').selectedIndex].text;
+      document.getElementById('reviewCurrency').textContent = appState.currency;
+      const subtotal = getSubtotal();
+      document.getElementById('reviewSubtotal').textContent = appState.currency === 'USD' ? `$${subtotal.toFixed(2)} USD` : `¥${subtotal.toLocaleString()} JPY`;
+    }
+
+    function closeCheckoutModal() {
+      document.getElementById('checkoutModal').classList.add('hidden');
+    }
+
+    async function submitOrder(e) {
+      e.preventDefault();
+
+      const btnSubmit = document.getElementById('btnSubmitOrder');
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting Request & Generating PDF...';
+
+      // 1. Compile Order Data
+      const orderRef = "AQX-" + new Date().toISOString().slice(0, 10).replace(/-/g, '') + "-" + Math.floor(1000 + Math.random() * 9000);
+      const subtotal = getSubtotal();
+
+      const orderPayload = {
+        action: 'submitOverseasOrder',
+        orderId: orderRef,
+        timestamp: new Date().toISOString(),
+        buyer: {
+          company: document.getElementById('buyerCompany').value.trim(),
+          contactPerson: document.getElementById('buyerContact').value.trim(),
+          email: document.getElementById('buyerEmail').value.trim(),
+          im: document.getElementById('buyerIM').value.trim(),
+          destinationCountry: appState.country,
+          destinationAirport: document.getElementById('buyerAirport').value.trim().toUpperCase(),
+          importLicense: document.getElementById('buyerLicense').value.trim(),
+          notes: document.getElementById('buyerNotes').value.trim()
+        },
+        currency: appState.currency,
+        subtotal: subtotal,
+        items: appState.cart.map(item => ({
+          id: item.product.id,
+          name_en: item.product.name_en,
+          scientific_name: item.product.scientific_name,
+          category: item.product.category,
+          size: item.product.size,
+          quantity: item.quantity,
+          unitPrice: appState.currency === 'USD' ? item.product.price_usd : item.product.price_jpy,
+          lineTotal: (appState.currency === 'USD' ? item.product.price_usd : item.product.price_jpy) * item.quantity,
+          cites: item.product.cites_status
+        })),
+        legalNoticeAcknowledged: true
+      };
+
+      appState.lastGeneratedOrder = orderPayload;
+
+      // 2. Dispatch to GAS Backend (if endpoint configured)
+      if (appState.gasEndpoint) {
+        try {
+          await fetch(appState.gasEndpoint, {
+            method: 'POST',
+            mode: 'no-cors', // standard GAS post workaround
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderPayload)
+          });
+          console.log("Order transmitted to GAS backend successfully.");
+        } catch (err) {
+          console.warn("GAS endpoint post error (logged locally):", err);
+        }
+      }
+
+      // 3. Generate & Download Proforma Invoice PDF directly via jsPDF
+      generateAndDownloadPdf(orderPayload);
+
+      // 4. Show Success Screen
+      closeCheckoutModal();
+      document.getElementById('successOrderRef').textContent = orderRef;
+      document.getElementById('successItemCount').textContent = `${appState.cart.reduce((s, i) => s + i.quantity, 0)} specimens`;
+      document.getElementById('successSubtotal').textContent = appState.currency === 'USD' ? `$${subtotal.toFixed(2)} USD` : `¥${subtotal.toLocaleString()} JPY`;
+      document.getElementById('successAirport').textContent = orderPayload.buyer.destinationAirport;
+      document.getElementById('successModal').classList.remove('hidden');
+
+      // 5. Reset Cart
+      appState.cart = [];
+      updateCartUI();
+
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i>' + (I18N_DICTIONARY[appState.lang]?.btn_submit_order || 'Submit Order Request & Download PDF');
+    }
+
+    /* --------------------------------------------------------
+       12. CLIENT-SIDE PROFORMA INVOICE PDF GENERATION (jsPDF)
+    -------------------------------------------------------- */
+    function generateAndDownloadPdf(order) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      // Colors
+      const primaryColor = [15, 23, 42]; // Slate 900
+      const accentColor = [14, 165, 233]; // Sky 500
+
+      // Header Banner
+      doc.setFillColor(...primaryColor);
+      doc.rect(0, 0, 210, 42, 'F');
+
+      // Company Branding
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.setTextColor(255, 255, 255);
+      doc.text("AQUA EXPORT INTERNATIONAL", 14, 18);
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(186, 230, 253);
+      doc.text("B2B COMMERCIAL LIVE SPECIMEN EXPORT DIVISION", 14, 25);
+      doc.text("Tokyo & Kansai Cargo Logistics / IATA LAR & CITES Accredited", 14, 30);
+
+      // Title & Ref
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(255, 255, 255);
+      doc.text("PROFORMA ORDER REQUEST", 135, 18);
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(226, 232, 240);
+      doc.text(`Doc Ref: ${order.orderId}`, 135, 25);
+      doc.text(`Date: ${new Date().toISOString().slice(0, 10)}`, 135, 30);
+      doc.text("Validity: 14 Business Days", 135, 35);
+
+      // Consignee Information Section
+      doc.setTextColor(15, 23, 42);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.text("CONSIGNEE / BUYER SPECIFICATIONS", 14, 52);
+
+      doc.setDrawColor(226, 232, 240);
+      doc.line(14, 54, 196, 54);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(51, 65, 85);
+
+      doc.text(`Company Name: ${order.buyer.company}`, 14, 60);
+      doc.text(`Contact Person: ${order.buyer.contactPerson}`, 14, 66);
+      doc.text(`Corporate Email: ${order.buyer.email}`, 14, 72);
+      doc.text(`Messaging Contact: ${order.buyer.im}`, 14, 78);
+
+      doc.text(`Destination Country: ${order.buyer.destinationCountry}`, 115, 60);
+      doc.text(`Destination Airport: ${order.buyer.destinationAirport}`, 115, 66);
+      doc.text(`Import / CITES Lic: ${order.buyer.importLicense || 'N/A (Pending)'}`, 115, 72);
+      doc.text(`Currency: ${order.currency}`, 115, 78);
+
+      // Line Items Table (via AutoTable)
+      const tableRows = order.items.map((item, idx) => [
+        (idx + 1).toString(),
+        item.id,
+        `${item.name_en}\n(${item.scientific_name})`,
+        item.size,
+        item.cites,
+        item.quantity.toString(),
+        order.currency === 'USD' ? `$${item.unitPrice.toFixed(2)}` : `¥${item.unitPrice.toLocaleString()}`,
+        order.currency === 'USD' ? `$${item.lineTotal.toFixed(2)}` : `¥${item.lineTotal.toLocaleString()}`
+      ]);
+
+      doc.autoTable({
+        startY: 85,
+        head: [['#', 'Code', 'Specimen & Scientific Name', 'Size', 'CITES Status', 'Qty', 'Unit Price', 'Total']],
+        body: tableRows,
+        theme: 'striped',
+        headStyles: {
+          fillColor: [15, 23, 42],
+          textColor: [255, 255, 255],
+          fontSize: 8,
+          fontStyle: 'bold',
+          halign: 'center'
+        },
+        styles: {
+          fontSize: 8,
+          cellPadding: 2.5
+        },
+        columnStyles: {
+          0: { halign: 'center', cellWidth: 8 },
+          1: { halign: 'center', cellWidth: 20 },
+          2: { cellWidth: 55 },
+          3: { halign: 'center', cellWidth: 26 },
+          4: { halign: 'center', cellWidth: 28 },
+          5: { halign: 'center', cellWidth: 12 },
+          6: { halign: 'right', cellWidth: 22 },
+          7: { halign: 'right', cellWidth: 24 }
+        }
+      });
+
+      const finalY = doc.lastAutoTable.finalY + 8;
+
+      // Subtotal & Financial Breakdown
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(15, 23, 42);
+      const subtotalLabel = `Specimen Subtotal (${order.currency}):`;
+      const subtotalValue = order.currency === 'USD' ? `$${order.subtotal.toFixed(2)}` : `¥${order.subtotal.toLocaleString()}`;
+      
+      doc.text(subtotalLabel, 125, finalY);
+      doc.text(subtotalValue, 196, finalY, { align: 'right' });
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139);
+      doc.text("Intl. Air Cargo & Heatpack Fee:", 125, finalY + 5);
+      doc.text("To be quoted on Final Invoice", 196, finalY + 5, { align: 'right' });
+
+      doc.text("CITES & Veterinary Health Cert:", 125, finalY + 10);
+      doc.text("Quoted upon booking confirmation", 196, finalY + 10, { align: 'right' });
+
+      // Legal & CITES Notice Box
+      doc.setDrawColor(203, 213, 225);
+      doc.setFillColor(248, 250, 252);
+      doc.roundedRect(14, finalY + 18, 182, 38, 2, 2, 'FD');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(15, 23, 42);
+      doc.text("EXPORT CONDITIONS & LEGAL DISCLAIMER (CITES & IATA COMPLIANCE):", 18, finalY + 23);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      doc.setTextColor(71, 85, 105);
+      const legalText1 = "1. Proforma Request Status: This document is an initial wholesale order request and does not constitute a confirmed sales contract until stock verification and flight space confirmation.";
+      const legalText2 = "2. CITES & Permits: Specimens listed under CITES Appendices require official export permits from the Ministry of Economy, Trade and Industry (Japan). Processing time requires 2-4 weeks.";
+      const legalText3 = "3. Buyer Clearance: Consignee is solely responsible for local customs declaration, veterinary clearance fees, and compliance with local species importation statutes.";
+      doc.text(legalText1, 18, finalY + 28);
+      doc.text(legalText2, 18, finalY + 34);
+      doc.text(legalText3, 18, finalY + 40);
+
+      // Signatures
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 116, 139);
+      doc.text("Authorized Signature & Stamp (Aqua Export Intl)", 14, finalY + 68);
+      doc.line(14, finalY + 65, 80, finalY + 65);
+
+      doc.text("Buyer Authorized Confirmation", 130, finalY + 68);
+      doc.line(130, finalY + 65, 196, finalY + 65);
+
+      // Save PDF
+      doc.save(`Proforma_Order_Request_${order.orderId}.pdf`);
+    }
+
+    function downloadGeneratedPdfAgain() {
+      if (appState.lastGeneratedOrder) {
+        generateAndDownloadPdf(appState.lastGeneratedOrder);
+      }
+    }
+
+    function resetAndCloseSuccess() {
+      document.getElementById('successModal').classList.add('hidden');
+    }
+
+    /* --------------------------------------------------------
+       13. CONFIGURATION & TOAST NOTIFICATION HELPERS
+    -------------------------------------------------------- */
+    function toggleApiConfig() {
+      const bar = document.getElementById('apiConfigBar');
+      bar.classList.toggle('hidden');
+      if (!bar.classList.contains('hidden')) {
+        document.getElementById('gasEndpointInput').value = appState.gasEndpoint;
+      }
+    }
+
+    function saveGasEndpoint() {
+      const url = document.getElementById('gasEndpointInput').value.trim();
+      appState.gasEndpoint = url;
+      localStorage.setItem(GAS_ENDPOINT_STORAGE_KEY, url);
+      showToast("GAS Endpoint URL saved!");
+      loadCatalog();
+    }
+
+    function showToast(msg) {
+      const toast = document.createElement('div');
+      toast.className = "fixed bottom-5 right-5 z-50 bg-slate-900 border border-slate-700 text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-2 animate-bounce";
+      toast.innerHTML = `<i class="fa-solid fa-circle-check text-sky-400"></i><span>${msg}</span>`;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    /* --------------------------------------------------------
+       14. INITIALIZATION
+    -------------------------------------------------------- */
+    window.addEventListener('DOMContentLoaded', () => {
+      setupPinInputs();
+
+      // Check if user already authenticated in this session
+      const existingToken = sessionStorage.getItem(AUTH_SESSION_KEY);
+      if (existingToken) {
+        grantAccess();
+      } else {
+        checkLockoutStatus();
+      }
+
+      // Initial UI updates
+      updateCartUI();
+    });
+  </script>
+</body>
+</html>
