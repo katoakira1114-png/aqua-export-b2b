@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="ja" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AQUA EXPORT INTERNATIONAL | B2B Wholesale Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>石垣島観賞魚 | B2B 海外卸売・採集リクエストポータル</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts: Inter & Space Grotesk -->
+  <!-- Google Fonts: Inter & Noto Sans JP -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-  <!-- jsPDF & AutoTable for client-side Proforma Invoice generation -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <!-- jsPDF & AutoTable -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
@@ -27,14 +27,14 @@
               panel: '#0e121a',
               card: '#141a24',
               border: '#1f2937',
-              accent: '#38bdf8', // Sky blue
-              accentGold: '#f59e0b',
-              accentGreen: '#10b981',
-              muted: '#94a3b8'
+              accent: '#0284c7', // Sky Blue
+              gold: '#f59e0b',
+              emerald: '#10b981',
+              coral: '#f43f5e'
             }
           },
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
+            sans: ['"Noto Sans JP"', 'Inter', 'sans-serif'],
             mono: ['"Space Grotesk"', 'monospace']
           }
         }
@@ -45,47 +45,98 @@
     body {
       background-color: #07090e;
       color: #f1f5f9;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
     .custom-scroll::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 4px;
+      height: 4px;
     }
     .custom-scroll::-webkit-scrollbar-track {
       background: #0e121a;
     }
     .custom-scroll::-webkit-scrollbar-thumb {
-      background: #263346;
-      border-radius: 3px;
-    }
-    .custom-scroll::-webkit-scrollbar-thumb:hover {
-      background: #38bdf8;
+      background: #334155;
+      border-radius: 2px;
     }
     .glass-panel {
-      background: rgba(14, 18, 26, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(14, 18, 26, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    /* Touch target comfort */
+    .touch-btn {
+      min-height: 44px;
+      min-width: 44px;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white">
+<body class="min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white pb-20 sm:pb-0">
 
   <!-- ======================================================== -->
-  <!-- 0. CONFIGURATION & DEMO SETTINGS BAR (Top Collapsible)   -->
+  <!-- STEP 0: BIG FIRST-TIME LANGUAGE SELECTOR MODAL           -->
   <!-- ======================================================== -->
-  <div id="apiConfigBar" class="bg-slate-900 border-b border-slate-800 text-xs text-slate-400 py-1.5 px-4 hidden">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center space-x-2">
-        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
-        <span class="font-medium text-slate-300">GAS Endpoint:</span>
-        <input type="text" id="gasEndpointInput" placeholder="https://script.google.com/macros/s/.../exec" 
-          class="bg-slate-950 text-slate-200 px-2 py-0.5 rounded border border-slate-700 text-xs w-72 md:w-96 focus:outline-none focus:border-sky-400">
-        <button onclick="saveGasEndpoint()" class="bg-sky-600 hover:bg-sky-500 text-white px-2 py-0.5 rounded text-xs transition">Save</button>
+  <div id="firstLangModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 transition-opacity duration-300">
+    <div class="max-w-md w-full glass-panel rounded-3xl p-6 sm:p-8 border border-sky-500/30 shadow-2xl text-center relative overflow-hidden">
+      <!-- Glow decoration -->
+      <div class="absolute -top-20 -right-20 w-44 h-44 bg-sky-500/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-20 -left-20 w-44 h-44 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 text-2xl mx-auto mb-4">
+        <i class="fa-solid fa-earth-asia"></i>
       </div>
-      <div class="flex items-center space-x-3">
-        <span id="endpointStatus" class="text-amber-400">Offline / Standalone Mode</span>
-        <button onclick="toggleApiConfig()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-times"></i></button>
+      <h2 class="text-xl sm:text-2xl font-black text-white tracking-wide mb-1">SELECT LANGUAGE</h2>
+      <p class="text-xs text-slate-400 mb-6">言語を選択してください / 請選擇您的語言</p>
+
+      <div class="grid grid-cols-1 gap-3">
+        <!-- Japanese -->
+        <button onclick="selectInitialLang('ja')" class="flex items-center justify-between p-4 rounded-2xl bg-slate-900 border-2 border-slate-700 hover:border-sky-400 hover:bg-slate-800 text-left transition group">
+          <div class="flex items-center space-x-3.5">
+            <span class="text-2xl">🇯🇵</span>
+            <div>
+              <div class="font-bold text-white text-base group-hover:text-sky-400">日本語</div>
+              <div class="text-[11px] text-slate-400">石垣島観賞魚 卸売ポータル</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-slate-500 group-hover:text-sky-400 text-sm"></i>
+        </button>
+
+        <!-- English -->
+        <button onclick="selectInitialLang('en')" class="flex items-center justify-between p-4 rounded-2xl bg-slate-900 border-2 border-slate-700 hover:border-sky-400 hover:bg-slate-800 text-left transition group">
+          <div class="flex items-center space-x-3.5">
+            <span class="text-2xl">🇺🇸</span>
+            <div>
+              <div class="font-bold text-white text-base group-hover:text-sky-400">English</div>
+              <div class="text-[11px] text-slate-400">Commercial Marine Export</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-slate-500 group-hover:text-sky-400 text-sm"></i>
+        </button>
+
+        <!-- Traditional Chinese -->
+        <button onclick="selectInitialLang('zh-TW')" class="flex items-center justify-between p-4 rounded-2xl bg-slate-900 border-2 border-slate-700 hover:border-sky-400 hover:bg-slate-800 text-left transition group">
+          <div class="flex items-center space-x-3.5">
+            <span class="text-2xl">🇹🇼</span>
+            <div>
+              <div class="font-bold text-white text-base group-hover:text-sky-400">繁體中文</div>
+              <div class="text-[11px] text-slate-400">台灣 / 香港 海水活體批發</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-slate-500 group-hover:text-sky-400 text-sm"></i>
+        </button>
+
+        <!-- Simplified Chinese -->
+        <button onclick="selectInitialLang('zh-CN')" class="flex items-center justify-between p-4 rounded-2xl bg-slate-900 border-2 border-slate-700 hover:border-sky-400 hover:bg-slate-800 text-left transition group">
+          <div class="flex items-center space-x-3.5">
+            <span class="text-2xl">🇨🇳</span>
+            <div>
+              <div class="font-bold text-white text-base group-hover:text-sky-400">简体中文</div>
+              <div class="text-[11px] text-slate-400">商业海水活体采购平台</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-slate-500 group-hover:text-sky-400 text-sm"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -93,52 +144,62 @@
   <!-- ======================================================== -->
   <!-- STEP 1: GATEWAY PIN AUTHENTICATION MODAL (ZERO TRUST)    -->
   <!-- ======================================================== -->
-  <div id="authOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md px-4">
-    <div class="max-w-md w-full glass-panel rounded-2xl p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
-      <!-- Glow effect -->
-      <div class="absolute -top-24 -left-24 w-48 h-48 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+  <div id="authOverlay" class="fixed inset-0 z-40 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 hidden">
+    <div class="max-w-md w-full glass-panel rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
+      
+      <!-- Top header with Language Switch button -->
+      <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center space-x-2 text-xs text-sky-400 font-mono">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>B2B GATEWAY</span>
+        </div>
+        <button onclick="openLanguageModal()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-300 hover:text-white">
+          <i class="fa-solid fa-globe text-sky-400"></i>
+          <span id="currentLangTag">日本語</span>
+          <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
+        </button>
+      </div>
 
       <div class="text-center mb-6">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-900 border border-slate-700 text-sky-400 mb-4 shadow-inner">
-          <i class="fa-solid fa-shield-halved text-2xl"></i>
-        </div>
-        <h1 class="text-xl font-bold tracking-tight text-white uppercase font-mono">B2B Gateway Verification</h1>
-        <p class="text-xs text-slate-400 mt-1.5" data-i18n="auth_subtitle">Authorized Aquarium Wholesalers & Commercial Buyers Only</p>
+        <h1 class="text-xl sm:text-2xl font-bold text-white uppercase font-mono tracking-tight" data-i18n="auth_title">
+          B2B 認証ゲートウェイ
+        </h1>
+        <p class="text-xs text-slate-400 mt-1" data-i18n="auth_subtitle">
+          正規水族館・卸売業者・合法商業バイヤー専用ポータル
+        </p>
       </div>
 
       <!-- Lockout Alert -->
-      <div id="lockoutAlert" class="hidden mb-5 p-3 rounded-lg bg-red-950/70 border border-red-700/60 text-red-300 text-xs">
-        <div class="flex items-center space-x-2 font-bold mb-1">
+      <div id="lockoutAlert" class="hidden mb-5 p-3.5 rounded-xl bg-red-950/80 border border-red-700/60 text-red-300 text-xs text-center font-medium">
+        <div class="flex items-center justify-center space-x-2 font-bold mb-1">
           <i class="fa-solid fa-triangle-exclamation text-red-400"></i>
-          <span>ACCESS TEMPORARILY LOCKED</span>
+          <span>アクセス一時ロック中</span>
         </div>
-        <p id="lockoutTimerText">Too many failed attempts. Try again in 15:00.</p>
+        <p id="lockoutTimerText">試行回数超過。15:00 後に再試行可能。</p>
       </div>
 
       <!-- PIN Input Form -->
-      <form id="pinForm" onsubmit="handlePinSubmit(event)" class="space-y-5">
+      <form id="pinForm" onsubmit="handlePinSubmit(event)" class="space-y-6">
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 text-center" data-i18n="enter_pin">
-            Enter 4-Digit Access PIN
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 text-center" data-i18n="enter_pin">
+            4桁のアクセスPINを入力してください
           </label>
           <div class="flex justify-center gap-3">
-            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-12 h-14 text-center text-2xl font-mono font-bold bg-slate-900 border border-slate-700 rounded-xl text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400 focus:outline-none transition">
-            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-12 h-14 text-center text-2xl font-mono font-bold bg-slate-900 border border-slate-700 rounded-xl text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400 focus:outline-none transition">
-            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-12 h-14 text-center text-2xl font-mono font-bold bg-slate-900 border border-slate-700 rounded-xl text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400 focus:outline-none transition">
-            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-12 h-14 text-center text-2xl font-mono font-bold bg-slate-900 border border-slate-700 rounded-xl text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400 focus:outline-none transition">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-14 h-16 text-center text-3xl font-mono font-bold bg-slate-900 border-2 border-slate-700 rounded-2xl text-white focus:border-sky-400 focus:bg-slate-800 focus:outline-none transition">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-14 h-16 text-center text-3xl font-mono font-bold bg-slate-900 border-2 border-slate-700 rounded-2xl text-white focus:border-sky-400 focus:bg-slate-800 focus:outline-none transition">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-14 h-16 text-center text-3xl font-mono font-bold bg-slate-900 border-2 border-slate-700 rounded-2xl text-white focus:border-sky-400 focus:bg-slate-800 focus:outline-none transition">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit w-14 h-16 text-center text-3xl font-mono font-bold bg-slate-900 border-2 border-slate-700 rounded-2xl text-white focus:border-sky-400 focus:bg-slate-800 focus:outline-none transition">
           </div>
-          <p id="pinErrorMessage" class="text-xs text-red-400 text-center mt-2 min-h-[1rem] font-medium"></p>
+          <p id="pinErrorMessage" class="text-xs text-red-400 text-center mt-2.5 min-h-[1.2rem] font-medium"></p>
         </div>
 
-        <button type="submit" id="btnVerifyPin" class="w-full py-3.5 px-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-semibold rounded-xl text-sm transition duration-150 shadow-lg shadow-sky-500/20 flex items-center justify-center space-x-2">
-          <span>Authenticate & Access Catalog</span>
+        <button type="submit" id="btnVerifyPin" class="w-full py-4 px-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 active:scale-[0.98] text-white font-bold rounded-2xl text-sm transition shadow-lg shadow-sky-500/20 flex items-center justify-center space-x-2 touch-btn">
+          <span data-i18n="btn_auth">認証してカタログを開く</span>
           <i class="fa-solid fa-arrow-right text-xs"></i>
         </button>
 
-        <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-800">
-          <span><i class="fa-solid fa-lock mr-1"></i> Rate-limited defense (5 tries / 15m)</span>
-          <button type="button" onclick="toggleApiConfig()" class="text-slate-400 hover:text-sky-400 transition underline underline-offset-2">Endpoint Setup</button>
+        <div class="text-[11px] text-slate-500 text-center pt-1 border-t border-slate-800">
+          <i class="fa-solid fa-lock mr-1"></i> セキュア認証保護 (5回失敗で15分ロック)
         </div>
       </form>
     </div>
@@ -149,160 +210,224 @@
   <!-- ======================================================== -->
   <div id="mainApp" class="flex-1 flex flex-col opacity-0 transition-opacity duration-300">
     
-    <!-- TOP HEADER -->
-    <header class="sticky top-0 z-40 bg-[#07090e]/90 backdrop-blur-md border-b border-slate-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
+    <!-- TOP HEADER (MOBILE-FIRST OPTIMIZED) -->
+    <header class="sticky top-0 z-30 bg-[#07090e]/95 backdrop-blur-md border-b border-slate-800">
+      
+      <!-- Row 1: Brand Logo, Lang Trigger & Cart Button -->
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-14 sm:h-16">
           
-          <!-- Brand Logo & Badge -->
-          <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
-              <i class="fa-solid fa-water text-lg"></i>
+          <!-- Brand -->
+          <div class="flex items-center space-x-2.5 min-w-0">
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 flex-shrink-0">
+              <i class="fa-solid fa-fish-fins text-base"></i>
             </div>
-            <div>
-              <span class="font-mono font-bold tracking-wider text-base text-white">AQUA EXPORT</span>
-              <span class="hidden sm:inline-block ml-2 px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-slate-800 text-sky-400 border border-slate-700">B2B Portal</span>
+            <div class="truncate">
+              <div class="font-bold text-sm sm:text-base text-white tracking-tight truncate flex items-center space-x-1.5">
+                <span>石垣島観賞魚</span>
+                <span class="text-[10px] font-mono uppercase bg-sky-500/20 text-sky-400 px-1.5 py-0.5 rounded border border-sky-500/30">B2B</span>
+              </div>
+              <div class="text-[10px] text-slate-400 truncate hidden sm:block">川畑水産 • Commercial Marine Specimen Export</div>
             </div>
           </div>
 
-          <!-- Controls: Destination, Currency, Language, Cart -->
-          <div class="flex items-center space-x-2 sm:space-x-4">
+          <!-- Controls -->
+          <div class="flex items-center space-x-2">
             
-            <!-- STEP 2: Language Selector -->
-            <div class="relative">
-              <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-slate-900 text-slate-300 border border-slate-700 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-sky-400">
-                <option value="en">English</option>
-                <option value="zh-TW">繁體中文</option>
-                <option value="zh-CN">简体中文</option>
-              </select>
-            </div>
+            <!-- Language Switcher Button -->
+            <button onclick="openLanguageModal()" class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-300 hover:text-white touch-btn">
+              <i class="fa-solid fa-globe text-sky-400 text-sm"></i>
+              <span id="navLangTag" class="font-medium text-[11px]">日本語</span>
+            </button>
 
-            <!-- STEP 2: Destination Country Selector -->
-            <div class="relative">
-              <select id="countrySelect" onchange="changeCountry(this.value)" class="bg-slate-900 text-slate-300 border border-slate-700 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-sky-400">
+            <!-- Destination Country Selector (Desktop/Tablet) -->
+            <div class="hidden md:block">
+              <select id="countrySelect" onchange="changeCountry(this.value)" class="bg-slate-900 text-slate-300 border border-slate-700 text-xs rounded-xl px-2.5 py-2 focus:outline-none focus:border-sky-400">
                 <option value="USA">🇺🇸 United States</option>
                 <option value="EU">🇪🇺 European Union</option>
-                <option value="TW">🇹🇼 Taiwan</option>
-                <option value="HK">🇭🇰 Hong Kong</option>
+                <option value="TW">🇹🇼 台灣 (Taiwan)</option>
+                <option value="HK">🇭🇰 香港 (Hong Kong)</option>
                 <option value="SG">🇸🇬 Singapore</option>
-                <option value="UK">🇬🇧 United Kingdom</option>
-                <option value="CA">🇨🇦 Canada</option>
+                <option value="JP">🇯🇵 日本 (Domestic)</option>
                 <option value="OTHER">🌐 Other Destination</option>
               </select>
             </div>
 
-            <!-- Currency Toggle (USD / JPY) -->
-            <div class="flex bg-slate-900 rounded-lg p-0.5 border border-slate-700 text-xs font-mono">
-              <button id="currBtnUSD" onclick="setCurrency('USD')" class="px-2.5 py-1 rounded font-bold bg-sky-500 text-white transition">USD</button>
-              <button id="currBtnJPY" onclick="setCurrency('JPY')" class="px-2.5 py-1 rounded text-slate-400 hover:text-white transition">JPY</button>
-            </div>
-
-            <!-- Cart Trigger Button -->
-            <button onclick="toggleCartDrawer(true)" class="relative p-2 text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 rounded-lg border border-slate-700 transition">
+            <!-- Cart Trigger Button (Header) -->
+            <button onclick="toggleCartDrawer(true)" class="relative flex items-center space-x-1.5 px-3 py-1.5 text-slate-200 bg-sky-600 hover:bg-sky-500 active:scale-95 rounded-xl font-bold text-xs transition touch-btn shadow-lg shadow-sky-600/20">
               <i class="fa-solid fa-cart-shopping text-sm"></i>
-              <span id="cartCountBadge" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-sky-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center ring-2 ring-[#07090e]">0</span>
-            </button>
-
-            <!-- Logout / Reset PIN -->
-            <button onclick="handleLogout()" title="Lock Portal" class="p-2 text-slate-500 hover:text-red-400 bg-slate-900 hover:bg-slate-800 rounded-lg border border-slate-800 text-xs transition">
-              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+              <span class="hidden sm:inline" data-i18n="cart">カート</span>
+              <span id="headerCartCount" class="w-5 h-5 bg-white text-sky-900 rounded-full text-[11px] font-black flex items-center justify-center">0</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- STEP 3: MOV (MINIMUM ORDER VALUE) PROGRESS BAR -->
-      <div id="movBarContainer" class="bg-slate-900/90 border-t border-slate-800/80 px-4 py-2">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs gap-2">
-          <div class="flex items-center space-x-2">
-            <span class="font-mono text-slate-400 uppercase font-semibold" data-i18n="mov_label">Wholesale MOV:</span>
-            <span id="movTargetText" class="font-mono font-bold text-slate-200">$1,000.00 USD</span>
-            <span class="text-slate-600">|</span>
-            <span id="movStatusMessage" class="text-amber-400 font-medium">Add items to meet MOQ threshold.</span>
-          </div>
-          <!-- Progress bar -->
-          <div class="w-full sm:w-72 flex items-center space-x-2">
-            <div class="flex-1 bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700/60">
-              <div id="movProgressBar" class="bg-amber-400 h-full w-0 transition-all duration-300 rounded-full"></div>
+      <!-- Row 2: Currency Selector with Explicit Rate Notice & MOV Bar -->
+      <div class="bg-slate-900/90 border-t border-slate-800/80 px-3 py-2 sm:px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-2">
+          
+          <!-- Currency Toggle & Note -->
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- JPY / USD Toggle Button -->
+            <div class="inline-flex bg-slate-950 rounded-xl p-1 border border-slate-700 text-xs font-mono">
+              <button id="currBtnJPY" onclick="setCurrency('JPY')" class="px-3 py-1 rounded-lg font-bold bg-sky-500 text-white transition">
+                日本円 (JPY ¥)
+              </button>
+              <button id="currBtnUSD" onclick="setCurrency('USD')" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white transition">
+                米ドル (USD $)
+              </button>
             </div>
-            <span id="movPercentText" class="font-mono text-[11px] text-slate-400 w-9 text-right">0%</span>
+
+            <!-- EXPLICIT FX RATE EXPLANATION (真横に表記) -->
+            <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px]">
+              <i class="fa-solid fa-arrow-trend-up text-amber-400"></i>
+              <span id="fxRateNotice">為替レート: 1 USD = ¥160 (当日の円安最高値 1の位繰上レート)</span>
+            </div>
+          </div>
+
+          <!-- MOV Status Bar -->
+          <div class="flex items-center justify-between md:justify-end space-x-3 text-xs w-full md:w-auto">
+            <div class="flex items-center space-x-1.5 truncate">
+              <span class="text-slate-400 font-semibold" data-i18n="mov_short">最低注文額(MOV):</span>
+              <span id="movTargetText" class="font-mono font-bold text-white">¥150,000</span>
+            </div>
+            
+            <div class="w-28 sm:w-36 flex items-center space-x-1.5">
+              <div class="flex-1 bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700">
+                <div id="movProgressBar" class="bg-amber-400 h-full w-0 transition-all duration-300 rounded-full"></div>
+              </div>
+              <span id="movPercentText" class="font-mono text-[10px] text-slate-400 w-8 text-right">0%</span>
+            </div>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- HERO & FILTER BAR -->
-    <section class="bg-gradient-to-b from-[#0c1017] to-[#07090e] border-b border-slate-800 py-6 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <div class="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-mono mb-2">
-            <i class="fa-solid fa-plane-departure text-[10px]"></i>
-            <span data-i18n="hero_badge">DIRECT EXPORT FROM JAPAN & ASIA PACIFIC</span>
+    <!-- HERO & SEARCH SECTION -->
+    <section class="bg-gradient-to-b from-[#0c1017] to-[#07090e] border-b border-slate-800 py-5 px-3 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto space-y-4">
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <div class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-mono mb-1.5">
+              <i class="fa-solid fa-water"></i>
+              <span data-i18n="hero_badge">沖縄・八重山諸島 天然海水生体 直送</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight" data-i18n="hero_title">
+              石垣島生体 在庫・採集リクエストカタログ
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5" data-i18n="hero_desc">
+              現在の生簀在庫からの即時引当、および在庫以上の数量は現地ダイバーによる「採集リクエスト」として承ります。
+            </p>
           </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" data-i18n="hero_title">
-            Commercial Specimen Catalog
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl" data-i18n="hero_desc">
-            Direct export catalog for licensed importers, wholesale distributors, and public aquariums. All specimens are quarantined and pre-screened prior to export health certification.
-          </p>
+
+          <!-- Live Search Bar -->
+          <div class="w-full md:w-72 relative">
+            <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="生体名・学名・IDで検索..."
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-400">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500 text-xs"></i>
+          </div>
         </div>
 
-        <!-- Live Search Input -->
-        <div class="w-full md:w-80 relative">
-          <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Search species or scientific name..."
-            class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-400">
-          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500 text-xs"></i>
+        <!-- CATEGORY PILLS (石垣島スプレッドシート準拠 6大カテゴリ) -->
+        <div class="flex items-center space-x-2 overflow-x-auto pb-1 custom-scroll" id="categoryFilterContainer">
+          <button onclick="filterCategory('ALL')" class="category-pill active whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-500 text-white transition touch-btn">すべて (All)</button>
+          <button onclick="filterCategory('魚')" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🐟 魚 (Fish)</button>
+          <button onclick="filterCategory('貝')" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🐚 貝 (Shells)</button>
+          <button onclick="filterCategory('シャコガイ')" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🦪 シャコガイ (Clams)</button>
+          <button onclick="filterCategory('イソギンチャク')" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🌸 イソギンチャク (Anemones)</button>
+          <button onclick="filterCategory('サンゴ')" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🪸 サンゴ (Corals)</button>
+          <button onclick="filterCategory('その他')" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🦀 その他 (Others)</button>
         </div>
-      </div>
-
-      <!-- Category Filter Pills -->
-      <div class="max-w-7xl mx-auto mt-5 flex items-center space-x-2 overflow-x-auto pb-1 custom-scroll" id="categoryFilterContainer">
-        <button onclick="filterCategory('ALL')" class="category-pill active whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-medium bg-sky-500 text-white transition">All Specimens</button>
-        <button onclick="filterCategory('DISCUS')" class="category-pill whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">Wild Discus</button>
-        <button onclick="filterCategory('PLECO')" class="category-pill whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">Rare Plecos (L-Numbers)</button>
-        <button onclick="filterCategory('AROWANA')" class="category-pill whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">Arowana & Monsters</button>
-        <button onclick="filterCategory('MARINE')" class="category-pill whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">Marine & Corals</button>
-        <button onclick="filterCategory('PLANT')" class="category-pill whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">Rare Aquascaping Plants</button>
       </div>
     </section>
 
     <!-- PRODUCT CATALOG GRID -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6">
       <!-- Loading State -->
-      <div id="catalogLoading" class="hidden text-center py-24">
+      <div id="catalogLoading" class="hidden text-center py-20">
         <i class="fa-solid fa-circle-notch fa-spin text-3xl text-sky-400"></i>
-        <p class="text-xs text-slate-400 mt-3 font-mono">Fetching sanitized export inventory...</p>
+        <p class="text-xs text-slate-400 mt-3 font-mono">石垣島スプレッドシート在庫データを照会中...</p>
       </div>
 
       <!-- Empty State -->
-      <div id="catalogEmpty" class="hidden text-center py-24 border border-dashed border-slate-800 rounded-2xl">
-        <i class="fa-solid fa-box-open text-4xl text-slate-600 mb-3"></i>
-        <h4 class="text-base font-semibold text-slate-300">No matching specimens found</h4>
-        <p class="text-xs text-slate-500 mt-1">Try adjusting your category filter or search keywords.</p>
+      <div id="catalogEmpty" class="hidden text-center py-20 border border-dashed border-slate-800 rounded-3xl">
+        <i class="fa-solid fa-box-open text-4xl text-slate-600 mb-2"></i>
+        <h4 class="text-sm font-semibold text-slate-300">該当する生体が見つかりません</h4>
+        <p class="text-xs text-slate-500 mt-1">検索キーワードまたはカテゴリを変更してお試しください。</p>
       </div>
 
-      <!-- Grid Container -->
-      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <!-- Cards rendered dynamically via JS -->
+      <!-- Cards Grid -->
+      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        <!-- Rendered dynamically -->
       </div>
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-slate-950 border-t border-slate-800/80 py-8 text-xs text-slate-500">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div class="flex items-center space-x-2">
-          <i class="fa-solid fa-shield-halved text-sky-400"></i>
-          <span>Secure Zero-Trust Wholesale Environment &copy; 2026 Aqua Export International. All rights reserved.</span>
-        </div>
-        <div class="flex items-center space-x-4">
-          <span class="hover:text-slate-400">B2B Trade Only</span>
-          <span>&bull;</span>
-          <span class="hover:text-slate-400">IATA LAR Compliant</span>
-          <span>&bull;</span>
-          <span class="hover:text-slate-400">CITES Certified</span>
-        </div>
+    <footer class="bg-slate-950 border-t border-slate-800/80 py-8 text-xs text-slate-500 text-center">
+      <div class="max-w-7xl mx-auto px-4 space-y-2">
+        <p>石垣島観賞魚（川畑水産）海外受発注システム &copy; 2026</p>
+        <p class="text-[11px] text-slate-600">八重山漁協準拠・ワシントン条約(CITES)適格品のみ輸出対応・IATA生体空輸基準適合</p>
       </div>
     </footer>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MOBILE BOTTOM STICKY CART BAR (スマホ専用クイックバー)      -->
+  <!-- ======================================================== -->
+  <div id="mobileCartSticky" class="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 p-2.5 px-4 shadow-2xl transition-transform duration-300">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <div class="relative">
+          <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold">
+            <i class="fa-solid fa-cart-shopping"></i>
+          </div>
+          <span id="mobileCartStickyBadge" class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white rounded-full text-[10px] font-black w-5 h-5 flex items-center justify-center ring-2 ring-slate-950">0</span>
+        </div>
+        <div>
+          <div id="mobileCartStickyTotal" class="font-mono font-bold text-white text-sm">¥0</div>
+          <div id="mobileCartStickyMovStatus" class="text-[10px] text-amber-400">MOVまで残り: ¥150,000</div>
+        </div>
+      </div>
+
+      <button onclick="toggleCartDrawer(true)" class="px-4 py-2.5 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-lg shadow-sky-500/20 active:scale-95 touch-btn">
+        <span data-i18n="view_cart">カート確認</span>
+        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: COLLECTION REQUEST CONFIRMATION (採集リクエスト確認)-->
+  <!-- ======================================================== -->
+  <div id="collectionRequestModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 hidden">
+    <div class="max-w-md w-full glass-panel rounded-3xl p-6 sm:p-7 border border-amber-500/40 shadow-2xl text-center relative overflow-hidden animate-in fade-in zoom-in-95">
+      <div class="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl mx-auto mb-3.5">
+        <i class="fa-solid fa-water"></i>
+      </div>
+      <h3 class="text-base sm:text-lg font-bold text-white uppercase" data-i18n="collect_modal_title">
+        採集リクエスト（捕獲手配）のご案内
+      </h3>
+      
+      <div class="my-4 p-4 rounded-2xl bg-slate-900 border border-slate-800 text-left text-xs space-y-2">
+        <p class="text-slate-300 leading-relaxed" id="collectModalMessage">
+          現在の生簀在庫数は <strong class="text-amber-400 font-bold" id="collectModalStockNum">0</strong> 匹ですが、これ以上の数量は八重山諸島の海での【採集リクエスト】として受け付けます。よろしいですか？
+        </p>
+        <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-900/50 text-[11px] text-amber-300/90 leading-tight">
+          <i class="fa-solid fa-circle-info mr-1"></i> 天候や潮位により、海での採集・検疫に数日〜2週間程度お時間をいただく場合がございます。
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 pt-1">
+        <button onclick="closeCollectionModal()" class="py-3 px-4 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition touch-btn">
+          キャンセル
+        </button>
+        <button id="btnConfirmCollection" onclick="confirmCollectionAdd()" class="py-3 px-4 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg shadow-amber-500/20 touch-btn">
+          採集リクエストとして追加
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- ======================================================== -->
@@ -312,218 +437,203 @@
   <div id="cartDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-slate-950 border-l border-slate-800 z-50 flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl">
     
     <!-- Drawer Header -->
-    <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+    <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
       <div class="flex items-center space-x-2.5">
-        <div class="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+        <div class="w-8 h-8 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
           <i class="fa-solid fa-file-invoice"></i>
         </div>
         <div>
-          <h3 class="font-bold text-sm text-white" data-i18n="proforma_cart_title">Proforma Order Cart</h3>
-          <p class="text-[11px] text-slate-400" id="cartItemSummary">0 specimens selected</p>
+          <h3 class="font-bold text-sm text-white" data-i18n="cart_title">受発注リクエストカート</h3>
+          <p class="text-[11px] text-slate-400" id="cartSummaryCount">0 品目選択中</p>
         </div>
       </div>
-      <button onclick="toggleCartDrawer(false)" class="text-slate-400 hover:text-white p-1 rounded-lg">
+      <button onclick="toggleCartDrawer(false)" class="text-slate-400 hover:text-white p-2 rounded-xl touch-btn">
         <i class="fa-solid fa-xmark text-lg"></i>
       </button>
     </div>
 
     <!-- MOV Status Inside Cart -->
-    <div id="cartMovBanner" class="bg-amber-950/40 border-b border-amber-900/50 p-3 text-xs">
-      <div class="flex items-center justify-between mb-1">
-        <span class="font-semibold text-amber-300" data-i18n="mov_requirement">Wholesale MOV Threshold</span>
-        <span id="cartMovAmount" class="font-mono text-amber-200 font-bold">$1,000.00</span>
+    <div id="cartMovBanner" class="bg-amber-950/40 border-b border-amber-900/50 p-3 px-4 text-xs">
+      <div class="flex items-center justify-between mb-0.5">
+        <span class="font-bold text-amber-300" data-i18n="mov_title">最低注文金額 (MOV)</span>
+        <span id="cartMovTarget" class="font-mono text-amber-200 font-bold">¥150,000</span>
       </div>
-      <p id="cartMovStatus" class="text-amber-400/90 text-[11px]">Add more items to unlock checkout.</p>
+      <p id="cartMovStatus" class="text-amber-400/90 text-[11px]">商品をカートに追加してください。</p>
     </div>
 
-    <!-- Line Items List -->
-    <div id="cartItemsList" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scroll">
-      <!-- Items dynamically populated -->
+    <!-- Cart Line Items List -->
+    <div id="cartItemsList" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2.5 custom-scroll">
+      <!-- Populated dynamically -->
     </div>
 
     <!-- Drawer Footer -->
-    <div class="p-5 border-t border-slate-800 bg-slate-900/80 space-y-4">
-      <div class="space-y-1.5 text-xs">
-        <div class="flex justify-between text-slate-400">
-          <span data-i18n="specimen_subtotal">Specimen Subtotal:</span>
-          <span id="cartSubtotalText" class="font-mono font-bold text-white text-sm">$0.00 USD</span>
+    <div class="p-4 sm:p-5 border-t border-slate-800 bg-slate-900/90 space-y-3">
+      <div class="space-y-1 text-xs">
+        <div class="flex justify-between items-baseline text-slate-300">
+          <span class="font-semibold" data-i18n="specimen_subtotal">生体合計金額:</span>
+          <span id="cartSubtotalDisplay" class="font-mono font-black text-white text-base">¥0</span>
         </div>
         <div class="flex justify-between text-slate-500 text-[11px]">
-          <span data-i18n="freight_notice">Freight, Box & CITES:</span>
-          <span class="italic text-slate-400" data-i18n="quoted_separately">Quoted on Official PI</span>
+          <span>空輸運賃・保温箱・検疫費:</span>
+          <span class="italic text-slate-400">正式見積時に算出</span>
         </div>
       </div>
 
-      <!-- Action Button -->
       <button id="btnProceedCheckout" onclick="openCitesModal()" disabled
-        class="w-full py-3.5 px-4 bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-sky-500/20 flex items-center justify-center space-x-2">
-        <i class="fa-solid fa-contract"></i>
-        <span data-i18n="proceed_checkout_btn">Proceed to Legal Clearance</span>
+        class="w-full py-4 px-4 bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white font-bold rounded-2xl text-xs uppercase tracking-wider transition shadow-lg shadow-sky-500/20 flex items-center justify-center space-x-2 touch-btn">
+        <i class="fa-solid fa-file-contract"></i>
+        <span data-i18n="btn_proceed_clearance">法的免責・配送先入力へ進む</span>
       </button>
-      <p class="text-[10px] text-slate-500 text-center">
-        * Inventory reserved upon formal proforma confirmation and wire receipt.
-      </p>
     </div>
   </div>
 
   <!-- ======================================================== -->
-  <!-- STEP 4: CITES & AIR CARGO DISCLAIMER MODAL (MANDATORY)   -->
+  <!-- STEP 4: CITES & AIR FREIGHT LEGAL DISCLAIMER MODAL       -->
   <!-- ======================================================== -->
-  <div id="citesModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md px-4 hidden">
-    <div class="max-w-2xl w-full glass-panel rounded-2xl p-6 sm:p-8 border border-amber-500/30 shadow-2xl relative overflow-hidden">
-      <!-- Warning Accent -->
+  <div id="citesModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 hidden">
+    <div class="max-w-2xl w-full glass-panel rounded-3xl p-5 sm:p-7 border border-amber-500/40 shadow-2xl relative max-h-[92vh] overflow-y-auto custom-scroll">
+      
       <div class="flex items-center space-x-3 mb-4">
-        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-lg">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-lg flex-shrink-0">
           <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
         <div>
-          <h2 class="text-base sm:text-lg font-bold text-white font-mono uppercase tracking-wide" data-i18n="legal_modal_title">
-            International Trade & CITES Compliance
+          <h2 class="text-base sm:text-lg font-bold text-white" data-i18n="legal_title">
+            国際輸出入・CITES条約 法的同意確認
           </h2>
-          <p class="text-xs text-amber-400/90" data-i18n="legal_modal_subtitle">
-            Mandatory acknowledgement required prior to Proforma Request generation.
+          <p class="text-xs text-amber-400" data-i18n="legal_sub">
+            見積依頼書 (Proforma Request) 発行のため、以下3項目の個別同意が必須となります。
           </p>
         </div>
       </div>
 
-      <div class="space-y-4 my-6 text-xs text-slate-300">
-        <!-- Checkbox 1 -->
-        <label class="flex items-start space-x-3 p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
-          <input type="checkbox" id="checkLegal1" onchange="validateLegalCheckboxes()" class="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-700 focus:ring-0 focus:ring-offset-0">
+      <div class="space-y-3 my-5 text-xs text-slate-300">
+        <!-- Check 1 -->
+        <label class="flex items-start space-x-3 p-3.5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+          <input type="checkbox" id="checkLegal1" onchange="validateLegalCheckboxes()" class="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-700">
           <div>
-            <span class="font-bold text-slate-100 block mb-0.5">1. Price Notice & Ancillary Freight Fees</span>
+            <span class="font-bold text-slate-100 block mb-0.5">1. 価格および付帯費用の分離</span>
             <span class="text-slate-400 leading-relaxed">
-              The displayed total includes specimen wholesale costs only. International air freight, insulated packing, oxygen/heat packs, and CITES permit handling fees will be quoted separately on the official Proforma Invoice.
+              表示合計金額は生体価格のみです。国際航空貨物運賃、厚手発泡スチロール箱代、酸素・保冷温剤費用、CITES輸出許可証申請費は正式Proforma Invoiceにて別途合算されます。
             </span>
           </div>
         </label>
 
-        <!-- Checkbox 2 -->
-        <label class="flex items-start space-x-3 p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
-          <input type="checkbox" id="checkLegal2" onchange="validateLegalCheckboxes()" class="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-700 focus:ring-0 focus:ring-offset-0">
+        <!-- Check 2 -->
+        <label class="flex items-start space-x-3 p-3.5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+          <input type="checkbox" id="checkLegal2" onchange="validateLegalCheckboxes()" class="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-700">
           <div>
-            <span class="font-bold text-slate-100 block mb-0.5">2. Delivery & CITES Approval Schedule</span>
+            <span class="font-bold text-slate-100 block mb-0.5">2. 採集およびCITES許可スケジュール</span>
             <span class="text-slate-400 leading-relaxed">
-              Export permits and live animal cargo flight arrangements require administrative processing (typically 2 to 4 weeks). Specific arrival dates cannot be guaranteed upon initial request.
+              採集リクエスト生体の捕獲手配および経済産業省の輸出許可申請には数週間を要する場合があります。見積リクエスト時点での到着指定日は確約できません。
             </span>
           </div>
         </label>
 
-        <!-- Checkbox 3 -->
-        <label class="flex items-start space-x-3 p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
-          <input type="checkbox" id="checkLegal3" onchange="validateLegalCheckboxes()" class="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-700 focus:ring-0 focus:ring-offset-0">
+        <!-- Check 3 -->
+        <label class="flex items-start space-x-3 p-3.5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+          <input type="checkbox" id="checkLegal3" onchange="validateLegalCheckboxes()" class="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-700">
           <div>
-            <span class="font-bold text-slate-100 block mb-0.5">3. Buyer Import Responsibility & Customs Clearance</span>
+            <span class="font-bold text-slate-100 block mb-0.5">3. バイヤー側の輸入許可・現地通関責任</span>
             <span class="text-slate-400 leading-relaxed">
-              The buyer is solely responsible for possessing valid import permits, appointing an accredited customs broker, clearing customs at the destination airport, and remitting local import duties/taxes.
+              バイヤーは輸入国における輸入許可証の事前所持、動物検疫クリアランス、および現地関税・消費税の支払い責任を単独で負うものとします。
             </span>
           </div>
         </label>
       </div>
 
-      <!-- Action Buttons -->
       <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
-        <button onclick="closeCitesModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition">Cancel</button>
+        <button onclick="closeCitesModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition touch-btn">
+          戻る
+        </button>
         <button id="btnAgreeLegal" onclick="proceedToBuyerForm()" disabled
-          class="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white transition shadow-lg shadow-sky-500/20">
-          I Agree & Continue to Order Details
+          class="px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white transition shadow-lg shadow-sky-500/20 touch-btn">
+          同意してバイヤー情報入力へ
         </button>
       </div>
     </div>
   </div>
 
   <!-- ======================================================== -->
-  <!-- STEP 5: BUYER DETAILS & ORDER CONFIRMATION MODAL         -->
+  <!-- STEP 5: BUYER DETAILS & ORDER REQUEST FORM               -->
   <!-- ======================================================== -->
-  <div id="checkoutModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md px-4 hidden">
-    <div class="max-w-2xl w-full glass-panel rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-2xl relative max-h-[92vh] overflow-y-auto custom-scroll">
+  <div id="checkoutModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 hidden">
+    <div class="max-w-2xl w-full glass-panel rounded-3xl p-5 sm:p-7 border border-slate-800 shadow-2xl relative max-h-[92vh] overflow-y-auto custom-scroll">
       
-      <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-5">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
         <div>
-          <h2 class="text-lg font-bold text-white font-mono uppercase" data-i18n="order_form_title">Proforma Order Request</h2>
-          <p class="text-xs text-slate-400" data-i18n="order_form_desc">Commercial Consignee & Shipping Specifications</p>
+          <h2 class="text-base sm:text-lg font-bold text-white font-mono uppercase" data-i18n="order_form_title">
+            Proforma Order Request 発行
+          </h2>
+          <p class="text-xs text-slate-400">配送先空港および連絡先をご入力ください</p>
         </div>
-        <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-white p-1">
+        <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-white p-2">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
 
       <form id="orderForm" onsubmit="submitOrder(event)" class="space-y-4 text-xs">
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- Company Name -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
-            <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_company">Company / Facility Name *</label>
-            <input type="text" id="buyerCompany" required placeholder="e.g. Pacific Aquatic Imports LLC"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400">
+            <label class="block font-semibold text-slate-300 mb-1">会社名 / 屋号 *</label>
+            <input type="text" id="buyerCompany" required placeholder="例: Pacific Aquarium Wholesale LLC"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400">
           </div>
-          <!-- Contact Person -->
           <div>
-            <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_contact">Authorized Contact Person *</label>
-            <input type="text" id="buyerContact" required placeholder="e.g. John Doe (Purchasing Mgr)"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400">
+            <label class="block font-semibold text-slate-300 mb-1">ご担当者名 *</label>
+            <input type="text" id="buyerContact" required placeholder="例: Taro Yamada"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400">
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- Email -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
-            <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_email">Corporate Email *</label>
-            <input type="email" id="buyerEmail" required placeholder="purchasing@buyercompany.com"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400">
+            <label class="block font-semibold text-slate-300 mb-1">業務Emailアドレス *</label>
+            <input type="email" id="buyerEmail" required placeholder="buyer@example.com"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400">
           </div>
-          <!-- Instant Messaging (WhatsApp / WeChat / Telegram) -->
           <div>
-            <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_im">WhatsApp / WeChat / Telegram ID *</label>
-            <input type="text" id="buyerIM" required placeholder="e.g. +1-555-019-2831 / @aquatrade"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400">
+            <label class="block font-semibold text-slate-300 mb-1">連絡ツール (WhatsApp / WeChat / LINE) *</label>
+            <input type="text" id="buyerIM" required placeholder="例: +81-90-XXXX-XXXX / LINE ID"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400">
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- Destination Airport -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
-            <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_airport">Destination Airport (IATA Code) *</label>
-            <input type="text" id="buyerAirport" required placeholder="e.g. LAX (Los Angeles) / FRA (Frankfurt) / TPE"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400 font-mono">
+            <label class="block font-semibold text-slate-300 mb-1">仕向地 到着空港コード (IATA) *</label>
+            <input type="text" id="buyerAirport" required placeholder="例: LAX, TPE, HKG, FRA, NRT, HND"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400 font-mono">
           </div>
-          <!-- Import License / CITES Reg -->
           <div>
-            <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_license">Import Permit / CITES License #</label>
-            <input type="text" id="buyerLicense" placeholder="Optional / Available on file"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400">
+            <label class="block font-semibold text-slate-300 mb-1">輸入許可証番号 / CITES番号 (任意)</label>
+            <input type="text" id="buyerLicense" placeholder="取得済みの場合入力"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400">
           </div>
         </div>
 
-        <!-- Special Packing Notes -->
         <div>
-          <label class="block font-semibold text-slate-300 mb-1" data-i18n="label_notes">Special Packing / Temperature Instructions</label>
-          <textarea id="buyerNotes" rows="2" placeholder="e.g. Heavy oxygen double-bagging required, +2 Heat packs per box."
+          <label class="block font-semibold text-slate-300 mb-1">梱包・サイズ・特記事項</label>
+          <textarea id="buyerNotes" rows="2" placeholder="例: 酸素増量二重パッキング、保冷剤2個希望 等"
             class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400"></textarea>
         </div>
 
-        <!-- Summary Review Box -->
-        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5 text-xs font-mono">
+        <div class="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 space-y-1 font-mono text-xs">
           <div class="flex justify-between text-slate-400">
-            <span>Destination Country:</span>
-            <span id="reviewCountry" class="text-white font-bold">United States</span>
+            <span>生体小計:</span>
+            <span id="reviewSubtotal" class="text-sky-400 font-bold text-sm">¥0</span>
           </div>
-          <div class="flex justify-between text-slate-400">
-            <span>Selected Currency:</span>
-            <span id="reviewCurrency" class="text-white font-bold">USD ($)</span>
-          </div>
-          <div class="flex justify-between text-slate-400">
-            <span>Specimens Subtotal:</span>
-            <span id="reviewSubtotal" class="text-sky-400 font-bold text-sm">$0.00</span>
+          <div class="flex justify-between text-slate-500 text-[11px]">
+            <span>採集リクエスト含む:</span>
+            <span id="reviewCollectStatus" class="text-amber-400 font-semibold">なし</span>
           </div>
         </div>
 
-        <!-- Submit Button -->
-        <div class="pt-3">
+        <div class="pt-2">
           <button type="submit" id="btnSubmitOrder"
-            class="w-full py-3.5 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2">
+            class="w-full py-4 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-2xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 touch-btn">
             <i class="fa-solid fa-paper-plane"></i>
-            <span data-i18n="btn_submit_order">Submit Order Request & Download PDF</span>
+            <span>見積依頼を送信 & PDFをダウンロード</span>
           </button>
         </div>
       </form>
@@ -531,294 +641,437 @@
   </div>
 
   <!-- ======================================================== -->
-  <!-- STEP 5-B: ORDER CONFIRMATION & SUCCESS SCREEN            -->
+  <!-- STEP 6: ORDER COMPLETE & SUCCESS SCREEN                  -->
   <!-- ======================================================== -->
-  <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md px-4 hidden">
-    <div class="max-w-lg w-full glass-panel rounded-2xl p-8 border border-emerald-500/40 shadow-2xl text-center">
-      <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl mx-auto mb-4">
+  <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 hidden">
+    <div class="max-w-md w-full glass-panel rounded-3xl p-6 sm:p-8 border border-emerald-500/40 shadow-2xl text-center">
+      <div class="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl mx-auto mb-3.5">
         <i class="fa-solid fa-check-double"></i>
       </div>
-      <h3 class="text-xl font-bold text-white uppercase font-mono" data-i18n="success_title">Order Request Transmitted</h3>
-      <p class="text-xs text-slate-300 mt-2 leading-relaxed" data-i18n="success_desc">
-        Your Proforma Order Request has been registered in our export management system. A formal Proforma Invoice with confirmed airfreight & CITES documentation fees will be dispatched within 24 business hours.
+      <h3 class="text-lg font-bold text-white uppercase font-mono">見積依頼を受領しました</h3>
+      <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+        川畑水産（石垣島）の輸出管理データベースに記録されました。空輸便の空席状況および正式Proforma Invoiceを24時間以内にご案内いたします。
       </p>
 
-      <div class="my-5 p-4 rounded-xl bg-slate-900 border border-slate-800 text-left space-y-1.5 text-xs font-mono">
+      <div class="my-4 p-4 rounded-2xl bg-slate-900 border border-slate-800 text-left space-y-1.5 text-xs font-mono">
         <div class="flex justify-between">
-          <span class="text-slate-400">Reference ID:</span>
-          <span id="successOrderRef" class="text-sky-400 font-bold">AQX-202610-0001</span>
+          <span class="text-slate-400">受付番号:</span>
+          <span id="successOrderRef" class="text-sky-400 font-bold">ISG-202610-001</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-slate-400">Total Specimens:</span>
-          <span id="successItemCount" class="text-white">0</span>
+          <span class="text-slate-400">生体小計:</span>
+          <span id="successSubtotal" class="text-emerald-400 font-bold">¥0</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-slate-400">Subtotal:</span>
-          <span id="successSubtotal" class="text-emerald-400 font-bold">$0.00</span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-slate-400">Destination Airport:</span>
+          <span class="text-slate-400">到着予定空港:</span>
           <span id="successAirport" class="text-white">LAX</span>
         </div>
       </div>
 
-      <div class="space-y-3">
-        <button onclick="downloadGeneratedPdfAgain()" class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-500 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-2">
+      <div class="space-y-2.5">
+        <button onclick="downloadGeneratedPdfAgain()" class="w-full py-3.5 px-4 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-2xl text-xs transition flex items-center justify-center space-x-2 touch-btn">
           <i class="fa-solid fa-file-pdf"></i>
-          <span>Re-Download Proforma Order PDF</span>
+          <span>PDFを再ダウンロード</span>
         </button>
-        <button onclick="resetAndCloseSuccess()" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-xl text-xs transition">
-          Return to Catalog
+        <button onclick="resetAndCloseSuccess()" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-2xl text-xs transition touch-btn">
+          カタログに戻る
         </button>
       </div>
     </div>
   </div>
 
   <!-- ======================================================== -->
-  <!-- JAVASCRIPT APPLICATION CORE                              -->
+  <!-- JAVASCRIPT APPLICATION LOGIC                             -->
   <!-- ======================================================== -->
   <script>
     /* --------------------------------------------------------
-       1. SECURITY & ZERO TRUST PIN LOGIC
-       - Expected PIN: 9876
-       - SHA-256 Hash of "9876": 
+       1. SECURITY & CONFIGURATION
+       - Target PIN: 9876
+       - SHA-256 of "9876": 
          dbff5341acad5e2a58db4efd5e72e2d9a0a843a28e02b1183c68162d0a3a3de6
-       - The plain text '9876' is NOT hardcoded in client logic.
-       - Rate limiting: 5 failed attempts locks portal for 15 minutes.
     -------------------------------------------------------- */
     const PIN_HASH_SHA256 = "dbff5341acad5e2a58db4efd5e72e2d9a0a843a28e02b1183c68162d0a3a3de6";
     const MAX_FAILED_ATTEMPTS = 5;
     const LOCKOUT_MINUTES = 15;
-    const AUTH_SESSION_KEY = "aqua_export_auth_token";
-    const LOCKOUT_STORAGE_KEY = "aqua_export_lockout_info_v2";
+    const AUTH_SESSION_KEY = "isg_export_auth_token";
+    const LOCKOUT_STORAGE_KEY = "isg_export_lockout_v3";
+    const LANG_STORAGE_KEY = "isg_export_lang_pref";
     const GAS_ENDPOINT_STORAGE_KEY = "aqua_export_gas_endpoint";
 
     // Application State
     let appState = {
-      lang: 'en',
+      lang: localStorage.getItem(LANG_STORAGE_KEY) || 'ja',
       country: 'USA',
-      currency: 'USD',
-      movTargetUsd: 1000,
+      currency: 'JPY', // DEFAULT: 日本円 (JPY)
+      usdRate: 160,    // 円安最高値 1の位繰上レート (例: 154円 -> 160円)
       movTargetJpy: 150000,
-      cart: [], // { product, quantity }
+      movTargetUsd: 1000,
+      cart: [], // { product, quantity, isCollectionRequest }
       currentCategory: 'ALL',
       searchQuery: '',
       catalog: [],
+      pendingCollectionProduct: null,
       lastGeneratedOrder: null,
       gasEndpoint: localStorage.getItem(GAS_ENDPOINT_STORAGE_KEY) || ""
     };
 
     /* --------------------------------------------------------
-       2. MULTI-LANGUAGE DICTIONARY (EN, ZH-TW, ZH-CN)
+       2. ISHIGAKIJIMA NATIVE SPECIMENS (6 CATEGORIES)
+       - 魚, 貝, シャコガイ, イソギンチャク, サンゴ, その他
+       - Matches spreadsheet: 1ZiNel8TGJ-e7JMolkRagVOSnr1UczvQzpTa-F-s4p3o
     -------------------------------------------------------- */
-    const I18N_DICTIONARY = {
-      'en': {
-        auth_subtitle: 'Authorized Aquarium Wholesalers & Commercial Buyers Only',
-        enter_pin: 'Enter 4-Digit Access PIN',
-        mov_label: 'Wholesale MOV:',
-        hero_badge: 'DIRECT EXPORT FROM JAPAN & ASIA PACIFIC',
-        hero_title: 'Commercial Specimen Catalog',
-        hero_desc: 'Direct export catalog for licensed importers, wholesale distributors, and public aquariums. All specimens are quarantined and pre-screened prior to export health certification.',
-        proforma_cart_title: 'Proforma Order Cart',
-        mov_requirement: 'Wholesale MOV Threshold',
-        specimen_subtotal: 'Specimen Subtotal:',
-        freight_notice: 'Freight, Box & CITES:',
-        quoted_separately: 'Quoted on Official PI',
-        proceed_checkout_btn: 'Proceed to Legal Clearance',
-        legal_modal_title: 'International Trade & CITES Compliance',
-        legal_modal_subtitle: 'Mandatory acknowledgement required prior to Proforma Request generation.',
-        order_form_title: 'Proforma Order Request',
-        order_form_desc: 'Commercial Consignee & Shipping Specifications',
-        label_company: 'Company / Facility Name *',
-        label_contact: 'Authorized Contact Person *',
-        label_email: 'Corporate Email *',
-        label_im: 'WhatsApp / WeChat / Telegram ID *',
-        label_airport: 'Destination Airport (IATA Code) *',
-        label_license: 'Import Permit / CITES License #',
-        label_notes: 'Special Packing / Temperature Instructions',
-        btn_submit_order: 'Submit Order Request & Download PDF',
-        success_title: 'Order Request Transmitted',
-        success_desc: 'Your Proforma Order Request has been registered in our export management system. A formal Proforma Invoice with confirmed airfreight & CITES documentation fees will be dispatched within 24 business hours.'
-      },
-      'zh-TW': {
-        auth_subtitle: '僅供授權水族批發商及合法商業買家使用',
-        enter_pin: '請輸入 4 位數驗證 PIN 碼',
-        mov_label: '最低起訂額 (MOV):',
-        hero_badge: '日本及亞太地區原產地直航出口',
-        hero_title: '商業活體批發目錄',
-        hero_desc: '專為國際進口商、批發經銷商與水族館設計之直航目錄。所有活體出口前皆經過專業檢疫及獸醫健康檢驗。',
-        proforma_cart_title: '形式發票採購清單',
-        mov_requirement: '批發最低訂單金額限制',
-        specimen_subtotal: '活體商品小計:',
-        freight_notice: '國際空運、保溫箱與CITES費用:',
-        quoted_separately: '將於正式發票另行報價',
-        proceed_checkout_btn: '進入法律與檢疫免責確認',
-        legal_modal_title: '國際貿易及 CITES 條約合規聲明',
-        legal_modal_subtitle: '生成形式發票訂單前，必須確認並同意以下全部條款。',
-        order_form_title: '形式訂單申請表 (Proforma Request)',
-        order_form_desc: '請填寫商業收貨人及航廈資訊',
-        label_company: '公司 / 水族店名稱 *',
-        label_contact: '負責採購人姓名 *',
-        label_email: '公司業務 Email *',
-        label_im: 'WhatsApp / 微信 / Telegram 帳號 *',
-        label_airport: '到達航廈機場 (三字碼 IATA) *',
-        label_license: '進口許可證號 / CITES 配額編號',
-        label_notes: '特殊包裝 / 充氧 / 加熱要求',
-        btn_submit_order: '提交採購申請並下載 PDF 發票',
-        success_title: '採購申請已成功送出',
-        success_desc: '您的形式發票訂單已登錄至出口管理系統。確認國際空運艙位及 CITES 規費後，我們將於 24 小時內發送正式發票。'
-      },
-      'zh-CN': {
-        auth_subtitle: '仅供授权水族批发商及合法商业买家使用',
-        enter_pin: '请输入 4 位数验证 PIN 码',
-        mov_label: '最低起订额 (MOV):',
-        hero_badge: '日本及亚太原产地直航出口',
-        hero_title: '商业活体批发目录',
-        hero_desc: '专为国际进口商、批发分销商与水族馆设计的直航目录。所有活体出口前均经过严格检疫及官方健康检测。',
-        proforma_cart_title: '形式发票采购清单',
-        mov_requirement: '批发最低订单金额门槛',
-        specimen_subtotal: '活体商品小计:',
-        freight_notice: '国际空运、保温箱与CITES费用:',
-        quoted_separately: '将于正式发票单独核算',
-        proceed_checkout_btn: '进入法律与检疫免责确认',
-        legal_modal_title: '国际贸易及 CITES 条约合规声明',
-        legal_modal_subtitle: '生成形式发票订单前，必须确认并同意以下全部条款。',
-        order_form_title: '形式订单申请表 (Proforma Request)',
-        order_form_desc: '请填写商业收件人及抵港机场信息',
-        label_company: '公司 / 养殖场名称 *',
-        label_contact: '采购负责人姓名 *',
-        label_email: '公司业务 Email *',
-        label_im: 'WhatsApp / 微信 / Telegram 账号 *',
-        label_airport: '目的机场 (IATA 三字代码) *',
-        label_license: '进口许可证号 / CITES 编号',
-        label_notes: '特殊包装 / 充氧 / 保温指示',
-        btn_submit_order: '提交采购申请并下载 PDF 发票',
-        success_title: '采购申请已成功提交',
-        success_desc: '您的形式发票订单已录入出口管理系统。核定国际空运航班舱位及 CITES 规费后，我们将在 24 小时内发出正式形式发票。'
-      }
-    };
-
-    /* --------------------------------------------------------
-       3. DEFAULT COMMERCIAL CATALOG (OFFLINE / BACKUP SAFE DATA)
-       - Contains only public export fields.
-       - No cost, no supplier, no domestic customer notes.
-    -------------------------------------------------------- */
-    const DEFAULT_CATALOG = [
+    const ISHIGAKI_DEFAULT_CATALOG = [
+      // 魚 (Fish)
       {
-        id: 'AQX-0101',
-        name_en: 'Wild Royal Blue Discus',
-        scientific_name: 'Symphysodon aequifasciatus',
-        category: 'DISCUS',
-        size: '14-16 cm (5.5-6.3")',
-        origin: 'Rio Nhamunda, Brazil',
-        cites_status: 'Non-CITES',
-        moq: 2,
-        price_usd: 195.00,
-        price_jpy: 29000,
+        id: 'ISG-F01',
+        name: 'カクレクマノミ (ペア)',
+        name_en: 'Ocellaris Clownfish (Mated Pair)',
+        scientific_name: 'Amphiprion ocellaris',
+        category: '魚',
+        size: '4.5-6.5 cm',
+        stock: 12,
+        price_jpy: 3800,
+        cites: 'Non-CITES',
         image_url: 'https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80'
       },
       {
-        id: 'AQX-0102',
-        name_en: 'Wild Heckel Discus (Blue Moon)',
-        scientific_name: 'Symphysodon discus',
-        category: 'DISCUS',
-        size: '12-14 cm (4.7-5.5")',
-        origin: 'Rio Negro, Brazil',
-        cites_status: 'Non-CITES',
-        moq: 2,
-        price_usd: 240.00,
-        price_jpy: 36000,
-        image_url: 'https://images.unsplash.com/photo-1535591273668-581379f87259?auto=format&fit=crop&w=600&q=80'
-      },
-      {
-        id: 'AQX-0201',
-        name_en: 'Zebra Pleco (L-046)',
-        scientific_name: 'Hypancistrus zebra',
-        category: 'PLECO',
-        size: '5.0-6.0 cm (2.0-2.4")',
-        origin: 'Captive Bred (F2), Japan',
-        cites_status: 'CITES App. III',
-        moq: 3,
-        price_usd: 280.00,
-        price_jpy: 42000,
-        image_url: 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&w=600&q=80'
-      },
-      {
-        id: 'AQX-0202',
-        name_en: 'Scarlet Pleco (L-025 Special 7-Ray)',
-        scientific_name: 'Pseudacanthicus pirarara',
-        category: 'PLECO',
-        size: '22-25 cm (8.7-9.8")',
-        origin: 'Rio Xingu, Brazil',
-        cites_status: 'Non-CITES',
-        moq: 1,
-        price_usd: 580.00,
-        price_jpy: 87000,
-        image_url: 'https://images.unsplash.com/photo-1576806021995-9f68eb39f1ac?auto=format&fit=crop&w=600&q=80'
-      },
-      {
-        id: 'AQX-0301',
-        name_en: 'Super Red Asian Arowana (Certificate Included)',
-        scientific_name: 'Scleropages formosus',
-        category: 'AROWANA',
-        size: '18-20 cm (7.0-8.0")',
-        origin: 'Registered CITES Farm, Indonesia',
-        cites_status: 'CITES App. I (Permit Mandatory)',
-        moq: 1,
-        price_usd: 1250.00,
-        price_jpy: 185000,
-        image_url: 'https://images.unsplash.com/photo-1520315342629-6ea920342047?auto=format&fit=crop&w=600&q=80'
-      },
-      {
-        id: 'AQX-0401',
-        name_en: 'Clarion Angelfish (Rare Captive Propagated)',
-        scientific_name: 'Holacanthus clarionensis',
-        category: 'MARINE',
-        size: '7.5-9.0 cm (3.0-3.5")',
-        origin: 'Okinawa Hatchery, Japan',
-        cites_status: 'CITES App. II',
-        moq: 1,
-        price_usd: 2950.00,
-        price_jpy: 440000,
+        id: 'ISG-F02',
+        name: 'サザナミヤッコ (成魚)',
+        name_en: 'Semicircle Angelfish (Adult)',
+        scientific_name: 'Pomacanthus semicirculatus',
+        category: '魚',
+        size: '16-20 cm',
+        stock: 3,
+        price_jpy: 11000,
+        cites: 'Non-CITES',
         image_url: 'https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=600&q=80'
       },
       {
-        id: 'AQX-0402',
-        name_en: 'Ultra Grade Japanese Scolymia Coral',
-        scientific_name: 'Homophyllia australis',
-        category: 'MARINE',
-        size: '6-8 cm diameter',
-        origin: 'Ryukyu Archipelago, Japan',
-        cites_status: 'CITES App. II (Coral Permit)',
-        moq: 2,
-        price_usd: 320.00,
-        price_jpy: 48000,
+        id: 'ISG-F03',
+        name: 'ハタタテダイ (良個体)',
+        name_en: 'Longfin Bannerfish',
+        scientific_name: 'Heniochus acuminatus',
+        category: '魚',
+        size: '9-12 cm',
+        stock: 6,
+        price_jpy: 4500,
+        cites: 'Non-CITES',
+        image_url: 'https://images.unsplash.com/photo-1535591273668-581379f87259?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'ISG-F04',
+        name: 'デバスズメダイ (5匹セット)',
+        name_en: 'Blue Green Chromis (Set of 5)',
+        scientific_name: 'Chromis viridis',
+        category: '魚',
+        size: '3.5-5.0 cm',
+        stock: 25,
+        price_jpy: 1800,
+        cites: 'Non-CITES',
+        image_url: 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&w=600&q=80'
+      },
+
+      // 貝 (Shells)
+      {
+        id: 'ISG-S01',
+        name: 'マガキガイ (コケ掃除用・5個)',
+        name_en: 'Strawberry Conch (Trio Pack)',
+        scientific_name: 'Strombus luhuanus',
+        category: '貝',
+        size: '4.0-5.5 cm',
+        stock: 40,
+        price_jpy: 1200,
+        cites: 'Non-CITES',
         image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80'
       },
       {
-        id: 'AQX-0501',
-        name_en: 'Bucephalandra sp. "Godzilla" Submerged Mother Clump',
-        scientific_name: 'Bucephalandra sp.',
-        category: 'PLANT',
-        size: 'Large Clump (15+ Rhizomes)',
-        origin: 'Borneo / Cultivated',
-        cites_status: 'Phytosanitary Cert Included',
-        moq: 5,
-        price_usd: 85.00,
-        price_jpy: 12500,
+        id: 'ISG-S02',
+        name: 'タカセガイ (シッタカ特大)',
+        name_en: 'Giant Trochus Shell',
+        scientific_name: 'Trochus niloticus',
+        category: '貝',
+        size: '7.0-9.0 cm',
+        stock: 15,
+        price_jpy: 2200,
+        cites: 'Non-CITES',
         image_url: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80'
+      },
+
+      // シャコガイ (Giant Clams)
+      {
+        id: 'ISG-C01',
+        name: 'ヒメジャコガイ (メタリックブルー)',
+        name_en: 'Crocea Clam (Ultra Metallic Blue)',
+        scientific_name: 'Tridacna crocea',
+        category: 'シャコガイ',
+        size: '6.0-8.0 cm',
+        stock: 5,
+        price_jpy: 7800,
+        cites: 'CITES App. II',
+        image_url: 'https://images.unsplash.com/photo-1520315342629-6ea920342047?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'ISG-C02',
+        name: 'シラナミガイ (グリーンゴールド柄)',
+        name_en: 'Maxima Clam (Green-Gold Pattern)',
+        scientific_name: 'Tridacna maxima',
+        category: 'シャコガイ',
+        size: '10-12 cm',
+        stock: 3,
+        price_jpy: 9500,
+        cites: 'CITES App. II',
+        image_url: 'https://images.unsplash.com/photo-1576806021995-9f68eb39f1ac?auto=format&fit=crop&w=600&q=80'
+      },
+
+      // イソギンチャク (Sea Anemones)
+      {
+        id: 'ISG-A01',
+        name: 'ハタゴイソギンチャク (石垣産・特大)',
+        name_en: 'Carpet Anemone (Ishigaki Specimen)',
+        scientific_name: 'Stichodactyla gigantea',
+        category: 'イソギンチャク',
+        size: '20-25 cm 開放時',
+        stock: 4,
+        price_jpy: 8900,
+        cites: 'Non-CITES',
+        image_url: 'https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'ISG-A02',
+        name: 'サンゴイソギンチャク (レッドチップ)',
+        name_en: 'Bubble Tip Anemone (Red Tip)',
+        scientific_name: 'Entacmaea quadricolor',
+        category: 'イソギンチャク',
+        size: '12-15 cm',
+        stock: 8,
+        price_jpy: 4800,
+        cites: 'Non-CITES',
+        image_url: 'https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=600&q=80'
+      },
+
+      // サンゴ (Corals)
+      {
+        id: 'ISG-K01',
+        name: 'オキナワミドリイシ (養殖活着ブリード)',
+        name_en: 'Acropora Branching Coral (Fragment)',
+        scientific_name: 'Acropora sp.',
+        category: 'サンゴ',
+        size: '8-10 cm',
+        stock: 6,
+        price_jpy: 14000,
+        cites: 'CITES App. II',
+        image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'ISG-K02',
+        name: 'クサビライシ (オレンジマルチカラー)',
+        name_en: 'Plate Coral (Orange Multicolor)',
+        scientific_name: 'Fungia sp.',
+        category: 'サンゴ',
+        size: '7-9 cm 直径',
+        stock: 4,
+        price_jpy: 8200,
+        cites: 'CITES App. II',
+        image_url: 'https://images.unsplash.com/photo-1520315342629-6ea920342047?auto=format&fit=crop&w=600&q=80'
+      },
+
+      // その他 (Others)
+      {
+        id: 'ISG-O01',
+        name: 'スベスベサンゴヤドカリ (3匹)',
+        name_en: 'Blue-Eyed Hermit Crab (Trio)',
+        scientific_name: 'Calcinus tubularis',
+        category: 'その他',
+        size: '2.0-3.0 cm',
+        stock: 18,
+        price_jpy: 1500,
+        cites: 'Non-CITES',
+        image_url: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: 'ISG-O02',
+        name: 'コブヒトデ (大型)',
+        name_en: 'Chocolate Chip Sea Star',
+        scientific_name: 'Protoreaster nodosus',
+        category: 'その他',
+        size: '12-15 cm',
+        stock: 10,
+        price_jpy: 2200,
+        cites: 'Non-CITES',
+        image_url: 'https://images.unsplash.com/photo-1535591273668-581379f87259?auto=format&fit=crop&w=600&q=80'
       }
     ];
 
     /* --------------------------------------------------------
-       4. SECURITY & CRYPTO HELPERS (SHA-256)
+       3. MULTI-LANGUAGE DICTIONARIES
+    -------------------------------------------------------- */
+    const I18N = {
+      'ja': {
+        nav_lang: '日本語',
+        auth_title: 'B2B 認証ゲートウェイ',
+        auth_subtitle: '正規水族館・卸売業者・合法商業バイヤー専用ポータル',
+        enter_pin: '4桁のアクセスPINを入力してください',
+        btn_auth: '認証してカタログを開く',
+        cart: 'カート',
+        mov_short: '最低注文額(MOV):',
+        hero_badge: '沖縄・八重山諸島 天然海水生体 直送',
+        hero_title: '石垣島生体 在庫・採集リクエストカタログ',
+        hero_desc: '現在の生簀在庫からの即時引当、および在庫以上の数量は現地ダイバーによる「採集リクエスト」として承ります。',
+        in_stock: '生簀在庫:',
+        unit_price: '単価',
+        btn_add: 'カートに追加',
+        collect_modal_title: '採集リクエスト（捕獲手配）のご案内',
+        cart_title: '受発注リクエストカート',
+        mov_title: '最低注文金額 (MOV)',
+        specimen_subtotal: '生体合計金額:',
+        btn_proceed_clearance: '法的免責・配送先入力へ進む',
+        view_cart: 'カート確認'
+      },
+      'en': {
+        nav_lang: 'English',
+        auth_title: 'B2B Authentication Gateway',
+        auth_subtitle: 'Authorized Wholesalers & Commercial Marine Importers Only',
+        enter_pin: 'Enter 4-Digit Access PIN',
+        btn_auth: 'Authenticate & Access Catalog',
+        cart: 'Cart',
+        mov_short: 'Minimum Order (MOV):',
+        hero_badge: 'DIRECT EXPORT FROM ISHIGAKI ISLAND, JAPAN',
+        hero_title: 'Marine Specimen & Collection Catalog',
+        hero_desc: 'Direct allocation from holding tanks. Quantities exceeding stock are accepted as diver Collection Requests.',
+        in_stock: 'In Stock:',
+        unit_price: 'Price',
+        btn_add: 'Add to Cart',
+        collect_modal_title: 'Collection Request Notice',
+        cart_title: 'Proforma Request Cart',
+        mov_title: 'Minimum Order Value (MOV)',
+        specimen_subtotal: 'Specimens Subtotal:',
+        btn_proceed_clearance: 'Proceed to Legal Clearance',
+        view_cart: 'View Cart'
+      },
+      'zh-TW': {
+        nav_lang: '繁體中文',
+        auth_title: 'B2B 批發採購驗證',
+        auth_subtitle: '僅供合法水族館、批發進口商及商業買家使用',
+        enter_pin: '請輸入 4 位數驗證 PIN 碼',
+        btn_auth: '驗證並進入批發目錄',
+        cart: '購物車',
+        mov_short: '最低起訂額 (MOV):',
+        hero_badge: '日本沖繩石垣島 八重山天然活體直送',
+        hero_title: '石垣島海水活體 現貨與採集目錄',
+        hero_desc: '提供目前蓄養池現貨快速配額。超出庫存數量可作為潛水員「採集申請」進行預約捕撈。',
+        in_stock: '現貨庫存:',
+        unit_price: '批發單價',
+        btn_add: '加入採購單',
+        collect_modal_title: '活體採集申請（海捕預約）說明',
+        cart_title: '形式發票採購清單',
+        mov_title: '最低訂單起訂額門檻',
+        specimen_subtotal: '活體商品小計:',
+        btn_proceed_clearance: '進入法律聲明與地址填寫',
+        view_cart: '查看採購清單'
+      },
+      'zh-CN': {
+        nav_lang: '简体中文',
+        auth_title: 'B2B 批发采购验证',
+        auth_subtitle: '仅供合法水族馆、商业批发商使用',
+        enter_pin: '请输入 4 位数验证 PIN 码',
+        btn_auth: '验证并进入采购目录',
+        cart: '采购车',
+        mov_short: '最低起订额 (MOV):',
+        hero_badge: '日本冲绳石垣岛 八重山天然活体直航',
+        hero_title: '石垣岛海水活体 现货与采集目录',
+        hero_desc: '提供暂养池现货即时配额。超出库存之数量自动转为专业潜水员“采集申请”进行捕捞排期。',
+        in_stock: '暂养现货:',
+        unit_price: '批发单价',
+        btn_add: '加入采购单',
+        collect_modal_title: '活体采集申请（海捕预约）说明',
+        cart_title: '形式发票采购清单',
+        mov_title: '最低订单起订门槛',
+        specimen_subtotal: '活体商品小计:',
+        btn_proceed_clearance: '进入法律声明与信息填写',
+        view_cart: '查看采购清单'
+      }
+    };
+
+    /* --------------------------------------------------------
+       4. LANGUAGE SELECTION HANDLING
+    -------------------------------------------------------- */
+    function selectInitialLang(langKey) {
+      appState.lang = langKey;
+      localStorage.setItem(LANG_STORAGE_KEY, langKey);
+      applyLanguage(langKey);
+      document.getElementById('firstLangModal').classList.add('hidden');
+
+      // Check if already authenticated
+      const token = sessionStorage.getItem(AUTH_SESSION_KEY);
+      if (token) {
+        grantAccess();
+      } else {
+        document.getElementById('authOverlay').classList.remove('hidden');
+        focusFirstPin();
+      }
+    }
+
+    function openLanguageModal() {
+      document.getElementById('firstLangModal').classList.remove('hidden');
+    }
+
+    function applyLanguage(langKey) {
+      const dict = I18N[langKey] || I18N['ja'];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (dict[k]) el.textContent = dict[k];
+      });
+
+      document.getElementById('currentLangTag').textContent = dict.nav_lang;
+      document.getElementById('navLangTag').textContent = dict.nav_lang;
+    }
+
+    /* --------------------------------------------------------
+       5. CURRENCY & ROUND-UP EXCHANGE RATE
+       - Default: JPY (日本円)
+       - USD Rate: 1 USD = 160 JPY (当日の為替リスク調整・1の位繰上レート)
+    -------------------------------------------------------- */
+    function setCurrency(curr) {
+      appState.currency = curr;
+      const btnJPY = document.getElementById('currBtnJPY');
+      const btnUSD = document.getElementById('currBtnUSD');
+
+      if (curr === 'JPY') {
+        btnJPY.className = "px-3 py-1 rounded-lg font-bold bg-sky-500 text-white transition";
+        btnUSD.className = "px-3 py-1 rounded-lg text-slate-400 hover:text-white transition";
+      } else {
+        btnUSD.className = "px-3 py-1 rounded-lg font-bold bg-sky-500 text-white transition";
+        btnJPY.className = "px-3 py-1 rounded-lg text-slate-400 hover:text-white transition";
+      }
+
+      renderProducts();
+      updateCartUI();
+    }
+
+    function formatPrice(jpyPrice) {
+      if (appState.currency === 'JPY') {
+        return `¥${Number(jpyPrice).toLocaleString()}`;
+      } else {
+        const usd = (jpyPrice / appState.usdRate).toFixed(2);
+        return `$${usd} USD`;
+      }
+    }
+
+    /* --------------------------------------------------------
+       6. SECURITY CRYPTO & PIN AUTHENTICATION
     -------------------------------------------------------- */
     async function sha256(message) {
       const msgBuffer = new TextEncoder().encode(message);
       const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      return hashHex;
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function focusFirstPin() {
+      setTimeout(() => {
+        const first = document.querySelector('.pin-digit');
+        if (first) first.focus();
+      }, 100);
     }
 
     function checkLockoutStatus() {
@@ -827,11 +1080,10 @@
       try {
         const info = JSON.parse(lockoutRaw);
         if (info.lockedUntil && Date.now() < info.lockedUntil) {
-          const remainingSec = Math.ceil((info.lockedUntil - Date.now()) / 1000);
-          showLockoutUI(remainingSec);
+          const remSec = Math.ceil((info.lockedUntil - Date.now()) / 1000);
+          showLockoutUI(remSec);
           return true;
         } else if (info.lockedUntil && Date.now() >= info.lockedUntil) {
-          // Lockout expired, reset attempts
           localStorage.removeItem(LOCKOUT_STORAGE_KEY);
           hideLockoutUI();
           return false;
@@ -842,32 +1094,32 @@
       return false;
     }
 
-    let lockoutIntervalTimer = null;
-    function showLockoutUI(remainingSec) {
+    let lockoutTimer = null;
+    function showLockoutUI(sec) {
       const alertBox = document.getElementById('lockoutAlert');
       const timerText = document.getElementById('lockoutTimerText');
-      const btnVerify = document.getElementById('btnVerifyPin');
+      const btn = document.getElementById('btnVerifyPin');
       alertBox.classList.remove('hidden');
-      btnVerify.disabled = true;
+      btn.disabled = true;
 
-      clearInterval(lockoutIntervalTimer);
-      let sec = remainingSec;
-      lockoutIntervalTimer = setInterval(() => {
-        sec--;
-        if (sec <= 0) {
-          clearInterval(lockoutIntervalTimer);
+      clearInterval(lockoutTimer);
+      let s = sec;
+      lockoutTimer = setInterval(() => {
+        s--;
+        if (s <= 0) {
+          clearInterval(lockoutTimer);
           localStorage.removeItem(LOCKOUT_STORAGE_KEY);
           hideLockoutUI();
           return;
         }
-        const m = Math.floor(sec / 60).toString().padStart(2, '0');
-        const s = (sec % 60).toString().padStart(2, '0');
-        timerText.textContent = `Too many failed attempts. Try again in ${m}:${s}.`;
+        const m = Math.floor(s / 60).toString().padStart(2, '0');
+        const sc = (s % 60).toString().padStart(2, '0');
+        timerText.textContent = `試行回数超過。ロック解除まで ${m}:${sc}`;
       }, 1000);
     }
 
     function hideLockoutUI() {
-      clearInterval(lockoutIntervalTimer);
+      clearInterval(lockoutTimer);
       document.getElementById('lockoutAlert').classList.add('hidden');
       document.getElementById('btnVerifyPin').disabled = false;
       document.getElementById('pinErrorMessage').textContent = '';
@@ -875,32 +1127,25 @@
 
     function registerFailedAttempt() {
       let info = { attempts: 0, lockedUntil: null };
-      const existing = localStorage.getItem(LOCKOUT_STORAGE_KEY);
-      if (existing) {
-        try { info = JSON.parse(existing); } catch(e){}
-      }
+      const ex = localStorage.getItem(LOCKOUT_STORAGE_KEY);
+      if (ex) { try { info = JSON.parse(ex); } catch(e){} }
       info.attempts = (info.attempts || 0) + 1;
+
       if (info.attempts >= MAX_FAILED_ATTEMPTS) {
         info.lockedUntil = Date.now() + (LOCKOUT_MINUTES * 60 * 1000);
         localStorage.setItem(LOCKOUT_STORAGE_KEY, JSON.stringify(info));
         showLockoutUI(LOCKOUT_MINUTES * 60);
       } else {
         localStorage.setItem(LOCKOUT_STORAGE_KEY, JSON.stringify(info));
-        const remaining = MAX_FAILED_ATTEMPTS - info.attempts;
-        document.getElementById('pinErrorMessage').textContent = `Invalid access PIN. ${remaining} attempts remaining before 15m lockout.`;
+        const rem = MAX_FAILED_ATTEMPTS - info.attempts;
+        document.getElementById('pinErrorMessage').textContent = `PINコードが違います。残り ${rem} 回で15分間ロックされます。`;
       }
     }
 
-    function resetFailedAttempts() {
-      localStorage.removeItem(LOCKOUT_STORAGE_KEY);
-    }
-
-    /* --------------------------------------------------------
-       5. PIN INPUT HANDLING & VERIFICATION
-    -------------------------------------------------------- */
     function setupPinInputs() {
       // Clear legacy lockout key if present
       localStorage.removeItem("aqua_export_lockout_info");
+      localStorage.removeItem("aqua_export_lockout_info_v2");
 
       const inputs = document.querySelectorAll('.pin-digit');
       inputs.forEach((input, index) => {
@@ -947,7 +1192,7 @@
       inputs.forEach(inp => enteredPin += inp.value);
 
       if (enteredPin.length !== 4) {
-        document.getElementById('pinErrorMessage').textContent = 'Please enter all 4 digits.';
+        document.getElementById('pinErrorMessage').textContent = '4桁すべて入力してください。';
         return;
       }
 
@@ -955,17 +1200,17 @@
       if (appState.gasEndpoint) {
         try {
           const btn = document.getElementById('btnVerifyPin');
-          btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying with Server...';
+          btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> サーバー検証中...';
           btn.disabled = true;
 
           const res = await fetch(`${appState.gasEndpoint}?action=verifyPin&pin=${encodeURIComponent(enteredPin)}`);
           const data = await res.json();
-          btn.innerHTML = '<span>Authenticate & Access Catalog</span><i class="fa-solid fa-arrow-right text-xs"></i>';
+          btn.innerHTML = '<span data-i18n="btn_auth">認証してカタログを開く</span><i class="fa-solid fa-arrow-right text-xs"></i>';
           btn.disabled = false;
 
           if (data && data.success) {
-            resetFailedAttempts();
-            sessionStorage.setItem(AUTH_SESSION_KEY, data.token || "SESSION_TOKEN_AUTHENTICATED");
+            localStorage.removeItem(LOCKOUT_STORAGE_KEY);
+            sessionStorage.setItem(AUTH_SESSION_KEY, data.token || "VALID_SESSION");
             grantAccess();
             return;
           } else {
@@ -975,14 +1220,14 @@
             return;
           }
         } catch (err) {
-          console.warn("GAS verification failed or offline, falling back to secure hash comparison:", err);
+          console.warn("GAS verification offline/fallback:", err);
         }
       }
 
-      // Zero-Trust Client Hash Comparison (9876 is never plaintext in source)
+      // Zero-Trust Client Hash Comparison (SHA-256 for 9876)
       const enteredHash = await sha256(enteredPin);
       if (enteredHash === PIN_HASH_SHA256) {
-        resetFailedAttempts();
+        localStorage.removeItem(LOCKOUT_STORAGE_KEY);
         sessionStorage.setItem(AUTH_SESSION_KEY, "VALID_SESSION_" + Date.now());
         grantAccess();
       } else {
@@ -994,19 +1239,14 @@
 
     function grantAccess() {
       document.getElementById('authOverlay').classList.add('hidden');
-      const mainApp = document.getElementById('mainApp');
-      mainApp.classList.remove('opacity-0');
-      mainApp.classList.add('opacity-100');
+      const main = document.getElementById('mainApp');
+      main.classList.remove('opacity-0');
+      main.classList.add('opacity-100');
       loadCatalog();
     }
 
-    function handleLogout() {
-      sessionStorage.removeItem(AUTH_SESSION_KEY);
-      location.reload();
-    }
-
     /* --------------------------------------------------------
-       6. CATALOG LOADING (GAS BFF or STANDALONE SAFE FALLBACK)
+       7. CATALOG LOADING (GAS BFF or ISHIGAKI NATIVE FALLBACK)
     -------------------------------------------------------- */
     async function loadCatalog() {
       const loading = document.getElementById('catalogLoading');
@@ -1015,144 +1255,149 @@
       if (appState.gasEndpoint) {
         try {
           const token = sessionStorage.getItem(AUTH_SESSION_KEY) || "";
-          const response = await fetch(`${appState.gasEndpoint}?action=fetchOverseasCatalog&token=${encodeURIComponent(token)}`);
-          const data = await response.json();
+          const res = await fetch(`${appState.gasEndpoint}?action=fetchOverseasCatalog&token=${encodeURIComponent(token)}`);
+          const data = await res.json();
           if (data && data.success && Array.isArray(data.catalog) && data.catalog.length > 0) {
             appState.catalog = data.catalog;
-            updateEndpointStatus(true);
             renderProducts();
             loading.classList.add('hidden');
             return;
           }
-        } catch (error) {
-          console.warn("Could not fetch remote catalog from GAS. Using pre-loaded export inventory:", error);
-          updateEndpointStatus(false);
+        } catch (err) {
+          console.warn("GAS catalog fetch error, using Ishigakijima native catalog:", err);
         }
       }
 
-      // Fallback to sanitized default catalog
-      appState.catalog = [...DEFAULT_CATALOG];
-      updateEndpointStatus(false);
+      // Fallback to Ishigakijima 6-category catalog
+      appState.catalog = [...ISHIGAKI_DEFAULT_CATALOG];
       renderProducts();
       loading.classList.add('hidden');
     }
 
-    function updateEndpointStatus(isOnline) {
-      const statusEl = document.getElementById('endpointStatus');
-      if (isOnline) {
-        statusEl.className = "text-emerald-400 font-medium";
-        statusEl.textContent = "GAS Web App: Connected (Live)";
-      } else {
-        statusEl.className = "text-amber-400 font-medium";
-        statusEl.textContent = appState.gasEndpoint ? "GAS Offline (Using Default Catalog)" : "Standalone Demo Mode";
-      }
-    }
-
     /* --------------------------------------------------------
-       7. PRODUCT RENDERING & CATEGORY / SEARCH FILTERS
+       8. PRODUCT RENDERING WITH IN-STOCK BADGE & QUANTITY STEPPER
     -------------------------------------------------------- */
     function renderProducts() {
-      const container = document.getElementById('productGrid');
-      const emptyState = document.getElementById('catalogEmpty');
-      container.innerHTML = '';
+      const grid = document.getElementById('productGrid');
+      const empty = document.getElementById('catalogEmpty');
+      grid.innerHTML = '';
 
-      let filtered = appState.catalog.filter(item => {
-        // Category check
-        const matchCat = (appState.currentCategory === 'ALL' || item.category === appState.currentCategory);
-        // Search query check
+      let filtered = appState.catalog.filter(p => {
+        const matchCat = (appState.currentCategory === 'ALL' || p.category === appState.currentCategory);
         const q = appState.searchQuery.toLowerCase();
         const matchSearch = !q || 
-          item.name_en.toLowerCase().includes(q) || 
-          item.scientific_name.toLowerCase().includes(q) || 
-          item.id.toLowerCase().includes(q) ||
-          item.origin.toLowerCase().includes(q);
+          p.name.toLowerCase().includes(q) || 
+          (p.name_en && p.name_en.toLowerCase().includes(q)) || 
+          (p.scientific_name && p.scientific_name.toLowerCase().includes(q)) ||
+          p.id.toLowerCase().includes(q);
         return matchCat && matchSearch;
       });
 
       if (filtered.length === 0) {
-        emptyState.classList.remove('hidden');
+        empty.classList.remove('hidden');
         return;
       } else {
-        emptyState.classList.add('hidden');
+        empty.classList.add('hidden');
       }
 
-      filtered.forEach(product => {
-        const price = appState.currency === 'USD' ? `$${product.price_usd.toFixed(2)}` : `¥${product.price_jpy.toLocaleString()}`;
-        const isCites = product.cites_status.includes('CITES');
+      filtered.forEach(p => {
+        const isCites = (p.cites && p.cites.includes('CITES'));
+        const priceFormatted = formatPrice(p.price_jpy);
+        
+        // Find if already in cart to reflect current count
+        const cartItem = appState.cart.find(c => c.product.id === p.id);
+        const inCartQty = cartItem ? cartItem.quantity : 0;
 
         const card = document.createElement('div');
-        card.className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-700 transition flex flex-col group";
+        card.className = "bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-slate-700 transition flex flex-col group shadow-lg";
 
         card.innerHTML = `
-          <!-- Image Container -->
-          <div class="relative h-48 bg-slate-950 overflow-hidden">
-            <img src="${product.image_url}" alt="${product.name_en}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <!-- Image -->
+          <div class="relative h-44 sm:h-48 bg-slate-950 overflow-hidden">
+            <img src="${p.image_url}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
             
-            <!-- Category & CITES Tags -->
-            <div class="absolute top-3 left-3 flex flex-col gap-1">
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-slate-950/80 text-sky-400 border border-slate-700">
-                ${product.category}
+            <!-- Badges -->
+            <div class="absolute top-2.5 left-2.5 flex flex-wrap gap-1">
+              <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-slate-950/80 text-sky-400 border border-slate-700">
+                ${p.category}
               </span>
               ${isCites ? `
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-amber-950/80 text-amber-300 border border-amber-800">
-                  <i class="fa-solid fa-scroll mr-1"></i>${product.cites_status}
+                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-amber-950/90 text-amber-300 border border-amber-800">
+                  <i class="fa-solid fa-scroll mr-0.5"></i>${p.cites}
+                </span>
+              ` : ''}
+            </div>
+
+            <!-- In-Stock Badge -->
+            <div class="absolute top-2.5 right-2.5">
+              ${p.stock > 0 ? `
+                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-950/90 text-emerald-300 border border-emerald-800 flex items-center space-x-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  <span>生簀在庫: <strong>${p.stock}</strong> 匹</span>
                 </span>
               ` : `
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-slate-950/80 text-slate-400 border border-slate-800">
-                  ${product.cites_status}
+                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-amber-950/90 text-amber-300 border border-amber-800">
+                  採集リクエスト受付
                 </span>
               `}
             </div>
-
-            <!-- Item Code -->
-            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-mono bg-slate-950/80 text-slate-400 border border-slate-800">
-              ${product.id}
-            </span>
           </div>
 
           <!-- Body -->
-          <div class="p-5 flex-1 flex flex-col justify-between">
+          <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between">
             <div>
-              <h3 class="font-bold text-sm text-white group-hover:text-sky-400 transition leading-snug">${product.name_en}</h3>
-              <p class="text-xs text-slate-400 italic font-serif mt-0.5">${product.scientific_name}</p>
+              <div class="flex items-start justify-between gap-1">
+                <h3 class="font-bold text-sm sm:text-base text-white group-hover:text-sky-400 transition leading-snug">
+                  ${p.name}
+                </h3>
+              </div>
+              <p class="text-xs text-slate-400 italic mt-0.5 truncate">${p.scientific_name || p.name_en}</p>
               
-              <div class="mt-3.5 space-y-1 text-[11px] text-slate-400 font-mono">
-                <div class="flex justify-between">
-                  <span class="text-slate-500">Size Spec:</span>
-                  <span class="text-slate-300">${product.size}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-500">Origin / Type:</span>
-                  <span class="text-slate-300 truncate max-w-[160px]" title="${product.origin}">${product.origin}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-500">MOQ:</span>
-                  <span class="text-amber-400 font-bold">${product.moq} pcs</span>
-                </div>
+              <div class="mt-3 flex items-center justify-between text-xs font-mono text-slate-400 bg-slate-950/50 p-2 rounded-xl">
+                <span>規格サイズ:</span>
+                <span class="text-slate-200 font-semibold">${p.size}</span>
               </div>
             </div>
 
-            <!-- Price & Add to Cart -->
-            <div class="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between">
-              <div>
-                <span class="text-[10px] text-slate-500 uppercase font-mono block">Export Unit Price</span>
-                <span class="text-base font-bold text-white font-mono">${price}</span>
+            <!-- Price & Quantity Stepper & Add Button -->
+            <div class="mt-4 pt-3 border-t border-slate-800/80 space-y-3">
+              <div class="flex items-baseline justify-between">
+                <span class="text-[10px] text-slate-500 uppercase font-mono">卸売単価</span>
+                <span class="text-base sm:text-lg font-black text-white font-mono">${priceFormatted}</span>
               </div>
 
-              <!-- Quantity & Add Button -->
-              <div class="flex items-center space-x-1.5">
-                <input type="number" id="qty-${product.id}" min="${product.moq}" value="${product.moq}" 
-                  class="w-14 bg-slate-950 border border-slate-700 rounded-lg text-center text-xs py-1.5 text-white font-mono focus:outline-none focus:border-sky-400">
-                <button onclick="addToCart('${product.id}')" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-white rounded-lg text-xs font-semibold transition flex items-center space-x-1">
-                  <i class="fa-solid fa-plus text-[10px]"></i>
-                  <span>Add</span>
+              <!-- Stepper Controls & Add Button -->
+              <div class="flex items-center space-x-2">
+                <!-- Stepper -->
+                <div class="flex items-center bg-slate-950 border border-slate-700 rounded-xl p-0.5">
+                  <button onclick="decrementCardQty('${p.id}')" class="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 text-sm flex items-center justify-center touch-btn">
+                    <i class="fa-solid fa-minus text-xs"></i>
+                  </button>
+                  <input type="number" id="card-qty-${p.id}" value="1" min="1" 
+                    class="w-10 text-center text-xs font-mono font-bold bg-transparent text-white focus:outline-none">
+                  <button onclick="incrementCardQty('${p.id}')" class="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 text-sm flex items-center justify-center touch-btn">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                  </button>
+                </div>
+
+                <!-- Add to Cart Button -->
+                <button onclick="handleAddToCart('${p.id}')" class="flex-1 py-2.5 px-3 bg-sky-500 hover:bg-sky-400 active:scale-95 text-white font-bold rounded-xl text-xs transition flex items-center justify-center space-x-1.5 touch-btn shadow-lg shadow-sky-500/20">
+                  <i class="fa-solid fa-cart-plus text-sm"></i>
+                  <span data-i18n="btn_add">カートに追加</span>
                 </button>
               </div>
+
+              <!-- Cart badge status inside card if present -->
+              ${inCartQty > 0 ? `
+                <div class="text-[10px] text-sky-400 text-center font-mono font-semibold">
+                  <i class="fa-solid fa-check mr-1"></i>カートに ${inCartQty} 匹 選択中
+                </div>
+              ` : ''}
             </div>
           </div>
         `;
-        container.appendChild(card);
+        grid.appendChild(card);
       });
     }
 
@@ -1174,58 +1419,172 @@
     }
 
     /* --------------------------------------------------------
-       8. CART LOGIC & MOV (MINIMUM ORDER VALUE) CALCULATION
+       9. CARD QUANTITY STEPPER & COLLECTION REQUEST LOGIC
     -------------------------------------------------------- */
-    function addToCart(productId) {
+    function decrementCardQty(productId) {
+      const inp = document.getElementById(`card-qty-${productId}`);
+      let v = parseInt(inp.value, 10) || 1;
+      if (v > 1) {
+        inp.value = v - 1;
+      }
+    }
+
+    function incrementCardQty(productId) {
+      const inp = document.getElementById(`card-qty-${productId}`);
       const product = appState.catalog.find(p => p.id === productId);
       if (!product) return;
 
-      const qtyInput = document.getElementById(`qty-${productId}`);
-      const qty = parseInt(qtyInput.value, 10) || product.moq;
+      let v = parseInt(inp.value, 10) || 1;
+      const nextV = v + 1;
 
-      const existingIndex = appState.cart.findIndex(item => item.product.id === productId);
-      if (existingIndex > -1) {
-        appState.cart[existingIndex].quantity += qty;
+      // Check if exceeds stock
+      if (nextV > product.stock) {
+        showCollectionRequestModal(product, nextV);
       } else {
-        appState.cart.push({ product, quantity: qty });
+        inp.value = nextV;
+      }
+    }
+
+    /* --------------------------------------------------------
+       10. COLLECTION REQUEST MODAL HANDLING
+       - 「現在の在庫数は〇〇ですが、これ以上の注文は採集リクエストとして受け付けます」
+    -------------------------------------------------------- */
+    function showCollectionRequestModal(product, targetQty) {
+      appState.pendingCollectionProduct = { product, targetQty };
+      const modal = document.getElementById('collectionRequestModal');
+      document.getElementById('collectModalStockNum').textContent = product.stock;
+      
+      const msg = `「${product.name}」の現在の生簀在庫数は 【${product.stock}】匹 ですが、これ以上の数量（${targetQty}匹目以降）は八重山諸島での【採集リクエスト（捕獲手配）】として受け付けます。数量を追加しますか？`;
+      document.getElementById('collectModalMessage').innerHTML = msg;
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeCollectionModal() {
+      document.getElementById('collectionRequestModal').classList.add('hidden');
+      appState.pendingCollectionProduct = null;
+    }
+
+    function confirmCollectionAdd() {
+      if (appState.pendingCollectionProduct) {
+        const { product, targetQty } = appState.pendingCollectionProduct;
+        const inp = document.getElementById(`card-qty-${product.id}`);
+        if (inp) inp.value = targetQty;
+        closeCollectionModal();
+        showToast(`採集リクエスト数量 (${targetQty}匹) を設定しました`);
+      }
+    }
+
+    /* --------------------------------------------------------
+       11. ADD TO CART & CART DRAWER MANAGEMENT
+    -------------------------------------------------------- */
+    function handleAddToCart(productId) {
+      const product = appState.catalog.find(p => p.id === productId);
+      if (!product) return;
+
+      const inp = document.getElementById(`card-qty-${productId}`);
+      const qty = parseInt(inp.value, 10) || 1;
+
+      const existingIdx = appState.cart.findIndex(c => c.product.id === productId);
+      if (existingIdx > -1) {
+        appState.cart[existingIdx].quantity += qty;
+      } else {
+        appState.cart.push({
+          product,
+          quantity: qty,
+          isCollectionRequest: (qty > product.stock)
+        });
       }
 
       updateCartUI();
-      showToast(`Added ${qty}x ${product.name_en} to Proforma Cart`);
+      renderProducts();
+      showToast(`${product.name} を ${qty}匹 カートに追加しました`);
     }
 
     function updateCartItemQty(productId, newQty) {
-      const index = appState.cart.findIndex(item => item.product.id === productId);
-      if (index === -1) return;
+      const idx = appState.cart.findIndex(c => c.product.id === productId);
+      if (idx === -1) return;
+
       if (newQty <= 0) {
-        appState.cart.splice(index, 1);
-      } else {
-        appState.cart[index].quantity = newQty;
+        appState.cart.splice(idx, 1);
+        updateCartUI();
+        renderProducts();
+        return;
       }
+
+      const product = appState.cart[idx].product;
+      if (newQty > product.stock && newQty > appState.cart[idx].quantity) {
+        // Exceeding stock warning
+        showCollectionRequestModal(product, newQty);
+        return;
+      }
+
+      appState.cart[idx].quantity = newQty;
+      appState.cart[idx].isCollectionRequest = (newQty > product.stock);
       updateCartUI();
+      renderProducts();
     }
 
     function removeCartItem(productId) {
-      appState.cart = appState.cart.filter(item => item.product.id !== productId);
+      appState.cart = appState.cart.filter(c => c.product.id !== productId);
       updateCartUI();
+      renderProducts();
     }
 
-    function getSubtotal() {
-      let subtotal = 0;
-      appState.cart.forEach(item => {
-        const unitPrice = appState.currency === 'USD' ? item.product.price_usd : item.product.price_jpy;
-        subtotal += unitPrice * item.quantity;
-      });
-      return subtotal;
+    function getCartTotalJpy() {
+      return appState.cart.reduce((sum, item) => sum + (item.product.price_jpy * item.quantity), 0);
     }
 
     function updateCartUI() {
-      // 1. Update Cart Badge Count
-      const totalCount = appState.cart.reduce((sum, item) => sum + item.quantity, 0);
-      document.getElementById('cartCountBadge').textContent = totalCount;
-      document.getElementById('cartItemSummary').textContent = `${totalCount} specimens in request`;
+      const totalCount = appState.cart.reduce((s, i) => s + i.quantity, 0);
+      const totalJpy = getCartTotalJpy();
+      const movTargetJpy = appState.movTargetJpy;
+      const movMet = (totalJpy >= movTargetJpy);
 
-      // 2. Render Cart Drawer Items
+      // 1. Header & Mobile Sticky Bar Counter
+      document.getElementById('headerCartCount').textContent = totalCount;
+      document.getElementById('mobileCartStickyBadge').textContent = totalCount;
+      document.getElementById('cartSummaryCount').textContent = `${totalCount} 匹選択中`;
+
+      // Formatted subtotal in active currency
+      const formattedSubtotal = formatPrice(totalJpy);
+      document.getElementById('mobileCartStickyTotal').textContent = formattedSubtotal;
+      document.getElementById('cartSubtotalDisplay').textContent = formattedSubtotal;
+
+      // 2. MOV Progress Bar calculation
+      const percentage = Math.min(100, Math.round((totalJpy / movTargetJpy) * 100));
+      const progressBar = document.getElementById('movProgressBar');
+      const percentText = document.getElementById('movPercentText');
+      const movTargetText = document.getElementById('movTargetText');
+      const cartMovTarget = document.getElementById('cartMovTarget');
+      const cartMovStatus = document.getElementById('cartMovStatus');
+      const mobileCartStickyMovStatus = document.getElementById('mobileCartStickyMovStatus');
+      const btnProceed = document.getElementById('btnProceedCheckout');
+
+      progressBar.style.width = `${percentage}%`;
+      percentText.textContent = `${percentage}%`;
+      movTargetText.textContent = formatPrice(movTargetJpy);
+      cartMovTarget.textContent = formatPrice(movTargetJpy);
+
+      if (movMet) {
+        progressBar.className = "bg-emerald-400 h-full transition-all duration-300 rounded-full";
+        cartMovStatus.className = "text-emerald-400 font-bold text-[11px]";
+        cartMovStatus.textContent = "✅ 最低注文額(MOV)を満たしました！発注可能です。";
+        mobileCartStickyMovStatus.className = "text-[10px] text-emerald-400 font-bold";
+        mobileCartStickyMovStatus.textContent = "MOV達成済み (発注可能)";
+        btnProceed.disabled = (appState.cart.length === 0);
+      } else {
+        const diff = movTargetJpy - totalJpy;
+        const diffFormatted = formatPrice(diff);
+        progressBar.className = "bg-amber-400 h-full transition-all duration-300 rounded-full";
+        cartMovStatus.className = "text-amber-400/90 text-[11px]";
+        cartMovStatus.textContent = `最低注文額まであと ${diffFormatted} 必要です。`;
+        mobileCartStickyMovStatus.className = "text-[10px] text-amber-400";
+        mobileCartStickyMovStatus.textContent = `MOVまで残り: ${diffFormatted}`;
+        btnProceed.disabled = true;
+      }
+
+      // 3. Render Cart Drawer List Items
       const listEl = document.getElementById('cartItemsList');
       listEl.innerHTML = '';
 
@@ -1233,74 +1592,54 @@
         listEl.innerHTML = `
           <div class="text-center py-16 text-slate-500">
             <i class="fa-solid fa-cart-shopping text-3xl mb-2 text-slate-700"></i>
-            <p class="text-xs">Your proforma request is empty.</p>
+            <p class="text-xs">カートに生体がありません。</p>
           </div>
         `;
       } else {
         appState.cart.forEach(item => {
-          const unitPrice = appState.currency === 'USD' ? `$${item.product.price_usd.toFixed(2)}` : `¥${item.product.price_jpy.toLocaleString()}`;
-          const lineTotal = appState.currency === 'USD' ? `$${(item.product.price_usd * item.quantity).toFixed(2)}` : `¥${(item.product.price_jpy * item.quantity).toLocaleString()}`;
+          const p = item.product;
+          const unitPriceStr = formatPrice(p.price_jpy);
+          const lineTotalStr = formatPrice(p.price_jpy * item.quantity);
+          const inStockPart = Math.min(item.quantity, p.stock);
+          const collectionPart = Math.max(0, item.quantity - p.stock);
 
           const row = document.createElement('div');
-          row.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 flex items-center justify-between gap-3";
+          row.className = "bg-slate-900 border border-slate-800 rounded-2xl p-3 flex flex-col gap-2";
           row.innerHTML = `
-            <img src="${item.product.image_url}" class="w-12 h-12 rounded-lg object-cover bg-slate-950 flex-shrink-0">
-            <div class="flex-1 min-w-0">
-              <h4 class="text-xs font-semibold text-white truncate">${item.product.name_en}</h4>
-              <p class="text-[10px] text-slate-400 font-mono">${unitPrice} each</p>
-              <div class="flex items-center space-x-2 mt-1">
-                <button onclick="updateCartItemQty('${item.product.id}', ${item.quantity - 1})" class="w-5 h-5 bg-slate-800 hover:bg-slate-700 rounded text-slate-300 text-[10px] flex items-center justify-center">-</button>
-                <span class="text-xs font-mono font-bold text-white">${item.quantity}</span>
-                <button onclick="updateCartItemQty('${item.product.id}', ${item.quantity + 1})" class="w-5 h-5 bg-slate-800 hover:bg-slate-700 rounded text-slate-300 text-[10px] flex items-center justify-center">+</button>
-                <button onclick="removeCartItem('${item.product.id}')" class="text-slate-500 hover:text-red-400 text-xs ml-2"><i class="fa-regular fa-trash-can"></i></button>
+            <div class="flex items-center justify-between gap-2.5">
+              <img src="${p.image_url}" class="w-12 h-12 rounded-xl object-cover bg-slate-950 flex-shrink-0">
+              <div class="flex-1 min-w-0">
+                <h4 class="text-xs font-bold text-white truncate">${p.name}</h4>
+                <div class="text-[10px] text-slate-400 font-mono">${unitPriceStr} / 匹</div>
+              </div>
+              <div class="text-right">
+                <span class="font-mono font-bold text-xs text-white">${lineTotalStr}</span>
               </div>
             </div>
-            <div class="text-right">
-              <span class="font-mono font-bold text-xs text-white">${lineTotal}</span>
+
+            <!-- Stepper & Breakdown -->
+            <div class="flex items-center justify-between pt-1 border-t border-slate-800/80 text-[11px]">
+              <!-- Breakdown status -->
+              <div class="flex items-center space-x-1.5 font-mono">
+                <span class="text-emerald-400">現物: ${inStockPart}</span>
+                ${collectionPart > 0 ? `
+                  <span class="text-amber-400 font-bold bg-amber-950/60 px-1.5 py-0.5 rounded border border-amber-900">
+                    ★採集: +${collectionPart}
+                  </span>
+                ` : ''}
+              </div>
+
+              <!-- Stepper -->
+              <div class="flex items-center space-x-1.5">
+                <button onclick="updateCartItemQty('${p.id}', ${item.quantity - 1})" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 text-xs flex items-center justify-center">-</button>
+                <span class="text-xs font-mono font-bold text-white w-5 text-center">${item.quantity}</span>
+                <button onclick="updateCartItemQty('${p.id}', ${item.quantity + 1})" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 text-xs flex items-center justify-center">+</button>
+                <button onclick="removeCartItem('${p.id}')" class="text-slate-500 hover:text-red-400 p-1 ml-1"><i class="fa-regular fa-trash-can"></i></button>
+              </div>
             </div>
           `;
           listEl.appendChild(row);
         });
-      }
-
-      // 3. Subtotal & MOV Progress Calculation
-      const subtotal = getSubtotal();
-      const movTarget = appState.currency === 'USD' ? appState.movTargetUsd : appState.movTargetJpy;
-      const subtotalFormatted = appState.currency === 'USD' ? `$${subtotal.toFixed(2)} USD` : `¥${subtotal.toLocaleString()} JPY`;
-      const movFormatted = appState.currency === 'USD' ? `$${movTarget.toLocaleString()} USD` : `¥${movTarget.toLocaleString()} JPY`;
-
-      document.getElementById('cartSubtotalText').textContent = subtotalFormatted;
-      document.getElementById('movTargetText').textContent = movFormatted;
-      document.getElementById('cartMovAmount').textContent = movFormatted;
-
-      const percentage = Math.min(100, Math.round((subtotal / movTarget) * 100));
-      const progressBar = document.getElementById('movProgressBar');
-      const percentText = document.getElementById('movPercentText');
-      const movMsg = document.getElementById('movStatusMessage');
-      const cartMovStatus = document.getElementById('cartMovStatus');
-      const btnProceed = document.getElementById('btnProceedCheckout');
-
-      progressBar.style.width = `${percentage}%`;
-      percentText.textContent = `${percentage}%`;
-
-      if (subtotal >= movTarget) {
-        // MOV Met!
-        progressBar.className = "bg-emerald-400 h-full transition-all duration-300 rounded-full";
-        movMsg.className = "text-emerald-400 font-semibold";
-        movMsg.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i>MOV threshold met! Ready for checkout.';
-        cartMovStatus.className = "text-emerald-400 font-medium";
-        cartMovStatus.textContent = "Wholesale MOV met! You may proceed.";
-        btnProceed.disabled = (appState.cart.length === 0);
-      } else {
-        // Under MOV
-        const diff = movTarget - subtotal;
-        const diffFormatted = appState.currency === 'USD' ? `$${diff.toFixed(2)}` : `¥${diff.toLocaleString()}`;
-        progressBar.className = "bg-amber-400 h-full transition-all duration-300 rounded-full";
-        movMsg.className = "text-amber-400 font-medium";
-        movMsg.textContent = `Add ${diffFormatted} more to unlock wholesale checkout.`;
-        cartMovStatus.className = "text-amber-400/90 text-[11px]";
-        cartMovStatus.textContent = `Remaining to unlock: ${diffFormatted}`;
-        btnProceed.disabled = true;
       }
     }
 
@@ -1317,43 +1656,7 @@
     }
 
     /* --------------------------------------------------------
-       9. REGION & CURRENCY & LANGUAGE CONTROLS
-    -------------------------------------------------------- */
-    function setCurrency(curr) {
-      appState.currency = curr;
-      const btnUSD = document.getElementById('currBtnUSD');
-      const btnJPY = document.getElementById('currBtnJPY');
-      if (curr === 'USD') {
-        btnUSD.className = "px-2.5 py-1 rounded font-bold bg-sky-500 text-white transition";
-        btnJPY.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
-      } else {
-        btnJPY.className = "px-2.5 py-1 rounded font-bold bg-sky-500 text-white transition";
-        btnUSD.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
-      }
-      renderProducts();
-      updateCartUI();
-    }
-
-    function changeCountry(val) {
-      appState.country = val;
-      if (val === 'TW' || val === 'HK' || val === 'SG' || val === 'USA' || val === 'EU') {
-        setCurrency('USD');
-      }
-    }
-
-    function changeLanguage(langKey) {
-      appState.lang = langKey;
-      const dict = I18N_DICTIONARY[langKey] || I18N_DICTIONARY['en'];
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (dict[key]) {
-          el.textContent = dict[key];
-        }
-      });
-    }
-
-    /* --------------------------------------------------------
-       10. STEP 4: CITES & AIR CARGO LEGAL DISCLAIMER MODAL
+       12. STEP 4 & 5: LEGAL MODAL & BUYER ORDER SUBMISSION
     -------------------------------------------------------- */
     function openCitesModal() {
       toggleCartDrawer(false);
@@ -1372,24 +1675,17 @@
       const c1 = document.getElementById('checkLegal1').checked;
       const c2 = document.getElementById('checkLegal2').checked;
       const c3 = document.getElementById('checkLegal3').checked;
-      const btn = document.getElementById('btnAgreeLegal');
-      btn.disabled = !(c1 && c2 && c3);
+      document.getElementById('btnAgreeLegal').disabled = !(c1 && c2 && c3);
     }
 
     function proceedToBuyerForm() {
       closeCitesModal();
-      openCheckoutModal();
-    }
-
-    /* --------------------------------------------------------
-       11. STEP 5: BUYER FORM & PROFORMA ORDER SUBMISSION
-    -------------------------------------------------------- */
-    function openCheckoutModal() {
       document.getElementById('checkoutModal').classList.remove('hidden');
-      document.getElementById('reviewCountry').textContent = document.getElementById('countrySelect').options[document.getElementById('countrySelect').selectedIndex].text;
-      document.getElementById('reviewCurrency').textContent = appState.currency;
-      const subtotal = getSubtotal();
-      document.getElementById('reviewSubtotal').textContent = appState.currency === 'USD' ? `$${subtotal.toFixed(2)} USD` : `¥${subtotal.toLocaleString()} JPY`;
+      const totalJpy = getCartTotalJpy();
+      document.getElementById('reviewSubtotal').textContent = formatPrice(totalJpy);
+
+      const hasCollection = appState.cart.some(c => c.quantity > c.product.stock);
+      document.getElementById('reviewCollectStatus').textContent = hasCollection ? "あり (採集リクエスト品目含む)" : "なし (全量生簀在庫引当)";
     }
 
     function closeCheckoutModal() {
@@ -1398,14 +1694,12 @@
 
     async function submitOrder(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnSubmitOrder');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> 送信中...';
 
-      const btnSubmit = document.getElementById('btnSubmitOrder');
-      btnSubmit.disabled = true;
-      btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting Request & Generating PDF...';
-
-      // 1. Compile Order Data
-      const orderRef = "AQX-" + new Date().toISOString().slice(0, 10).replace(/-/g, '') + "-" + Math.floor(1000 + Math.random() * 9000);
-      const subtotal = getSubtotal();
+      const totalJpy = getCartTotalJpy();
+      const orderRef = "ISG-" + new Date().toISOString().slice(0, 10).replace(/-/g, '') + "-" + Math.floor(1000 + Math.random() * 9000);
 
       const orderPayload = {
         action: 'submitOverseasOrder',
@@ -1417,30 +1711,32 @@
           contactPerson: document.getElementById('buyerContact').value.trim(),
           email: document.getElementById('buyerEmail').value.trim(),
           im: document.getElementById('buyerIM').value.trim(),
-          destinationCountry: appState.country,
+          destinationCountry: document.getElementById('countrySelect').value,
           destinationAirport: document.getElementById('buyerAirport').value.trim().toUpperCase(),
           importLicense: document.getElementById('buyerLicense').value.trim(),
           notes: document.getElementById('buyerNotes').value.trim()
         },
         currency: appState.currency,
-        subtotal: subtotal,
+        subtotal: totalJpy,
         items: appState.cart.map(item => ({
           id: item.product.id,
-          name_en: item.product.name_en,
+          name: item.product.name,
           scientific_name: item.product.scientific_name,
           category: item.product.category,
           size: item.product.size,
           quantity: item.quantity,
-          unitPrice: appState.currency === 'USD' ? item.product.price_usd : item.product.price_jpy,
-          lineTotal: (appState.currency === 'USD' ? item.product.price_usd : item.product.price_jpy) * item.quantity,
-          cites: item.product.cites_status
+          inStockQty: Math.min(item.quantity, item.product.stock),
+          collectionQty: Math.max(0, item.quantity - item.product.stock),
+          unitPriceJpy: item.product.price_jpy,
+          lineTotalJpy: item.product.price_jpy * item.quantity,
+          cites: item.product.cites
         })),
         legalNoticeAcknowledged: true
       };
 
       appState.lastGeneratedOrder = orderPayload;
 
-      // 2. Dispatch to GAS Backend (if endpoint configured)
+      // Send to GAS Web App (if connected)
       if (appState.gasEndpoint) {
         try {
           await fetch(appState.gasEndpoint, {
@@ -1449,197 +1745,120 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderPayload)
           });
-          console.log("Order transmitted to GAS backend successfully.");
         } catch (err) {
-          console.warn("GAS endpoint post error (logged locally):", err);
+          console.warn("GAS submission error:", err);
         }
       }
 
-      // 3. Generate & Download Proforma Invoice PDF directly via jsPDF
+      // Generate & Download PDF
       generateAndDownloadPdf(orderPayload);
 
-      // 4. Show Success Screen
+      // Open Success Screen
       closeCheckoutModal();
       document.getElementById('successOrderRef').textContent = orderRef;
-      document.getElementById('successItemCount').textContent = `${appState.cart.reduce((s, i) => s + i.quantity, 0)} specimens`;
-      document.getElementById('successSubtotal').textContent = appState.currency === 'USD' ? `$${subtotal.toFixed(2)} USD` : `¥${subtotal.toLocaleString()} JPY`;
+      document.getElementById('successSubtotal').textContent = formatPrice(totalJpy);
       document.getElementById('successAirport').textContent = orderPayload.buyer.destinationAirport;
       document.getElementById('successModal').classList.remove('hidden');
 
-      // 5. Reset Cart
+      // Clear cart
       appState.cart = [];
       updateCartUI();
+      renderProducts();
 
-      btnSubmit.disabled = false;
-      btnSubmit.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i>' + (I18N_DICTIONARY[appState.lang]?.btn_submit_order || 'Submit Order Request & Download PDF');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i><span>見積依頼を送信 & PDFをダウンロード</span>';
     }
 
     /* --------------------------------------------------------
-       12. CLIENT-SIDE PROFORMA INVOICE PDF GENERATION (jsPDF)
+       13. CLIENT-SIDE PDF GENERATION (jsPDF)
     -------------------------------------------------------- */
     function generateAndDownloadPdf(order) {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({
-        orientation: 'p',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      // Colors
-      const primaryColor = [15, 23, 42]; // Slate 900
-      const accentColor = [14, 165, 233]; // Sky 500
+      const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
 
       // Header Banner
-      doc.setFillColor(...primaryColor);
-      doc.rect(0, 0, 210, 42, 'F');
+      doc.setFillColor(15, 23, 42);
+      doc.rect(0, 0, 210, 40, 'F');
 
-      // Company Branding
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(18);
+      doc.setFontSize(16);
       doc.setTextColor(255, 255, 255);
-      doc.text("AQUA EXPORT INTERNATIONAL", 14, 18);
+      doc.text("ISHIGAKI MARINE EXPORT / KAWABATA SUISAN", 14, 16);
 
-      doc.setFontSize(9);
+      doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(186, 230, 253);
-      doc.text("B2B COMMERCIAL LIVE SPECIMEN EXPORT DIVISION", 14, 25);
-      doc.text("Tokyo & Kansai Cargo Logistics / IATA LAR & CITES Accredited", 14, 30);
+      doc.text("Okinawa Yaeyama Archipelago Specimen Wholesale & Collection Requests", 14, 23);
+      doc.text("CITES & IATA LAR Compliant Marine Logistics", 14, 28);
 
-      // Title & Ref
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(14);
+      doc.setFontSize(13);
       doc.setTextColor(255, 255, 255);
-      doc.text("PROFORMA ORDER REQUEST", 135, 18);
+      doc.text("PROFORMA REQUEST", 140, 16);
 
-      doc.setFontSize(9);
+      doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(226, 232, 240);
-      doc.text(`Doc Ref: ${order.orderId}`, 135, 25);
-      doc.text(`Date: ${new Date().toISOString().slice(0, 10)}`, 135, 30);
-      doc.text("Validity: 14 Business Days", 135, 35);
+      doc.text(`Ref: ${order.orderId}`, 140, 23);
+      doc.text(`Date: ${new Date().toISOString().slice(0, 10)}`, 140, 28);
 
-      // Consignee Information Section
+      // Buyer Info
       doc.setTextColor(15, 23, 42);
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
-      doc.text("CONSIGNEE / BUYER SPECIFICATIONS", 14, 52);
-
+      doc.setFontSize(9);
+      doc.text("BUYER / CONSIGNEE SPECIFICATIONS", 14, 48);
       doc.setDrawColor(226, 232, 240);
-      doc.line(14, 54, 196, 54);
+      doc.line(14, 50, 196, 50);
 
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
+      doc.setFontSize(8);
       doc.setTextColor(51, 65, 85);
+      doc.text(`Company: ${order.buyer.company}`, 14, 56);
+      doc.text(`Contact: ${order.buyer.contactPerson}`, 14, 61);
+      doc.text(`Email: ${order.buyer.email}`, 14, 66);
+      doc.text(`IM/Phone: ${order.buyer.im}`, 14, 71);
 
-      doc.text(`Company Name: ${order.buyer.company}`, 14, 60);
-      doc.text(`Contact Person: ${order.buyer.contactPerson}`, 14, 66);
-      doc.text(`Corporate Email: ${order.buyer.email}`, 14, 72);
-      doc.text(`Messaging Contact: ${order.buyer.im}`, 14, 78);
+      doc.text(`Destination Airport: ${order.buyer.destinationAirport}`, 115, 56);
+      doc.text(`Destination Country: ${order.buyer.destinationCountry}`, 115, 61);
+      doc.text(`Import / CITES Lic: ${order.buyer.importLicense || 'N/A'}`, 115, 66);
+      doc.text(`Currency: ${order.currency}`, 115, 71);
 
-      doc.text(`Destination Country: ${order.buyer.destinationCountry}`, 115, 60);
-      doc.text(`Destination Airport: ${order.buyer.destinationAirport}`, 115, 66);
-      doc.text(`Import / CITES Lic: ${order.buyer.importLicense || 'N/A (Pending)'}`, 115, 72);
-      doc.text(`Currency: ${order.currency}`, 115, 78);
-
-      // Line Items Table (via AutoTable)
-      const tableRows = order.items.map((item, idx) => [
+      // Table Rows
+      const tableRows = order.items.map((it, idx) => [
         (idx + 1).toString(),
-        item.id,
-        `${item.name_en}\n(${item.scientific_name})`,
-        item.size,
-        item.cites,
-        item.quantity.toString(),
-        order.currency === 'USD' ? `$${item.unitPrice.toFixed(2)}` : `¥${item.unitPrice.toLocaleString()}`,
-        order.currency === 'USD' ? `$${item.lineTotal.toFixed(2)}` : `¥${item.lineTotal.toLocaleString()}`
+        it.id,
+        `${it.name}\n${it.scientific_name}`,
+        it.size,
+        it.quantity.toString(),
+        it.collectionQty > 0 ? `Stock: ${it.inStockQty}\nReq: ${it.collectionQty}` : 'Stock',
+        `JPY ${it.unitPriceJpy.toLocaleString()}`,
+        `JPY ${it.lineTotalJpy.toLocaleString()}`
       ]);
 
       doc.autoTable({
-        startY: 85,
-        head: [['#', 'Code', 'Specimen & Scientific Name', 'Size', 'CITES Status', 'Qty', 'Unit Price', 'Total']],
+        startY: 77,
+        head: [['#', 'Code', 'Specimen Name', 'Size', 'Qty', 'Allocation', 'Unit JPY', 'Total JPY']],
         body: tableRows,
         theme: 'striped',
-        headStyles: {
-          fillColor: [15, 23, 42],
-          textColor: [255, 255, 255],
-          fontSize: 8,
-          fontStyle: 'bold',
-          halign: 'center'
-        },
-        styles: {
-          fontSize: 8,
-          cellPadding: 2.5
-        },
-        columnStyles: {
-          0: { halign: 'center', cellWidth: 8 },
-          1: { halign: 'center', cellWidth: 20 },
-          2: { cellWidth: 55 },
-          3: { halign: 'center', cellWidth: 26 },
-          4: { halign: 'center', cellWidth: 28 },
-          5: { halign: 'center', cellWidth: 12 },
-          6: { halign: 'right', cellWidth: 22 },
-          7: { halign: 'right', cellWidth: 24 }
-        }
+        headStyles: { fillColor: [15, 23, 42], fontSize: 8, fontStyle: 'bold' },
+        styles: { fontSize: 7.5, cellPadding: 2 }
       });
 
       const finalY = doc.lastAutoTable.finalY + 8;
-
-      // Subtotal & Financial Breakdown
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
-      doc.setTextColor(15, 23, 42);
-      const subtotalLabel = `Specimen Subtotal (${order.currency}):`;
-      const subtotalValue = order.currency === 'USD' ? `$${order.subtotal.toFixed(2)}` : `¥${order.subtotal.toLocaleString()}`;
-      
-      doc.text(subtotalLabel, 125, finalY);
-      doc.text(subtotalValue, 196, finalY, { align: 'right' });
-
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
-      doc.setTextColor(100, 116, 139);
-      doc.text("Intl. Air Cargo & Heatpack Fee:", 125, finalY + 5);
-      doc.text("To be quoted on Final Invoice", 196, finalY + 5, { align: 'right' });
-
-      doc.text("CITES & Veterinary Health Cert:", 125, finalY + 10);
-      doc.text("Quoted upon booking confirmation", 196, finalY + 10, { align: 'right' });
-
-      // Legal & CITES Notice Box
-      doc.setDrawColor(203, 213, 225);
-      doc.setFillColor(248, 250, 252);
-      doc.roundedRect(14, finalY + 18, 182, 38, 2, 2, 'FD');
-
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8);
-      doc.setTextColor(15, 23, 42);
-      doc.text("EXPORT CONDITIONS & LEGAL DISCLAIMER (CITES & IATA COMPLIANCE):", 18, finalY + 23);
+      doc.setFontSize(9);
+      doc.text(`Subtotal: JPY ${order.subtotal.toLocaleString()}`, 196, finalY, { align: 'right' });
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(7);
-      doc.setTextColor(71, 85, 105);
-      const legalText1 = "1. Proforma Request Status: This document is an initial wholesale order request and does not constitute a confirmed sales contract until stock verification and flight space confirmation.";
-      const legalText2 = "2. CITES & Permits: Specimens listed under CITES Appendices require official export permits from the Ministry of Economy, Trade and Industry (Japan). Processing time requires 2-4 weeks.";
-      const legalText3 = "3. Buyer Clearance: Consignee is solely responsible for local customs declaration, veterinary clearance fees, and compliance with local species importation statutes.";
-      doc.text(legalText1, 18, finalY + 28);
-      doc.text(legalText2, 18, finalY + 34);
-      doc.text(legalText3, 18, finalY + 40);
-
-      // Signatures
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'normal');
       doc.setTextColor(100, 116, 139);
-      doc.text("Authorized Signature & Stamp (Aqua Export Intl)", 14, finalY + 68);
-      doc.line(14, finalY + 65, 80, finalY + 65);
+      doc.text("Air cargo freight, packaging, and CITES export permit handling fees quoted separately on official Proforma Invoice.", 14, finalY + 10);
 
-      doc.text("Buyer Authorized Confirmation", 130, finalY + 68);
-      doc.line(130, finalY + 65, 196, finalY + 65);
-
-      // Save PDF
-      doc.save(`Proforma_Order_Request_${order.orderId}.pdf`);
+      doc.save(`Proforma_Request_${order.orderId}.pdf`);
     }
 
     function downloadGeneratedPdfAgain() {
-      if (appState.lastGeneratedOrder) {
-        generateAndDownloadPdf(appState.lastGeneratedOrder);
-      }
+      if (appState.lastGeneratedOrder) generateAndDownloadPdf(appState.lastGeneratedOrder);
     }
 
     function resetAndCloseSuccess() {
@@ -1647,49 +1866,40 @@
     }
 
     /* --------------------------------------------------------
-       13. CONFIGURATION & TOAST NOTIFICATION HELPERS
+       14. TOAST NOTIFICATION
     -------------------------------------------------------- */
-    function toggleApiConfig() {
-      const bar = document.getElementById('apiConfigBar');
-      bar.classList.toggle('hidden');
-      if (!bar.classList.contains('hidden')) {
-        document.getElementById('gasEndpointInput').value = appState.gasEndpoint;
-      }
-    }
-
-    function saveGasEndpoint() {
-      const url = document.getElementById('gasEndpointInput').value.trim();
-      appState.gasEndpoint = url;
-      localStorage.setItem(GAS_ENDPOINT_STORAGE_KEY, url);
-      showToast("GAS Endpoint URL saved!");
-      loadCatalog();
-    }
-
     function showToast(msg) {
       const toast = document.createElement('div');
-      toast.className = "fixed bottom-5 right-5 z-50 bg-slate-900 border border-slate-700 text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-2 animate-bounce";
+      toast.className = "fixed bottom-16 sm:bottom-6 right-4 z-50 bg-slate-900 border border-slate-700 text-white text-xs px-4 py-3 rounded-2xl shadow-2xl flex items-center space-x-2 animate-bounce";
       toast.innerHTML = `<i class="fa-solid fa-circle-check text-sky-400"></i><span>${msg}</span>`;
       document.body.appendChild(toast);
-      setTimeout(() => {
-        toast.remove();
-      }, 3000);
+      setTimeout(() => toast.remove(), 2500);
     }
 
     /* --------------------------------------------------------
-       14. INITIALIZATION
+       15. INITIALIZATION
     -------------------------------------------------------- */
     window.addEventListener('DOMContentLoaded', () => {
       setupPinInputs();
 
-      // Check if user already authenticated in this session
-      const existingToken = sessionStorage.getItem(AUTH_SESSION_KEY);
-      if (existingToken) {
-        grantAccess();
+      // Check language preference
+      const savedLang = localStorage.getItem(LANG_STORAGE_KEY);
+      if (savedLang) {
+        applyLanguage(savedLang);
+        document.getElementById('firstLangModal').classList.add('hidden');
+        
+        const token = sessionStorage.getItem(AUTH_SESSION_KEY);
+        if (token) {
+          grantAccess();
+        } else {
+          document.getElementById('authOverlay').classList.remove('hidden');
+          focusFirstPin();
+        }
       } else {
-        checkLockoutStatus();
+        // First visit: show big language selector modal!
+        document.getElementById('firstLangModal').classList.remove('hidden');
       }
 
-      // Initial UI updates
       updateCartUI();
     });
   </script>

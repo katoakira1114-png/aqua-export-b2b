@@ -19,6 +19,12 @@
 // 1. 環境設定 & プロパティ管理
 // ==========================================
 const CONFIG = {
+  // 石垣島観賞魚（川畑水産）本番スプレッドシートID
+  DEFAULT_SPREADSHEET_ID: "1ZiNel8TGJ-e7JMolkRagVOSnr1UczvQzpTa-F-s4p3o",
+
+  // 6大カテゴリシート
+  TARGET_CATEGORIES: ["魚", "貝", "シャコガイ", "イソギンチャク", "サンゴ", "その他"],
+
   // デフォルトPIN（スクリプトプロパティ 'OVERSEAS_PIN' で上書き可能）
   DEFAULT_PIN: "9876",
 
@@ -30,9 +36,6 @@ const CONFIG = {
 
   // 海外注文リクエスト記録先シート名
   SHEET_NAME_REQUESTS: "海外注文リクエスト",
-
-  // 国内商品マスターシート名（商品データ取得元）
-  SHEET_NAME_PRODUCTS: "商品マスター",
 
   // ブルートフォース対策: 許容失敗回数
   MAX_FAILED_ATTEMPTS: 5,
@@ -235,11 +238,17 @@ function handleFetchCatalog(token) {
     };
   }
 
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var productSheet = ss.getSheetByName(CONFIG.SHEET_NAME_PRODUCTS);
+  var ss = null;
+  try {
+    var ssId = getProperty("SPREADSHEET_ID", CONFIG.DEFAULT_SPREADSHEET_ID);
+    if (ssId) {
+      ss = SpreadsheetApp.openById(ssId);
+    }
+  } catch (e) {
+    try { ss = SpreadsheetApp.getActiveSpreadsheet(); } catch (e2) {}
+  }
 
-  // シートが存在しない場合は、サニタイズされた初期データを返却
-  if (!productSheet || productSheet.getLastRow() <= 1) {
+  if (!ss) {
     return {
       success: true,
       catalog: getFallbackSanitizedCatalog(),
@@ -247,58 +256,51 @@ function handleFetchCatalog(token) {
     };
   }
 
-  var data = productSheet.getDataRange().getValues();
-  var headers = data[0];
-
-  // 列名のインデックスマッピング (大文字小文字を無視して柔軟に照合)
-  var colMap = {};
-  for (var c = 0; c < headers.length; c++) {
-    var h = headers[c].toString().trim().toLowerCase();
-    colMap[h] = c;
-  }
-
   var sanitizedCatalog = [];
+  var targetCategories = CONFIG.TARGET_CATEGORIES;
 
-  for (var r = 1; r < data.length; r++) {
-    var row = data[r];
+  for (var i = 0; i < targetCategories.length; i++) {
+    var catName = targetCategories[i];
+    var sheet = ss.getSheetByName(catName);
+    if (!sheet || sheet.getLastRow() <= 1) continue;
 
-    // 非公開フラグや海外非対象品はスキップ
-    var exportStatus = getColValue(row, colMap, ["export_available", "海外公開", "公開フラグ"]);
-    if (exportStatus === false || exportStatus === "0" || exportStatus === "非公開") {
-      continue;
+    var data = sheet.getDataRange().getValues();
+    var headers = data[0];
+    var colMap = {};
+    for (var c = 0; c < headers.length; c++) {
+      var h = headers[c].toString().trim().toLowerCase();
+      colMap[h] = c;
     }
 
-    var id = getColValue(row, colMap, ["id", "商品コード", "code"]) || ("AQX-" + r);
-    var nameEn = getColValue(row, colMap, ["name_en", "英語名", "商品名(英)"]) || getColValue(row, colMap, ["name", "商品名"]);
-    var scientific = getColValue(row, colMap, ["scientific_name", "学名"]) || "";
-    var category = getColValue(row, colMap, ["category", "カテゴリ", "分類"]) || "GENERAL";
-    var size = getColValue(row, colMap, ["size", "サイズ", "規格"]) || "Standard";
-    var origin = getColValue(row, colMap, ["origin", "産地", "原産地"]) || "Asia Pacific";
-    var cites = getColValue(row, colMap, ["cites_status", "cites", "サイテス"]) || "Non-CITES";
-    var moq = parseInt(getColValue(row, colMap, ["moq", "最小ロット", "起訂数"]) || "1", 10);
-    var priceUsd = parseFloat(getColValue(row, colMap, ["price_usd", "海外価格(usd)", "usd"])) || 0;
-    var priceJpy = parseFloat(getColValue(row, colMap, ["price_jpy", "海外価格(jpy)", "jpy"])) || 0;
-    var imageUrl = getColValue(row, colMap, ["image_url", "画像url", "写真"]) || "https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80";
+    for (var r = 1; r < data.length; r++) {
+      var row = data[r];
+      var name = getColValue(row, colMap, ["商品名", "名", "魚種", "name", "品名"]);
+      if (!name) continue;
 
-    // 必須データ（英名・価格）が存在する場合のみ追加
-    if (nameEn && (priceUsd > 0 || priceJpy > 0)) {
+      var priceJpy = parseFloat(getColValue(row, colMap, ["価格", "単価", "jpy", "price", "卸価格"])) || 0;
+      if (priceJpy <= 0) continue;
+
+      var stock = parseInt(getColValue(row, colMap, ["在庫", "在庫数", "匹数", "stock", "現在庫"]) || "0", 10);
+      var size = getColValue(row, colMap, ["サイズ", "規格", "size"]) || "規格おまかせ";
+      var imageUrl = getColValue(row, colMap, ["画像", "img", "写真", "image_url", "image"]) || "";
+      var id = getColValue(row, colMap, ["id", "商品コード", "code"]) || ("ISG-" + catName.slice(0, 1) + r);
+      var cites = getColValue(row, colMap, ["cites", "サイテス", "cites_status"]) || ((catName === "サンゴ" || catName === "シャコガイ") ? "CITES App. II" : "Non-CITES");
+
       sanitizedCatalog.push({
-        id: id.toString(),
-        name_en: nameEn.toString(),
-        scientific_name: scientific.toString(),
-        category: category.toString().toUpperCase(),
-        size: size.toString(),
-        origin: origin.toString(),
-        cites_status: cites.toString(),
-        moq: isNaN(moq) ? 1 : moq,
-        price_usd: priceUsd,
+        id: String(id),
+        name: String(name),
+        name_en: String(name),
+        scientific_name: "",
+        category: catName,
+        size: String(size),
+        stock: isNaN(stock) ? 0 : Math.max(0, stock),
         price_jpy: priceJpy,
-        image_url: imageUrl.toString()
+        cites: String(cites),
+        image_url: imageUrl || "https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80"
       });
     }
   }
 
-  // シートから有効データが取れなかった場合は安全なフォールバックを返却
   if (sanitizedCatalog.length === 0) {
     sanitizedCatalog = getFallbackSanitizedCatalog();
   }
@@ -355,9 +357,13 @@ function handleSubmitOrder(payload) {
   var minMov = currency === "USD" ? 1000 : 150000;
   var isMovSatisfied = (subtotal >= minMov);
 
-  // 品目リストの要約文字列作成
+  // 品目リストの要約文字列作成 (現物引当 vs 採集リクエストの明記)
+  var hasCollection = false;
   var itemsSummary = items.map(function(item) {
-    return item.name_en + " (" + item.id + ") x " + item.quantity + " @ " + currency + " " + item.unitPrice;
+    var inStock = item.inStockQty !== undefined ? item.inStockQty : item.quantity;
+    var collect = item.collectionQty !== undefined ? item.collectionQty : 0;
+    if (collect > 0) hasCollection = true;
+    return item.name + " (" + item.id + ") x " + item.quantity + "匹 [在庫引当:" + inStock + " / 採集:" + collect + "]";
   }).join("\n");
 
   var hasCites = items.some(function(item) {
@@ -378,8 +384,9 @@ function handleSubmitOrder(payload) {
     currency,
     subtotal,
     itemsSummary,
+    hasCollection ? "YES (採集リクエスト含む)" : "NO (全量生簀在庫)",
     JSON.stringify(items),
-    hasCites ? "YES (Permit Req.)" : "NO",
+    hasCites ? "YES (CITES対象)" : "NO",
     payload.legalNoticeAcknowledged ? "Agreed" : "No",
     "NEW_REQUEST (Pending Quote)",
     buyer.notes || ""
@@ -597,107 +604,87 @@ function sendAdminEmailNotification(orderId, buyer, items, currency, subtotal, h
 function getFallbackSanitizedCatalog() {
   return [
     {
-      id: "AQX-0101",
-      name_en: "Wild Royal Blue Discus",
-      scientific_name: "Symphysodon aequifasciatus",
-      category: "DISCUS",
-      size: "14-16 cm (5.5-6.3\")",
-      origin: "Rio Nhamunda, Brazil",
-      cites_status: "Non-CITES",
-      moq: 2,
-      price_usd: 195.00,
-      price_jpy: 29000,
+      id: "ISG-F01",
+      name: "カクレクマノミ (ペア)",
+      name_en: "Ocellaris Clownfish (Pair)",
+      scientific_name: "Amphiprion ocellaris",
+      category: "魚",
+      size: "4.5-6.5 cm",
+      stock: 12,
+      price_jpy: 3800,
+      cites: "Non-CITES",
       image_url: "https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80"
     },
     {
-      id: "AQX-0102",
-      name_en: "Wild Heckel Discus (Blue Moon)",
-      scientific_name: "Symphysodon discus",
-      category: "DISCUS",
-      size: "12-14 cm (4.7-5.5\")",
-      origin: "Rio Negro, Brazil",
-      cites_status: "Non-CITES",
-      moq: 2,
-      price_usd: 240.00,
-      price_jpy: 36000,
-      image_url: "https://images.unsplash.com/photo-1535591273668-581379f87259?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      id: "AQX-0201",
-      name_en: "Zebra Pleco (L-046)",
-      scientific_name: "Hypancistrus zebra",
-      category: "PLECO",
-      size: "5.0-6.0 cm (2.0-2.4\")",
-      origin: "Captive Bred (F2), Japan",
-      cites_status: "CITES App. III",
-      moq: 3,
-      price_usd: 280.00,
-      price_jpy: 42000,
-      image_url: "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      id: "AQX-0202",
-      name_en: "Scarlet Pleco (L-025 Special 7-Ray)",
-      scientific_name: "Pseudacanthicus pirarara",
-      category: "PLECO",
-      size: "22-25 cm (8.7-9.8\")",
-      origin: "Rio Xingu, Brazil",
-      cites_status: "Non-CITES",
-      moq: 1,
-      price_usd: 580.00,
-      price_jpy: 87000,
-      image_url: "https://images.unsplash.com/photo-1576806021995-9f68eb39f1ac?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      id: "AQX-0301",
-      name_en: "Super Red Asian Arowana (Certificate Included)",
-      scientific_name: "Scleropages formosus",
-      category: "AROWANA",
-      size: "18-20 cm (7.0-8.0\")",
-      origin: "Registered CITES Farm, Indonesia",
-      cites_status: "CITES App. I (Permit Mandatory)",
-      moq: 1,
-      price_usd: 1250.00,
-      price_jpy: 185000,
-      image_url: "https://images.unsplash.com/photo-1520315342629-6ea920342047?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      id: "AQX-0401",
-      name_en: "Clarion Angelfish (Rare Captive Propagated)",
-      scientific_name: "Holacanthus clarionensis",
-      category: "MARINE",
-      size: "7.5-9.0 cm (3.0-3.5\")",
-      origin: "Okinawa Hatchery, Japan",
-      cites_status: "CITES App. II",
-      moq: 1,
-      price_usd: 2950.00,
-      price_jpy: 440000,
+      id: "ISG-F02",
+      name: "サザナミヤッコ (成魚)",
+      name_en: "Semicircle Angelfish",
+      scientific_name: "Pomacanthus semicirculatus",
+      category: "魚",
+      size: "16-20 cm",
+      stock: 3,
+      price_jpy: 11000,
+      cites: "Non-CITES",
       image_url: "https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=600&q=80"
     },
     {
-      id: "AQX-0402",
-      name_en: "Ultra Grade Japanese Scolymia Coral",
-      scientific_name: "Homophyllia australis",
-      category: "MARINE",
-      size: "6-8 cm diameter",
-      origin: "Ryukyu Archipelago, Japan",
-      cites_status: "CITES App. II (Coral Permit)",
-      moq: 2,
-      price_usd: 320.00,
-      price_jpy: 48000,
+      id: "ISG-S01",
+      name: "マガキガイ (5個組)",
+      name_en: "Strawberry Conch",
+      scientific_name: "Strombus luhuanus",
+      category: "貝",
+      size: "4.0-5.5 cm",
+      stock: 40,
+      price_jpy: 1200,
+      cites: "Non-CITES",
       image_url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80"
     },
     {
-      id: "AQX-0501",
-      name_en: "Bucephalandra sp. \"Godzilla\" Submerged Mother Clump",
-      scientific_name: "Bucephalandra sp.",
-      category: "PLANT",
-      size: "Large Clump (15+ Rhizomes)",
-      origin: "Borneo / Cultivated",
-      cites_status: "Phytosanitary Cert Included",
-      moq: 5,
-      price_usd: 85.00,
-      price_jpy: 12500,
+      id: "ISG-C01",
+      name: "ヒメジャコガイ (メタリックブルー)",
+      name_en: "Crocea Clam",
+      scientific_name: "Tridacna crocea",
+      category: "シャコガイ",
+      size: "6.0-8.0 cm",
+      stock: 5,
+      price_jpy: 7800,
+      cites: "CITES App. II",
+      image_url: "https://images.unsplash.com/photo-1520315342629-6ea920342047?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      id: "ISG-A01",
+      name: "ハタゴイソギンチャク (特大)",
+      name_en: "Carpet Anemone",
+      scientific_name: "Stichodactyla gigantea",
+      category: "イソギンチャク",
+      size: "20-25 cm",
+      stock: 4,
+      price_jpy: 8900,
+      cites: "Non-CITES",
+      image_url: "https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      id: "ISG-K01",
+      name: "オキナワミドリイシ (ブリード)",
+      name_en: "Acropora Coral",
+      scientific_name: "Acropora sp.",
+      category: "サンゴ",
+      size: "8-10 cm",
+      stock: 6,
+      price_jpy: 14000,
+      cites: "CITES App. II",
+      image_url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      id: "ISG-O01",
+      name: "スベスベサンゴヤドカリ (3匹)",
+      name_en: "Blue-Eyed Hermit Crab",
+      scientific_name: "Calcinus tubularis",
+      category: "その他",
+      size: "2.0-3.0 cm",
+      stock: 18,
+      price_jpy: 1500,
+      cites: "Non-CITES",
       image_url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80"
     }
   ];
