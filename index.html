@@ -87,7 +87,7 @@
         <i class="fa-solid fa-earth-asia"></i>
       </div>
       <h2 class="text-lg sm:text-2xl font-black text-white tracking-wide mb-1">SELECT LANGUAGE</h2>
-      <p class="text-xs text-slate-400 mb-5">言語を選択 / Please select your language / Seleccione idioma</p>
+      <p class="text-xs text-slate-400 mb-5">言語を選択 / Select Language / Seleccione idioma / Choisissez la langue / Sprache wählen</p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
         <!-- Japanese -->
@@ -109,6 +109,30 @@
             <div>
               <div class="font-bold text-white text-sm group-hover:text-sky-400">English</div>
               <div class="text-[10px] text-slate-400">Commercial Marine Export</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-slate-500 group-hover:text-sky-400 text-xs"></i>
+        </button>
+
+        <!-- French -->
+        <button onclick="selectInitialLang('fr')" class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-900 border-2 border-slate-700 hover:border-sky-400 hover:bg-slate-800 text-left transition group">
+          <div class="flex items-center space-x-3">
+            <span class="text-2xl">🇫🇷</span>
+            <div>
+              <div class="font-bold text-white text-sm group-hover:text-sky-400">Français</div>
+              <div class="text-[10px] text-slate-400">Grossiste Spécimens Marins</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-slate-500 group-hover:text-sky-400 text-xs"></i>
+        </button>
+
+        <!-- German -->
+        <button onclick="selectInitialLang('de')" class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-900 border-2 border-slate-700 hover:border-sky-400 hover:bg-slate-800 text-left transition group">
+          <div class="flex items-center space-x-3">
+            <span class="text-2xl">🇩🇪</span>
+            <div>
+              <div class="font-bold text-white text-sm group-hover:text-sky-400">Deutsch</div>
+              <div class="text-[10px] text-slate-400">Großhandel für Meerestiere</div>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right text-slate-500 group-hover:text-sky-400 text-xs"></i>
@@ -269,8 +293,13 @@
               <select id="countrySelect" onchange="changeCountry(this.value)" class="bg-slate-900 text-slate-300 border border-slate-700 text-xs rounded-xl px-2.5 py-2 focus:outline-none focus:border-sky-400">
                 <option value="USA">🇺🇸 United States</option>
                 <option value="EU">🇪🇺 European Union</option>
+                <option value="FR">🇫🇷 France</option>
+                <option value="DE">🇩🇪 Deutschland (Germany)</option>
                 <option value="ES">🇪🇸 España (Spain)</option>
                 <option value="PT">🇵🇹 Portugal</option>
+                <option value="CH">🇨🇭 Suisse / Schweiz</option>
+                <option value="BE">🇧🇪 Belgique / België</option>
+                <option value="AT">🇦🇹 Österreich (Austria)</option>
                 <option value="MX">🇲🇽 México</option>
                 <option value="BR">🇧🇷 Brasil</option>
                 <option value="TW">🇹🇼 台灣 (Taiwan)</option>
@@ -857,13 +886,13 @@
     ];
 
     const CATEGORY_NAMES = {
-      'ALL': { ja: 'すべて', en: 'All Specimens', 'zh-TW': '全部活體', 'zh-CN': '全部活体', es: 'Todos los Especímenes', pt: 'Todos os Espécimes' },
-      '魚': { ja: '🐟 海水魚', en: '🐟 Marine Fish', 'zh-TW': '🐟 海水魚類', 'zh-CN': '🐟 海水鱼类', es: '🐟 Peces Marinos', pt: '🐟 Peixes Marinhos' },
-      '貝': { ja: '🐚 貝類', en: '🐚 Marine Snails & Shells', 'zh-TW': '🐚 螺貝類', 'zh-CN': '🐚 螺贝类', es: '🐚 Moluscos y Caracoles', pt: '🐚 Moluscos e Caramujos' },
-      'シャコガイ': { ja: '🦪 シャコガイ', en: '🦪 Giant Clams', 'zh-TW': '🦪 硨磲貝', 'zh-CN': '🦪 硨磲贝', es: '🦪 Almejas Gigantes (Tridacna)', pt: '🦪 Ostras Gigantes (Tridacna)' },
-      'イソギンチャク': { ja: '🌸 イソギンチャク', en: '🌸 Sea Anemones', 'zh-TW': '🌸 海葵類', 'zh-CN': '🌸 海葵类', es: '🌸 Anémonas de Mar', pt: '🌸 Anêmonas do Mar' },
-      'サンゴ': { ja: '🪸 サンゴ', en: '🪸 Live Corals', 'zh-TW': '🪸 珊瑚類', 'zh-CN': '🪸 珊瑚类', es: '🪸 Corales Vivos', pt: '🪸 Corais Vivos' },
-      'その他': { ja: '🦀 その他', en: '🦀 Inverts & Others', 'zh-TW': '🦀 甲殼類及其他', 'zh-CN': '🦀 甲壳类及其他', es: '🦀 Invertebrados y Otros', pt: '🦀 Invertebrados e Outros' }
+      'ALL': { ja: 'すべて', en: 'All Specimens', 'zh-TW': '全部活體', 'zh-CN': '全部活体', es: 'Todos los Especímenes', pt: 'Todos os Espécimes', fr: 'Tous les Spécimens', de: 'Alle Meerestiere' },
+      '魚': { ja: '🐟 海水魚', en: '🐟 Marine Fish', 'zh-TW': '🐟 海水魚類', 'zh-CN': '🐟 海水鱼类', es: '🐟 Peces Marinos', pt: '🐟 Peixes Marinhos', fr: '🐟 Poissons Marins', de: '🐟 Meerwasserfische' },
+      '貝': { ja: '🐚 貝類', en: '🐚 Marine Snails & Shells', 'zh-TW': '🐚 螺貝類', 'zh-CN': '🐚 螺贝类', es: '🐚 Moluscos y Caracoles', pt: '🐚 Moluscos e Caramujos', fr: '🐚 Mollusques & Escargots', de: '🐚 Mollusken & Schnecken' },
+      'シャコガイ': { ja: '🦪 シャコガイ', en: '🦪 Giant Clams', 'zh-TW': '🦪 硨磲貝', 'zh-CN': '🦪 硨磲贝', es: '🦪 Almejas Gigantes (Tridacna)', pt: '🦪 Ostras Gigantes (Tridacna)', fr: '🦪 Bénitiers Géants (Tridacna)', de: '🦪 Riesenmuscheln (Tridacna)' },
+      'イソギンチャク': { ja: '🌸 イソギンチャク', en: '🌸 Sea Anemones', 'zh-TW': '🌸 海葵類', 'zh-CN': '🌸 海葵类', es: '🌸 Anémonas de Mar', pt: '🌸 Anêmonas do Mar', fr: '🌸 Anémones de Mer', de: '🌸 Seeanemonen' },
+      'サンゴ': { ja: '🪸 サンゴ', en: '🪸 Live Corals', 'zh-TW': '🪸 珊瑚類', 'zh-CN': '🪸 珊瑚类', es: '🪸 Corales Vivos', pt: '🪸 Corais Vivos', fr: '🪸 Coraux Vivants', de: '🪸 Lebende Korallen' },
+      'その他': { ja: '🦀 その他', en: '🦀 Inverts & Others', 'zh-TW': '🦀 甲殼類及其他', 'zh-CN': '🦀 甲壳类及其他', es: '🦀 Invertebrados y Otros', pt: '🦀 Invertebrados e Outros', fr: '🦀 Invertébrés & Autres', de: '🦀 Wirbellose & Sonstige' }
     };
 
     function resolveProductLocalization(rawName, category) {
@@ -937,6 +966,14 @@
         return s.replace(/規格おまかせ/g, 'Assorted Standard')
                 .replace(/開放時/g, 'Expanded')
                 .replace(/直径/g, 'Dia.');
+      } else if (lang === 'fr') {
+        return s.replace(/規格おまかせ/g, 'Standard Assorti')
+                .replace(/開放時/g, 'Déployé')
+                .replace(/直径/g, 'Diam.');
+      } else if (lang === 'de') {
+        return s.replace(/規格おまかせ/g, 'Standard Sortiert')
+                .replace(/開放時/g, 'Geöffnet')
+                .replace(/直径/g, 'Durchm.');
       } else if (lang === 'es') {
         return s.replace(/規格おまかせ/g, 'Estándar Mixto')
                 .replace(/開放時/g, 'Expandido')
@@ -964,7 +1001,7 @@
 
     function getLocalizedProductName(product, lang) {
       if (!product) return '';
-      if (lang === 'en' || lang === 'es' || lang === 'pt') return product.name_en || product.name || product.name_ja;
+      if (lang === 'en' || lang === 'es' || lang === 'pt' || lang === 'fr' || lang === 'de') return product.name_en || product.name || product.name_ja;
       if (lang === 'zh-TW') return product.name_zh_tw || product.name_en || product.name || product.name_ja;
       if (lang === 'zh-CN') return product.name_zh_cn || product.name_en || product.name || product.name_ja;
       return product.name_ja || product.name;
@@ -1574,6 +1611,144 @@
         spec_size_label: 'Tamanho Espécime:',
         empty_title: 'Nenhum espécime correspondente encontrado',
         empty_desc: 'Tente ajustar os termos de pesquisa ou o filtro de categoria.'
+      },
+      'fr': {
+        nav_lang: 'Français',
+        auth_title: 'Portail d\'Authentification B2B',
+        auth_subtitle: 'Accès Exclusif pour Aquariums Publics et Grossistes Commerciaux Agréés',
+        enter_pin: 'Entrez le code PIN d\'accès à 4 chiffres',
+        btn_auth: 'Authentifier et Ouvrir le Catalogue',
+        cart: 'Panier',
+        mov_short: 'Commande Min. (MOV):',
+        hero_badge: 'EXPÉDITION DIRECTE DE L\'ÎLE D\'ISHIGAKI, JAPON',
+        hero_title: 'Catalogue de Spécimens Marins & Demandes de Collecte',
+        hero_desc: 'Allocation directe depuis les bassins de quarantaine. Les quantités dépassant le stock sont acceptées comme Demandes de Collecte par plongeurs professionnels.',
+        search_ph: 'Rechercher espèce, nom scientifique, code...',
+        fx_rate_notice: 'Taux FX: 1 USD = ¥160 (Taux de couverture du jour avec arrondi supérieur)',
+        btn_refresh_stock: 'Actualiser',
+        in_stock: 'En Stock:',
+        unit_price: 'Prix de Gros',
+        btn_add: 'Ajouter au Panier',
+        collect_modal_title: 'Avis de Demande de Collecte Sauvage',
+        collect_modal_ok: 'Accepter et Demander la Collecte (OK)',
+        collect_modal_cancel: 'Annuler',
+        cart_title: 'Panier de Demande Proforma',
+        mov_title: 'Montant Minimum de Commande (MOV)',
+        specimen_subtotal: 'Sous-total des Spécimens:',
+        lbl_freight_est: 'Fret Aérien, Caisses Isothermes & Quarantaine:',
+        lbl_freight_desc: 'Calculé sur la Facture Proforma Officielle',
+        btn_proceed_clearance: 'Passer aux Conditions Légales & Envoi',
+        view_cart: 'Voir le Panier',
+        legal_title: 'Confirmation Légale CITES & Fret Aérien International',
+        legal_sub: 'Pour générer la demande Proforma officielle, l\'acceptation des 3 clauses est obligatoire.',
+        legal_c1_title: '1. Séparation des Prix des Spécimens et Frais Annexes',
+        legal_c1_desc: 'Le montant total affiché comprend uniquement le prix des animaux. Le fret aérien international, les caisses polystyrène renforcées, l\'oxygène/chaufferettes et les frais d\'émission de licence CITES seront facturés séparément sur la facture proforma officielle.',
+        legal_c2_title: '2. Délais de Collecte Sauvage et Permis CITES',
+        legal_c2_desc: 'La capture par plongeurs professionnels et l\'obtention du permis d\'exportation CITES auprès du ministère METI peuvent nécessiter plusieurs semaines. Aucune date d\'arrivée ferme ne peut être garantie lors de la demande initiale.',
+        legal_c3_title: '3. Responsabilité d\'Importation et de Dédouanement de l\'Acheteur',
+        legal_c3_desc: 'L\'acheteur est seul responsable de détenir les permis d\'importation requis dans son pays, d\'assurer le dédouanement vétérinaire et de régler l\'ensemble des droits de douane et taxes locales.',
+        btn_back: 'Retour au Panier',
+        btn_agree_proceed: 'J\'Accepte Tout • Renseigner les Coordonnées',
+        order_form_title: 'Émission de la Demande de Commande Proforma',
+        order_form_sub: 'Veuillez renseigner le code IATA de l\'aéroport d\'arrivée et vos coordonnées',
+        lbl_company: 'Entreprise / Raison Sociale *',
+        ph_company: 'Ex.: France Récif Aquarium SAS',
+        lbl_contact: 'Nom du Contact *',
+        ph_contact: 'Ex.: Pierre Martin / Sophie Dubois',
+        lbl_email: 'E-mail Professionnel *',
+        ph_email: 'acheteur@entreprise.fr',
+        lbl_im: 'Messagerie Instantanée (WhatsApp / WeChat / LINE) *',
+        ph_im: 'Ex.: +33-6-12-34-56-78 / WhatsApp',
+        lbl_airport: 'Code IATA de l\'Aéroport de Destination (3 lettres) *',
+        ph_airport: 'Ex.: CDG, ORY, FRA, AMS, ZRH, MIA, LAX',
+        lbl_license: 'N° de Licence d\'Importation / CITES (Facultatif)',
+        ph_license: 'Renseigner si déjà obtenue',
+        lbl_notes: 'Consignes d\'Emballage / Tailles / Remarques',
+        ph_notes: 'Ex.: Double ensachage avec oxygène supplémentaire, 2x chaufferettes',
+        lbl_subtotal: 'Sous-total Spécimens:',
+        lbl_collect_status: 'Inclut Demandes de Collecte:',
+        btn_submit_order: 'Envoyer la Demande & Télécharger le PDF',
+        success_title: 'Demande Proforma Enregistrée avec Succès',
+        success_desc: 'Enregistré dans le système d\'exportation de Kawabata Suisan (Île d\'Ishigaki). Le plan de vol cargo et la Facture Proforma officielle vous seront transmis sous 24 heures.',
+        lbl_order_ref: 'Référence de Commande:',
+        lbl_dest_airport: 'Aéroport d\'Arrivée:',
+        btn_download_pdf_again: 'Télécharger le PDF à Nouveau',
+        btn_back_to_catalog: 'Retour au Catalogue Grossiste',
+        footer_title: 'Système B2B d\'Export Marin d\'Ishigaki (Kawabata Suisan) © 2026',
+        footer_sub: 'Conforme Coopérative de Pêche de Yaeyama • Homologation CITES Annexe II • Normes de Transport IATA LAR',
+        pcs_unit: 'pcs',
+        spec_size_label: 'Taille du Spécimen:',
+        empty_title: 'Aucun spécimen correspondant trouvé',
+        empty_desc: 'Veuillez modifier vos termes de recherche ou le filtre de catégorie.'
+      },
+      'de': {
+        nav_lang: 'Deutsch',
+        auth_title: 'B2B-Authentifizierungsportal',
+        auth_subtitle: 'Exklusiver Zugang für Schau-Aquarien und registrierte Großhändler',
+        enter_pin: 'Bitte 4-stelligen Zugangs-PIN eingeben',
+        btn_auth: 'Authentifizieren & Katalog Öffnen',
+        cart: 'Warenkorb',
+        mov_short: 'Mindestbestellwert (MOV):',
+        hero_badge: 'DIREKTEXPORT VON DER INSEL ISHIGAKI, JAPAN',
+        hero_title: 'Katalog für Meerestiere & Wildfang-Sammelanfragen',
+        hero_desc: 'Direktzuteilung aus Hälterungsbecken. Über den Lagerbestand hinausgehende Mengen werden als Sammelanfragen durch Berufstaucher angenommen.',
+        search_ph: 'Artname, wissenschaftl. Name, ID suchen...',
+        fx_rate_notice: 'Wechselkurs: 1 USD = ¥160 (Täglicher Absicherungskurs mit Aufrundung)',
+        btn_refresh_stock: 'Aktualisieren',
+        in_stock: 'Auf Lager:',
+        unit_price: 'Großhandelspreis',
+        btn_add: 'In den Warenkorb',
+        collect_modal_title: 'Hinweis zu Wildfang-Sammelanfragen',
+        collect_modal_ok: 'Zustimmen & Sammelanfrage stellen (OK)',
+        collect_modal_cancel: 'Abbrechen',
+        cart_title: 'Proforma-Anfragekorb',
+        mov_title: 'Mindestbestellwert (MOV)',
+        specimen_subtotal: 'Zwischensumme Meerestiere:',
+        lbl_freight_est: 'Luftfracht, Thermoboxen & Quarantäne:',
+        lbl_freight_desc: 'Wird auf der offiziellen Proforma-Rechnung berechnet',
+        btn_proceed_clearance: 'Zu den rechtlichen Bedingungen & Käuferdaten',
+        view_cart: 'Warenkorb ansehen',
+        legal_title: 'Rechtliche Vereinbarung: CITES & Internationaler Lufttransport',
+        legal_sub: 'Zur Erstellung der offiziellen Proforma-Bestellanfrage müssen alle 3 Klauseln bestätigt werden.',
+        legal_c1_title: '1. Trennung von Tierpreisen und Nebenkosten',
+        legal_c1_desc: 'Der angezeigte Betrag umfasst ausschließlich die Tierpreise. Internationale Luftfrachtkosten, verstärkte Styropor-Thermoboxen, Sauerstoff/Heatpacks und CITES-Ausfuhrgenehmigungsgebühren werden auf der offiziellen Proforma-Rechnung separat ausgewiesen.',
+        legal_c2_title: '2. Wildfang-Zeitplan & CITES-Genehmigungsverfahren',
+        legal_c2_desc: 'Der Fang durch lizenzierte Berufstaucher sowie die Genehmigung durch das japanische Wirtschaftsministerium (METI) können mehrere Wochen in Anspruch nehmen. Ein festes Lieferdatum kann bei der Erstanfrage nicht garantiert werden.',
+        legal_c3_title: '3. Importgenehmigung & Zollabfertigungsverantwortung des Käufers',
+        legal_c3_desc: 'Der Käufer trägt die alleinige Verantwortung für das Vorliegen erforderlicher Einfuhrgenehmigungen im Bestimmungsland, die veterinäramtliche Grenzabfertigung sowie alle anfallenden Zölle und Steuern.',
+        btn_back: 'Zurück zum Warenkorb',
+        btn_agree_proceed: 'Allen Klauseln zustimmen • Käuferdaten eingeben',
+        order_form_title: 'Proforma-Bestellanfrage Übermitteln',
+        order_form_sub: 'Bitte IATA-Zielflughafencode und geschäftliche Kontaktdaten eingeben',
+        lbl_company: 'Firmenname / Organisation *',
+        ph_company: 'Z.B.: Aquaristik Großhandel Hamburg GmbH',
+        lbl_contact: 'Ansprechpartner *',
+        ph_contact: 'Z.B.: Max Mustermann / Anna Schmidt',
+        lbl_email: 'Geschäftliche E-Mail-Adresse *',
+        ph_email: 'einkauf@firma.de',
+        lbl_im: 'Messenger (WhatsApp / WeChat / LINE) *',
+        ph_im: 'Z.B.: +49-170-1234567 / WhatsApp',
+        lbl_airport: 'IATA-Code des Zielflughafens (3 Buchstaben) *',
+        ph_airport: 'Z.B.: FRA, MUC, BER, HAM, DUS, ZRH, VIE',
+        lbl_license: 'Einfuhrgenehmigungs- / CITES-Registriernr. (Optional)',
+        ph_license: 'Eintragen falls bereits vorhanden',
+        lbl_notes: 'Verpackungsanweisungen / Größen / Anmerkungen',
+        ph_notes: 'Z.B.: Doppelbeutel mit extra Sauerstoff, 2x Heatpacks erwünscht',
+        lbl_subtotal: 'Zwischensumme Tiere:',
+        lbl_collect_status: 'Enthält Sammelanfragen:',
+        btn_submit_order: 'Anfrage Absenden & PDF Herunterladen',
+        success_title: 'Proforma-Anfrage Erfolgreich Übermittelt',
+        success_desc: 'Im Exportsystem von Kawabata Suisan (Insel Ishigaki) erfasst. Flugplanoptionen und die offizielle Proforma-Rechnung werden innerhalb von 24 Stunden zugesendet.',
+        lbl_order_ref: 'Bestellreferenz:',
+        lbl_dest_airport: 'Zielflughafen:',
+        btn_download_pdf_again: 'PDF Erneut Herunterladen',
+        btn_back_to_catalog: 'Zurück zum Großhandelskatalog',
+        footer_title: 'Ishigaki Marine B2B-Exportsystem (Kawabata Suisan) © 2026',
+        footer_sub: 'Gemäß Fischereigenossenschaft Yaeyama • CITES Anhang II zertifiziert • Konform mit IATA Live Animals Regulations (LAR)',
+        pcs_unit: 'Stk',
+        spec_size_label: 'Größe:',
+        empty_title: 'Keine passenden Meerestiere gefunden',
+        empty_desc: 'Bitte Suchbegriff anpassen oder den Kategoriefilter ändern.'
       }
     };
 
@@ -1738,6 +1913,8 @@
         const sc = (s % 60).toString().padStart(2, '0');
         const lockMsg = (lang === 'ja') ? `試行回数超過。ロック解除まで ${m}:${sc}` :
                         (lang === 'en') ? `Too many attempts. Lockout remaining ${m}:${sc}` :
+                        (lang === 'fr') ? `Tentatives excessives. Verrouillage restant ${m}:${sc}` :
+                        (lang === 'de') ? `Zu viele Versuche. Sperre verbleibend ${m}:${sc}` :
                         (lang === 'es') ? `Demasiados intentos. Bloqueo restante ${m}:${sc}` :
                         (lang === 'pt') ? `Tentativas excessivas. Bloqueio restante ${m}:${sc}` :
                         (lang === 'zh-TW') ? `嘗試次數過多。解鎖倒數 ${m}:${sc}` :
@@ -1772,6 +1949,8 @@
         const rem = MAX_FAILED_ATTEMPTS - info.attempts;
         const msg = (lang === 'ja') ? `PINコードが違います。残り ${rem} 回で15分間ロックされます。` :
                     (lang === 'en') ? `Invalid PIN. ${rem} attempts remaining before 15-min lockout.` :
+                    (lang === 'fr') ? `PIN incorrect. Il reste ${rem} tentatives avant verrouillage de 15 min.` :
+                    (lang === 'de') ? `Falsche PIN. Noch ${rem} Versuche vor 15-Minuten-Sperre.` :
                     (lang === 'es') ? `PIN incorrecto. Quedan ${rem} intentos antes del bloqueo de 15 min.` :
                     (lang === 'pt') ? `PIN incorreto. Restam ${rem} tentativas antes do bloqueio de 15 min.` :
                     (lang === 'zh-TW') ? `PIN 碼錯誤。剩餘 ${rem} 次嘗試機會後將鎖定 15 分鐘。` :
@@ -1869,6 +2048,8 @@
         const lang = appState.lang || 'ja';
         const msg = (lang === 'ja') ? '4桁すべて入力してください。' :
                     (lang === 'en') ? 'Please enter all 4 digits.' :
+                    (lang === 'fr') ? 'Veuillez saisir les 4 chiffres.' :
+                    (lang === 'de') ? 'Bitte alle 4 Ziffern eingeben.' :
                     (lang === 'es') ? 'Por favor ingrese los 4 dígitos.' :
                     (lang === 'pt') ? 'Por favor, insira todos os 4 dígitos.' :
                     (lang === 'zh-TW') ? '請輸入完整 4 位數驗證碼。' :
@@ -1942,6 +2123,8 @@
       if (badgeText) {
         badgeText.textContent = (lang === 'ja' ? "スプレッドシート在庫 取得中..." :
                                 lang === 'en' ? "Fetching live inventory..." :
+                                lang === 'fr' ? "Récupération du stock en direct..." :
+                                lang === 'de' ? "Live-Lagerbestand wird abgerufen..." :
                                 lang === 'es' ? "Obteniendo inventario en vivo..." :
                                 lang === 'pt' ? "Obtendo inventário ao vivo..." :
                                 lang === 'zh-TW' ? "正在取得現貨庫存..." : "正在获取现货库存...");
@@ -2011,6 +2194,8 @@
               const count = appState.catalog.length;
               if (lang === 'ja') badgeText.textContent = `本番在庫: ${count} 種 同期中`;
               else if (lang === 'en') badgeText.textContent = `Live Stock: ${count} species synced`;
+              else if (lang === 'fr') badgeText.textContent = `Stock en direct: ${count} espèces synchronisées`;
+              else if (lang === 'de') badgeText.textContent = `Live-Bestand: ${count} Arten synchronisiert`;
               else if (lang === 'es') badgeText.textContent = `Stock en Vivo: ${count} especies sincronizadas`;
               else if (lang === 'pt') badgeText.textContent = `Estoque ao Vivo: ${count} espécies sincronizadas`;
               else if (lang === 'zh-TW') badgeText.textContent = `現貨在庫: ${count} 種 即時同步中`;
@@ -2038,6 +2223,8 @@
         if (badgeText) {
           badgeText.textContent = (lang === 'ja') ? `オフライン (基本カタログ)` :
                                   (lang === 'en') ? `Offline (Standard Catalog)` :
+                                  (lang === 'fr') ? `Hors ligne (Catalogue Standard)` :
+                                  (lang === 'de') ? `Offline (Standard-Katalog)` :
                                   (lang === 'es') ? `Desconectado (Catálogo Estándar)` :
                                   (lang === 'pt') ? `Offline (Catálogo Padrão)` :
                                   (lang === 'zh-TW') ? `離線 (預設目錄)` :
@@ -2101,6 +2288,8 @@
         const hasImage = !!(p.image_url && String(p.image_url).trim() !== '');
         const noPhotoSub = (lang === 'ja') ? '写真なし' :
                            (lang === 'en') ? 'No Photo' :
+                           (lang === 'fr') ? 'Sans Photo' :
+                           (lang === 'de') ? 'Kein Foto' :
                            (lang === 'es') ? 'Sin Foto' :
                            (lang === 'pt') ? 'Sem Foto' :
                            (lang === 'zh-TW') ? '暫無照片' : '暂无照片';
@@ -2115,6 +2304,8 @@
         if (p.stock > 0) {
           const inStockText = (lang === 'ja') ? `生簀在庫: <strong>${p.stock}</strong> 匹` :
                               (lang === 'en') ? `Holding Stock: <strong>${p.stock}</strong> pcs` :
+                              (lang === 'fr') ? `Stock en Bassin: <strong>${p.stock}</strong> pcs` :
+                              (lang === 'de') ? `Beckenbestand: <strong>${p.stock}</strong> Stk` :
                               (lang === 'es') ? `En Estanque: <strong>${p.stock}</strong> uds` :
                               (lang === 'pt') ? `Em Tanque: <strong>${p.stock}</strong> pçs` :
                               (lang === 'zh-TW') ? `蓄養現貨: <strong>${p.stock}</strong> 隻` :
@@ -2128,6 +2319,8 @@
         } else {
           const zeroStockText = (lang === 'ja') ? `採集リクエスト受付 (在庫0)` :
                                 (lang === 'en') ? `Collection Request Only (0 Stock)` :
+                                (lang === 'fr') ? `Demande de Collecte Uniquement (Stock 0)` :
+                                (lang === 'de') ? `Nur Sammelanfrage (Bestand 0)` :
                                 (lang === 'es') ? `Solo Solicitud de Colecta (Stock 0)` :
                                 (lang === 'pt') ? `Apenas Pedido de Coleta (Estoque 0)` :
                                 (lang === 'zh-TW') ? `採集申請受理 (無現貨)` :
@@ -2144,6 +2337,8 @@
         if (initialOverStock > 0) {
           const overText = (lang === 'ja') ? `★ 採集リクエスト: +${initialOverStock}匹 含む` :
                            (lang === 'en') ? `★ Collection Request: +${initialOverStock} pcs` :
+                           (lang === 'fr') ? `★ Demande de Collecte: +${initialOverStock} pcs` :
+                           (lang === 'de') ? `★ Sammelanfrage: +${initialOverStock} Stk` :
                            (lang === 'es') ? `★ Solicitud Colecta: +${initialOverStock} uds` :
                            (lang === 'pt') ? `★ Pedido de Coleta: +${initialOverStock} pçs` :
                            (lang === 'zh-TW') ? `★ 採集預約: 含 +${initialOverStock} 隻` :
@@ -2156,6 +2351,8 @@
         if (inCartQty > 0) {
           const inCartText = (lang === 'ja') ? `カートに ${inCartQty} 匹 選択中` :
                              (lang === 'en') ? `${inCartQty} pcs in cart` :
+                             (lang === 'fr') ? `${inCartQty} pcs dans le panier` :
+                             (lang === 'de') ? `${inCartQty} Stk im Warenkorb` :
                              (lang === 'es') ? `${inCartQty} uds en carrito` :
                              (lang === 'pt') ? `${inCartQty} pçs no carrinho` :
                              (lang === 'zh-TW') ? `已選購 ${inCartQty} 隻` :
@@ -2331,6 +2528,8 @@
         const extra = qty - stock;
         const txt = (lang === 'ja') ? `★ 採集リクエスト: +${extra}匹 含む` :
                     (lang === 'en') ? `★ Collection Request: +${extra} pcs` :
+                    (lang === 'fr') ? `★ Demande de Collecte: +${extra} pcs` :
+                    (lang === 'de') ? `★ Sammelanfrage: +${extra} Stk` :
                     (lang === 'es') ? `★ Solicitud Colecta: +${extra} uds` :
                     (lang === 'pt') ? `★ Pedido de Coleta: +${extra} pçs` :
                     (lang === 'zh-TW') ? `★ 採集預約: 含 +${extra} 隻` :
@@ -2413,6 +2612,10 @@
         msgHtml = `（現在の在庫数は <strong class="text-amber-400 font-bold">${stockNum}</strong> 匹ですが、これ以上の注文は八重山諸島での採集リクエストとして受け付けます）`;
       } else if (lang === 'en') {
         msgHtml = `(Current holding stock is <strong class="text-amber-400 font-bold">${stockNum}</strong> pcs. Quantities exceeding this will be accepted as wild diver collection requests in Yaeyama Islands)`;
+      } else if (lang === 'fr') {
+        msgHtml = `(Le stock actuel en bassin est de <strong class="text-amber-400 font-bold">${stockNum}</strong> pcs. Les quantités supérieures seront acceptées comme demandes de collecte sauvage par plongeurs aux îles Yaeyama)`;
+      } else if (lang === 'de') {
+        msgHtml = `(Aktueller Hälterungsbestand: <strong class="text-amber-400 font-bold">${stockNum}</strong> Stk. Darüber hinausgehende Mengen werden als Wildfang-Sammelanfrage durch Taucher auf den Yaeyama-Inseln angenommen)`;
       } else if (lang === 'es') {
         msgHtml = `(El inventario actual en estanque es de <strong class="text-amber-400 font-bold">${stockNum}</strong> uds. Las cantidades que superen este límite se aceptarán como solicitudes de colecta por buzos en las Islas Yaeyama)`;
       } else if (lang === 'pt') {
@@ -2463,9 +2666,11 @@
       closeCollectionModal();
       const lang = appState.lang || 'ja';
       const name = getLocalizedProductName(product, lang);
-      const pcs = (lang === 'ja') ? '匹' : (lang === 'en') ? 'pcs' : (lang === 'es') ? 'uds' : (lang === 'pt') ? 'pçs' : (lang === 'zh-TW') ? '隻' : '只';
+      const pcs = (lang === 'ja') ? '匹' : (lang === 'en') ? 'pcs' : (lang === 'fr') ? 'pcs' : (lang === 'de') ? 'Stk' : (lang === 'es') ? 'uds' : (lang === 'pt') ? 'pçs' : (lang === 'zh-TW') ? '隻' : '只';
       const toastMsg = (lang === 'ja') ? `「${name}」採集リクエスト数量（${targetQty}${pcs}）を設定しました` :
                        (lang === 'en') ? `Set collection request qty for "${name}" to ${targetQty} ${pcs}` :
+                       (lang === 'fr') ? `Quantité de collecte pour « ${name} » fixée à ${targetQty} ${pcs}` :
+                       (lang === 'de') ? `Sammelanfrage-Menge für „${name}“ auf ${targetQty} ${pcs} festgelegt` :
                        (lang === 'es') ? `Cantidad de colecta para "${name}" fijada en ${targetQty} ${pcs}` :
                        (lang === 'pt') ? `Quantidade de coleta para "${name}" definida em ${targetQty} ${pcs}` :
                        (lang === 'zh-TW') ? `已為「${name}」設定採集申請數量（${targetQty} ${pcs}）` :
@@ -2505,9 +2710,11 @@
       
       const lang = appState.lang || 'ja';
       const name = getLocalizedProductName(product, lang);
-      const pcs = (lang === 'ja') ? '匹' : (lang === 'en') ? 'pcs' : (lang === 'es') ? 'uds' : (lang === 'pt') ? 'pçs' : (lang === 'zh-TW') ? '隻' : '只';
+      const pcs = (lang === 'ja') ? '匹' : (lang === 'en') ? 'pcs' : (lang === 'fr') ? 'pcs' : (lang === 'de') ? 'Stk' : (lang === 'es') ? 'uds' : (lang === 'pt') ? 'pçs' : (lang === 'zh-TW') ? '隻' : '只';
       const toastMsg = (lang === 'ja') ? `「${name}」を ${qty}${pcs} カートに追加しました` :
                        (lang === 'en') ? `Added ${qty} ${pcs} of "${name}" to cart` :
+                       (lang === 'fr') ? `Ajouté ${qty} ${pcs} de « ${name} » au panier` :
+                       (lang === 'de') ? `${qty} ${pcs} von „${name}“ zum Warenkorb hinzugefügt` :
                        (lang === 'es') ? `Se añadieron ${qty} ${pcs} de "${name}" al carrito` :
                        (lang === 'pt') ? `Adicionado ${qty} ${pcs} de "${name}" ao carrinho` :
                        (lang === 'zh-TW') ? `已將「${name}」共 ${qty} ${pcs} 加入採購單` :
@@ -2564,6 +2771,8 @@
       
       const countLabel = (lang === 'ja') ? `${totalCount} 匹選択中` :
                          (lang === 'en') ? `${totalCount} pcs selected` :
+                         (lang === 'fr') ? `${totalCount} pcs sélectionnées` :
+                         (lang === 'de') ? `${totalCount} Stk ausgewählt` :
                          (lang === 'es') ? `${totalCount} uds seleccionadas` :
                          (lang === 'pt') ? `${totalCount} pçs selecionadas` :
                          (lang === 'zh-TW') ? `已選 ${totalCount} 隻` :
@@ -2596,6 +2805,8 @@
         
         const metText = (lang === 'ja') ? "✅ 最低注文額(MOV)を満たしました！発注可能です。" :
                         (lang === 'en') ? "✅ Minimum Order Value (MOV) met! Ready to order." :
+                        (lang === 'fr') ? "✅ Valeur minimale de commande (MOV) atteinte ! Prêt à commander." :
+                        (lang === 'de') ? "✅ Mindestbestellwert (MOV) erreicht! Bestellbereit." :
                         (lang === 'es') ? "✅ ¡Valor mínimo de pedido (MOV) alcanzado! Listo para ordenar." :
                         (lang === 'pt') ? "✅ Valor mínimo de pedido (MOV) atingido! Pronto para encomendar." :
                         (lang === 'zh-TW') ? "✅ 已達到最低起訂額 (MOV)！可以提交訂單。" :
@@ -2604,6 +2815,8 @@
         mobileCartStickyMovStatus.className = "text-[10px] text-emerald-400 font-bold";
         mobileCartStickyMovStatus.textContent = (lang === 'ja') ? "MOV達成済み (発注可能)" :
                                                 (lang === 'en') ? "MOV Met (Order Ready)" :
+                                                (lang === 'fr') ? "MOV Atteint (Prêt)" :
+                                                (lang === 'de') ? "MOV Erreicht (Bereit)" :
                                                 (lang === 'es') ? "MOV Alcanzado (Listo)" :
                                                 (lang === 'pt') ? "MOV Atingido (Pronto)" :
                                                 (lang === 'zh-TW') ? "MOV已達成 (可下單)" :
@@ -2617,6 +2830,8 @@
 
         const unmetText = (lang === 'ja') ? `最低注文額まであと ${diffFormatted} 必要です。` :
                           (lang === 'en') ? `Remaining for Minimum Order (MOV): ${diffFormatted}` :
+                          (lang === 'fr') ? `Reste pour atteindre la commande min. (MOV): ${diffFormatted}` :
+                          (lang === 'de') ? `Noch ${diffFormatted} bis zum Mindestbestellwert (MOV)` :
                           (lang === 'es') ? `Faltan ${diffFormatted} para el pedido mínimo (MOV).` :
                           (lang === 'pt') ? `Restam ${diffFormatted} para o pedido mínimo (MOV).` :
                           (lang === 'zh-TW') ? `距離最低起訂額尚差: ${diffFormatted}` :
@@ -2625,6 +2840,8 @@
         mobileCartStickyMovStatus.className = "text-[10px] text-amber-400";
         mobileCartStickyMovStatus.textContent = (lang === 'ja') ? `MOVまで残り: ${diffFormatted}` :
                                                 (lang === 'en') ? `Remaining: ${diffFormatted}` :
+                                                (lang === 'fr') ? `Reste: ${diffFormatted}` :
+                                                (lang === 'de') ? `Rest: ${diffFormatted}` :
                                                 (lang === 'es') ? `Faltan: ${diffFormatted}` :
                                                 (lang === 'pt') ? `Restam: ${diffFormatted}` :
                                                 (lang === 'zh-TW') ? `距離MOV尚差: ${diffFormatted}` :
@@ -2639,6 +2856,8 @@
       if (appState.cart.length === 0) {
         const emptyCartMsg = (lang === 'ja') ? "カートに生体がありません。" :
                              (lang === 'en') ? "Your request cart is empty." :
+                             (lang === 'fr') ? "Votre panier de demande est vide." :
+                             (lang === 'de') ? "Ihr Anfragekorb ist leer." :
                              (lang === 'es') ? "Su carrito de solicitud está vacío." :
                              (lang === 'pt') ? "Seu carrinho de solicitação está vazio." :
                              (lang === 'zh-TW') ? "採購清單目前尚無活體項目。" :
@@ -2660,6 +2879,8 @@
 
           const stockPartLabel = (lang === 'ja') ? `現物: ${inStockPart}` :
                                  (lang === 'en') ? `Stock: ${inStockPart}` :
+                                 (lang === 'fr') ? `Stock: ${inStockPart}` :
+                                 (lang === 'de') ? `Lager: ${inStockPart}` :
                                  (lang === 'es') ? `Stock: ${inStockPart}` :
                                  (lang === 'pt') ? `Estoque: ${inStockPart}` :
                                  (lang === 'zh-TW') ? `現貨: ${inStockPart}` :
@@ -2667,6 +2888,8 @@
 
           const collectPartLabel = (lang === 'ja') ? `★採集: +${collectionPart}` :
                                    (lang === 'en') ? `★Req: +${collectionPart}` :
+                                   (lang === 'fr') ? `★Collecte: +${collectionPart}` :
+                                   (lang === 'de') ? `★Fang: +${collectionPart}` :
                                    (lang === 'es') ? `★Colecta: +${collectionPart}` :
                                    (lang === 'pt') ? `★Coleta: +${collectionPart}` :
                                    (lang === 'zh-TW') ? `★採集: +${collectionPart}` :
@@ -2674,6 +2897,8 @@
 
           const perPiece = (lang === 'ja') ? '匹' :
                            (lang === 'en') ? 'pc' :
+                           (lang === 'fr') ? 'pc' :
+                           (lang === 'de') ? 'Stk' :
                            (lang === 'es') ? 'ud' :
                            (lang === 'pt') ? 'pç' :
                            (lang === 'zh-TW') ? '隻' : '只';
@@ -2783,6 +3008,8 @@
       if (hasCollection) {
         collectText = (lang === 'ja') ? "あり (採集リクエスト品目含む)" :
                       (lang === 'en') ? "Yes (Includes wild collection items)" :
+                      (lang === 'fr') ? "Oui (Inclut demandes de collecte sauvage)" :
+                      (lang === 'de') ? "Ja (Enthält Wildfang-Sammelanfragen)" :
                       (lang === 'es') ? "Sí (Incluye solicitudes de colecta)" :
                       (lang === 'pt') ? "Sim (Inclui pedidos de coleta selvagem)" :
                       (lang === 'zh-TW') ? "有 (含海捕採集預約項目)" :
@@ -2790,6 +3017,8 @@
       } else {
         collectText = (lang === 'ja') ? "なし (全量生簀在庫引当)" :
                       (lang === 'en') ? "None (100% Holding Tank Stock)" :
+                      (lang === 'fr') ? "Non (100% Stock en bassin de quarantaine)" :
+                      (lang === 'de') ? "Nein (100% Hälterungsbestand)" :
                       (lang === 'es') ? "No (100% Stock en estanque)" :
                       (lang === 'pt') ? "Não (100% Estoque em tanque)" :
                       (lang === 'zh-TW') ? "無 (全數現貨庫存配額)" :
@@ -2810,6 +3039,8 @@
       const dict = I18N[lang] || I18N['ja'];
       const sendingText = (lang === 'ja') ? '送信中...' :
                           (lang === 'en') ? 'Submitting...' :
+                          (lang === 'fr') ? 'Envoi en cours...' :
+                          (lang === 'de') ? 'Wird gesendet...' :
                           (lang === 'es') ? 'Enviando...' :
                           (lang === 'pt') ? 'Enviando...' :
                           (lang === 'zh-TW') ? '正在傳送...' : '正在发送...';
