@@ -582,15 +582,15 @@
        1. SECURITY & ZERO TRUST PIN LOGIC
        - Expected PIN: 9876
        - SHA-256 Hash of "9876": 
-         9b0485906dd4bc8aa3eb1cf7eb0be550e55ee17aa4438b37ad2927c3da3e1b78
+         dbff5341acad5e2a58db4efd5e72e2d9a0a843a28e02b1183c68162d0a3a3de6
        - The plain text '9876' is NOT hardcoded in client logic.
        - Rate limiting: 5 failed attempts locks portal for 15 minutes.
     -------------------------------------------------------- */
-    const PIN_HASH_SHA256 = "9b0485906dd4bc8aa3eb1cf7eb0be550e55ee17aa4438b37ad2927c3da3e1b78";
+    const PIN_HASH_SHA256 = "dbff5341acad5e2a58db4efd5e72e2d9a0a843a28e02b1183c68162d0a3a3de6";
     const MAX_FAILED_ATTEMPTS = 5;
     const LOCKOUT_MINUTES = 15;
     const AUTH_SESSION_KEY = "aqua_export_auth_token";
-    const LOCKOUT_STORAGE_KEY = "aqua_export_lockout_info";
+    const LOCKOUT_STORAGE_KEY = "aqua_export_lockout_info_v2";
     const GAS_ENDPOINT_STORAGE_KEY = "aqua_export_gas_endpoint";
 
     // Application State
@@ -899,23 +899,47 @@
        5. PIN INPUT HANDLING & VERIFICATION
     -------------------------------------------------------- */
     function setupPinInputs() {
+      // Clear legacy lockout key if present
+      localStorage.removeItem("aqua_export_lockout_info");
+
       const inputs = document.querySelectorAll('.pin-digit');
       inputs.forEach((input, index) => {
         input.addEventListener('input', (e) => {
-          if (input.value.length === 1 && index < inputs.length - 1) {
-            inputs[index + 1].focus();
+          if (input.value.length >= 1) {
+            input.value = input.value.slice(-1);
+            if (index < inputs.length - 1) {
+              inputs[index + 1].focus();
+            }
+          }
+          let pin = '';
+          inputs.forEach(inp => pin += inp.value);
+          if (pin.length === 4) {
+            handlePinSubmit();
           }
         });
         input.addEventListener('keydown', (e) => {
           if (e.key === 'Backspace' && !input.value && index > 0) {
             inputs[index - 1].focus();
+          } else if (e.key === 'Enter') {
+            handlePinSubmit();
+          }
+        });
+        input.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const paste = (e.clipboardData || window.clipboardData).getData('text').trim();
+          if (paste.length >= 4) {
+            for (let i = 0; i < 4; i++) {
+              if (inputs[i]) inputs[i].value = paste[i];
+            }
+            inputs[3].focus();
+            handlePinSubmit();
           }
         });
       });
     }
 
     async function handlePinSubmit(e) {
-      e.preventDefault();
+      if (e && e.preventDefault) e.preventDefault();
       if (checkLockoutStatus()) return;
 
       const inputs = document.querySelectorAll('.pin-digit');
