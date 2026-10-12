@@ -745,15 +745,8 @@
       return (match && match[1]) ? `https://lh3.googleusercontent.com/d/${match[1]}` : url;
     }
 
-    // カテゴリ別フォールバック高画質写真
-    const categoryFallbackImages = {
-      '魚': 'https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80',
-      '貝': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80',
-      'シャコガイ': 'https://images.unsplash.com/photo-1520315342629-6ea920342047?auto=format&fit=crop&w=600&q=80',
-      'イソギンチャク': 'https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=600&q=80',
-      'サンゴ': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80',
-      'その他': 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80'
-    };
+    // 写真なし対応: ダミー/暫定のUnsplash写真は使用せず、スプレッドシートに実写真がある場合のみ表示
+    const categoryFallbackImages = {};
 
     /* --------------------------------------------------------
        1.1 COMPREHENSIVE ISHIGAKIJIMA TAXONOMY & MULTILINGUAL DICTIONARY
@@ -958,7 +951,7 @@
         stock: 12,
         price_jpy: 3800,
         cites: 'Non-CITES',
-        image_url: 'https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
       {
         id: 'ISG-F02',
@@ -970,7 +963,7 @@
         stock: 3,
         price_jpy: 11000,
         cites: 'Non-CITES',
-        image_url: 'https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
       {
         id: 'ISG-F03',
@@ -982,7 +975,7 @@
         stock: 6,
         price_jpy: 4500,
         cites: 'Non-CITES',
-        image_url: 'https://images.unsplash.com/photo-1535591273668-581379f87259?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
       {
         id: 'ISG-F04',
@@ -994,7 +987,7 @@
         stock: 25,
         price_jpy: 1800,
         cites: 'Non-CITES',
-        image_url: 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
 
       // 貝 (Shells)
@@ -1008,7 +1001,7 @@
         stock: 40,
         price_jpy: 1200,
         cites: 'Non-CITES',
-        image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
       {
         id: 'ISG-S02',
@@ -1020,7 +1013,7 @@
         stock: 15,
         price_jpy: 2200,
         cites: 'Non-CITES',
-        image_url: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
 
       // シャコガイ (Giant Clams)
@@ -1034,7 +1027,7 @@
         stock: 5,
         price_jpy: 7800,
         cites: 'CITES App. II',
-        image_url: 'https://images.unsplash.com/photo-1520315342629-6ea920342047?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
       {
         id: 'ISG-C02',
@@ -1046,7 +1039,7 @@
         stock: 3,
         price_jpy: 9500,
         cites: 'CITES App. II',
-        image_url: 'https://images.unsplash.com/photo-1576806021995-9f68eb39f1ac?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
 
       // イソギンチャク (Sea Anemones)
@@ -1060,7 +1053,7 @@
         stock: 4,
         price_jpy: 8900,
         cites: 'Non-CITES',
-        image_url: 'https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
       {
         id: 'ISG-A02',
@@ -1072,7 +1065,7 @@
         stock: 8,
         price_jpy: 4800,
         cites: 'Non-CITES',
-        image_url: 'https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
 
       // サンゴ (Corals)
@@ -1086,7 +1079,7 @@
         stock: 6,
         price_jpy: 14000,
         cites: 'CITES App. II',
-        image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
       {
         id: 'ISG-K02',
@@ -1098,7 +1091,7 @@
         stock: 4,
         price_jpy: 8200,
         cites: 'CITES App. II',
-        image_url: 'https://images.unsplash.com/photo-1520315342629-6ea920342047?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
 
       // その他 (Others)
@@ -1112,7 +1105,7 @@
         stock: 18,
         price_jpy: 1500,
         cites: 'Non-CITES',
-        image_url: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       },
       {
         id: 'ISG-O02',
@@ -1124,7 +1117,7 @@
         stock: 10,
         price_jpy: 2200,
         cites: 'Non-CITES',
-        image_url: 'https://images.unsplash.com/photo-1535591273668-581379f87259?auto=format&fit=crop&w=600&q=80'
+        image_url: ''
       }
     ];
 
@@ -1801,10 +1794,8 @@
               const stockNum = parseInt(item.stock, 10);
               const safeStock = isNaN(stockNum) ? 0 : Math.max(0, stockNum);
 
-              let img = item.img ? formatDriveImage(item.img) : '';
-              if (!img || img.trim() === '') {
-                img = categoryFallbackImages[cat] || categoryFallbackImages['その他'];
-              }
+              // スプレッドシートに実写真がある場合のみGoogle DriveプレビューURLに変換。無ければ空文字（写真なし）
+              let img = (item.img && String(item.img).trim() !== '') ? formatDriveImage(String(item.img).trim()) : '';
 
               let sizeStr = String(item.size || '').trim();
               if (!sizeStr) sizeStr = '規格おまかせ';
@@ -1918,7 +1909,10 @@
         const initialCardVal = inCartQty > 0 ? inCartQty : 1;
         const initialOverStock = initialCardVal > p.stock ? (initialCardVal - p.stock) : 0;
 
-        const fallbackImg = categoryFallbackImages[p.category] || categoryFallbackImages['その他'];
+        const hasImage = !!(p.image_url && String(p.image_url).trim() !== '');
+        const noPhotoSub = (lang === 'ja') ? '写真なし' :
+                           (lang === 'en') ? 'No Photo' :
+                           (lang === 'zh-TW') ? '暫無照片' : '暂无照片';
 
         // Localized product strings
         const displayName = getLocalizedProductName(p, lang);
@@ -1974,34 +1968,78 @@
           `;
         }
 
+        // Image container HTML
+        let mediaHtml = '';
+        if (hasImage) {
+          mediaHtml = `
+            <div class="relative h-44 sm:h-48 bg-slate-950 overflow-hidden flex items-center justify-center">
+              <img src="${p.image_url}" alt="${displayName}" 
+                onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.no-photo-box'); if(fb) fb.classList.remove('hidden');"
+                class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
+              
+              <div class="no-photo-box hidden absolute inset-0 flex flex-col items-center justify-center bg-slate-950/90 text-slate-500">
+                <div class="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mb-1 text-slate-600">
+                  <i class="fa-regular fa-image text-xl"></i>
+                </div>
+                <span class="text-[10px] font-mono tracking-widest text-slate-400 font-bold uppercase">NO PHOTO</span>
+                <span class="text-[9px] text-slate-600 font-sans mt-0.5">${noPhotoSub}</span>
+              </div>
+
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent pointer-events-none"></div>
+              
+              <!-- Badges -->
+              <div class="absolute top-2.5 left-2.5 flex flex-wrap gap-1 z-10">
+                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-slate-950/80 text-sky-400 border border-slate-700">
+                  ${displayCategory}
+                </span>
+                ${isCites ? `
+                  <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-amber-950/90 text-amber-300 border border-amber-800">
+                    <i class="fa-solid fa-scroll mr-0.5"></i>${p.cites}
+                  </span>
+                ` : ''}
+              </div>
+
+              <!-- In-Stock Badge -->
+              <div class="absolute top-2.5 right-2.5 z-10">
+                ${inStockBadgeHtml}
+              </div>
+            </div>
+          `;
+        } else {
+          mediaHtml = `
+            <div class="relative h-44 sm:h-48 bg-gradient-to-b from-slate-950 to-slate-900/90 border-b border-slate-800/60 overflow-hidden flex flex-col items-center justify-center select-none">
+              <div class="w-14 h-14 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center justify-center mb-1.5 text-slate-600 group-hover:text-slate-400 group-hover:border-slate-700 transition">
+                <i class="fa-regular fa-image text-2xl"></i>
+              </div>
+              <span class="text-[11px] font-mono tracking-widest text-slate-400 font-bold uppercase">NO PHOTO</span>
+              <span class="text-[9px] text-slate-500 font-sans mt-0.5">${noPhotoSub}</span>
+
+              <!-- Badges -->
+              <div class="absolute top-2.5 left-2.5 flex flex-wrap gap-1 z-10">
+                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-slate-950/80 text-sky-400 border border-slate-700">
+                  ${displayCategory}
+                </span>
+                ${isCites ? `
+                  <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-amber-950/90 text-amber-300 border border-amber-800">
+                    <i class="fa-solid fa-scroll mr-0.5"></i>${p.cites}
+                  </span>
+                ` : ''}
+              </div>
+
+              <!-- In-Stock Badge -->
+              <div class="absolute top-2.5 right-2.5 z-10">
+                ${inStockBadgeHtml}
+              </div>
+            </div>
+          `;
+        }
+
         const card = document.createElement('div');
         card.className = "bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-slate-700 transition flex flex-col group shadow-lg";
 
         card.innerHTML = `
           <!-- Image -->
-          <div class="relative h-44 sm:h-48 bg-slate-950 overflow-hidden">
-            <img src="${p.image_url}" alt="${displayName}" 
-              onerror="this.onerror=null; this.src='${fallbackImg}';"
-              class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
-            
-            <!-- Badges -->
-            <div class="absolute top-2.5 left-2.5 flex flex-wrap gap-1">
-              <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-slate-950/80 text-sky-400 border border-slate-700">
-                ${displayCategory}
-              </span>
-              ${isCites ? `
-                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-amber-950/90 text-amber-300 border border-amber-800">
-                  <i class="fa-solid fa-scroll mr-0.5"></i>${p.cites}
-                </span>
-              ` : ''}
-            </div>
-
-            <!-- In-Stock Badge -->
-            <div class="absolute top-2.5 right-2.5">
-              ${inStockBadgeHtml}
-            </div>
-          </div>
+          ${mediaHtml}
 
           <!-- Body -->
           <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between">
@@ -2413,11 +2451,29 @@
                            (lang === 'en') ? 'pc' :
                            (lang === 'zh-TW') ? '隻' : '只';
 
+          const hasImg = !!(p.image_url && String(p.image_url).trim() !== '');
+          const cartThumbHtml = hasImg ? `
+            <div class="w-12 h-12 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex-shrink-0 relative">
+              <img src="${p.image_url}" 
+                onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.cart-no-pic'); if(fb) fb.classList.remove('hidden');" 
+                class="w-full h-full object-cover">
+              <div class="cart-no-pic hidden absolute inset-0 bg-slate-950 flex flex-col items-center justify-center text-slate-500">
+                <i class="fa-regular fa-image text-xs"></i>
+                <span class="text-[7px] font-mono text-slate-400 font-bold">NO PIC</span>
+              </div>
+            </div>
+          ` : `
+            <div class="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center text-slate-500 flex-shrink-0">
+              <i class="fa-regular fa-image text-xs"></i>
+              <span class="text-[7px] font-mono text-slate-400 font-bold">NO PIC</span>
+            </div>
+          `;
+
           const row = document.createElement('div');
           row.className = "bg-slate-900 border border-slate-800 rounded-2xl p-3 flex flex-col gap-2";
           row.innerHTML = `
             <div class="flex items-center justify-between gap-2.5">
-              <img src="${p.image_url}" class="w-12 h-12 rounded-xl object-cover bg-slate-950 flex-shrink-0">
+              ${cartThumbHtml}
               <div class="flex-1 min-w-0">
                 <h4 class="text-xs font-bold text-white truncate">${displayName}</h4>
                 <div class="text-[10px] text-slate-400 font-mono">${unitPriceStr} / ${perPiece}</div>

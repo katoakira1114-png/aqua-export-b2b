@@ -296,7 +296,7 @@ function handleFetchCatalog(token) {
         stock: isNaN(stock) ? 0 : Math.max(0, stock),
         price_jpy: priceJpy,
         cites: String(cites),
-        image_url: imageUrl || "https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80"
+        image_url: imageUrl ? String(imageUrl).trim() : ""
       });
     }
   }
@@ -613,7 +613,7 @@ function getFallbackSanitizedCatalog() {
       stock: 12,
       price_jpy: 3800,
       cites: "Non-CITES",
-      image_url: "https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80"
+      image_url: ""
     },
     {
       id: "ISG-F02",
@@ -625,7 +625,7 @@ function getFallbackSanitizedCatalog() {
       stock: 3,
       price_jpy: 11000,
       cites: "Non-CITES",
-      image_url: "https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=600&q=80"
+      image_url: ""
     },
     {
       id: "ISG-S01",
@@ -637,7 +637,7 @@ function getFallbackSanitizedCatalog() {
       stock: 40,
       price_jpy: 1200,
       cites: "Non-CITES",
-      image_url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80"
+      image_url: ""
     },
     {
       id: "ISG-C01",
@@ -649,7 +649,7 @@ function getFallbackSanitizedCatalog() {
       stock: 5,
       price_jpy: 7800,
       cites: "CITES App. II",
-      image_url: "https://images.unsplash.com/photo-1520315342629-6ea920342047?auto=format&fit=crop&w=600&q=80"
+      image_url: ""
     },
     {
       id: "ISG-A01",
@@ -661,7 +661,7 @@ function getFallbackSanitizedCatalog() {
       stock: 4,
       price_jpy: 8900,
       cites: "Non-CITES",
-      image_url: "https://images.unsplash.com/photo-1544943910-4c1dc44a034f?auto=format&fit=crop&w=600&q=80"
+      image_url: ""
     },
     {
       id: "ISG-K01",
@@ -673,7 +673,7 @@ function getFallbackSanitizedCatalog() {
       stock: 6,
       price_jpy: 14000,
       cites: "CITES App. II",
-      image_url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80"
+      image_url: ""
     },
     {
       id: "ISG-O01",
@@ -685,7 +685,7 @@ function getFallbackSanitizedCatalog() {
       stock: 18,
       price_jpy: 1500,
       cites: "Non-CITES",
-      image_url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80"
+      image_url: ""
     }
   ];
 }
