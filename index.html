@@ -330,28 +330,31 @@
           </div>
         </div>
 
-        <!-- CATEGORY & LIVE SYNC STATUS BAR -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-1">
-          <!-- CATEGORY PILLS (石垣島スプレッドシート準拠 6大カテゴリ) -->
-          <div class="flex items-center space-x-2 overflow-x-auto pb-1 custom-scroll flex-1" id="categoryFilterContainer">
-            <button onclick="filterCategory('ALL', this)" class="category-pill active whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-500 text-white transition touch-btn">すべて (All)</button>
-            <button onclick="filterCategory('魚', this)" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🐟 魚 (Fish)</button>
-            <button onclick="filterCategory('貝', this)" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🐚 貝 (Shells)</button>
-            <button onclick="filterCategory('シャコガイ', this)" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🦪 シャコガイ (Clams)</button>
-            <button onclick="filterCategory('イソギンチャク', this)" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🌸 イソギンチャク (Anemones)</button>
-            <button onclick="filterCategory('サンゴ', this)" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🪸 サンゴ (Corals)</button>
-            <button onclick="filterCategory('その他', this)" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition touch-btn">🦀 その他 (Others)</button>
+        <!-- CATEGORY & LIVE SYNC STATUS BAR (INTEGRATED SEGMENTED BAR) -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-1">
+          <!-- Segmented Category Tab Bar -->
+          <div class="p-1 bg-slate-950/90 rounded-2xl border border-slate-800/80 flex items-center space-x-1 overflow-x-auto custom-scroll shadow-inner" id="categoryFilterContainer">
+            <button onclick="filterCategory('ALL', this)" id="catTab-ALL" class="category-pill active whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-500 text-white shadow-md shadow-sky-500/20 transition touch-btn">すべて</button>
+            <button onclick="filterCategory('魚', this)" id="catTab-魚" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition touch-btn">🐟 海水魚</button>
+            <button onclick="filterCategory('貝', this)" id="catTab-貝" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition touch-btn">🐚 貝類</button>
+            <button onclick="filterCategory('シャコガイ', this)" id="catTab-シャコガイ" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition touch-btn">🦪 シャコガイ</button>
+            <button onclick="filterCategory('イソギンチャク', this)" id="catTab-イソギンチャク" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition touch-btn">🌸 イソギンチャク</button>
+            <button onclick="filterCategory('サンゴ', this)" id="catTab-サンゴ" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition touch-btn">🪸 サンゴ</button>
+            <button onclick="filterCategory('その他', this)" id="catTab-その他" class="category-pill whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition touch-btn">🦀 その他</button>
           </div>
 
-          <!-- Live Inventory Status Badge & Refresh -->
-          <div class="flex items-center space-x-2 flex-shrink-0">
-            <div id="liveStockBadge" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-mono">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span id="liveStockCountText">スプレッドシート在庫 読込中...</span>
+          <!-- Live Inventory Status Badge & Refresh Button -->
+          <div class="flex items-center space-x-2 self-start lg:self-center">
+            <div id="liveStockBadge" class="inline-flex items-center space-x-2 px-3 py-2 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-xs font-mono shadow-sm">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span id="liveStockCountText">スプレッドシート在庫 同期中</span>
             </div>
-            <button onclick="loadCatalog()" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white text-xs font-mono transition flex items-center space-x-1 touch-btn" title="最新在庫を同期">
-              <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
-              <span>更新</span>
+            <button onclick="loadCatalog()" class="px-3 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-300 hover:text-white text-xs font-mono transition flex items-center space-x-1.5 touch-btn shadow-sm" title="最新在庫を再同期">
+              <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+              <span data-i18n="btn_refresh_stock">更新</span>
             </button>
           </div>
         </div>
@@ -382,8 +385,8 @@
     <!-- FOOTER -->
     <footer class="bg-slate-950 border-t border-slate-800/80 py-8 text-xs text-slate-500 text-center">
       <div class="max-w-7xl mx-auto px-4 space-y-2">
-        <p>石垣島観賞魚（川畑水産）海外受発注システム &copy; 2026</p>
-        <p class="text-[11px] text-slate-600">八重山漁協準拠・ワシントン条約(CITES)適格品のみ輸出対応・IATA生体空輸基準適合</p>
+        <p data-i18n="footer_title">石垣島観賞魚（川畑水産）海外受発注システム &copy; 2026</p>
+        <p class="text-[11px] text-slate-600" data-i18n="footer_sub">八重山漁協準拠・ワシントン条約(CITES)適格品のみ輸出対応・IATA生体空輸基準適合</p>
       </div>
     </footer>
   </div>
@@ -435,10 +438,10 @@
       </div>
 
       <div class="grid grid-cols-2 gap-3 pt-1">
-        <button onclick="closeCollectionModal()" class="py-3 px-4 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition touch-btn">
+        <button onclick="closeCollectionModal()" class="py-3 px-4 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition touch-btn" data-i18n="collect_modal_cancel">
           キャンセル
         </button>
-        <button id="btnConfirmCollection" onclick="confirmCollectionAdd()" class="py-3 px-4 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg shadow-amber-500/20 touch-btn">
+        <button id="btnConfirmCollection" onclick="confirmCollectionAdd()" class="py-3 px-4 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg shadow-amber-500/20 touch-btn" data-i18n="collect_modal_ok">
           OK（採集リクエスト）
         </button>
       </div>
@@ -489,8 +492,8 @@
           <span id="cartSubtotalDisplay" class="font-mono font-black text-white text-base">¥0</span>
         </div>
         <div class="flex justify-between text-slate-500 text-[11px]">
-          <span>空輸運賃・保温箱・検疫費:</span>
-          <span class="italic text-slate-400">正式見積時に算出</span>
+          <span data-i18n="lbl_freight_est">空輸運賃・保温箱・検疫費:</span>
+          <span class="italic text-slate-400" data-i18n="lbl_freight_desc">正式見積時に算出</span>
         </div>
       </div>
 
@@ -527,8 +530,8 @@
         <label class="flex items-start space-x-3 p-3.5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
           <input type="checkbox" id="checkLegal1" onchange="validateLegalCheckboxes()" class="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-700">
           <div>
-            <span class="font-bold text-slate-100 block mb-0.5">1. 価格および付帯費用の分離</span>
-            <span class="text-slate-400 leading-relaxed">
+            <span class="font-bold text-slate-100 block mb-0.5" data-i18n="legal_c1_title">1. 価格および付帯費用の分離</span>
+            <span class="text-slate-400 leading-relaxed" data-i18n="legal_c1_desc">
               表示合計金額は生体価格のみです。国際航空貨物運賃、厚手発泡スチロール箱代、酸素・保冷温剤費用、CITES輸出許可証申請費は正式Proforma Invoiceにて別途合算されます。
             </span>
           </div>
@@ -538,8 +541,8 @@
         <label class="flex items-start space-x-3 p-3.5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
           <input type="checkbox" id="checkLegal2" onchange="validateLegalCheckboxes()" class="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-700">
           <div>
-            <span class="font-bold text-slate-100 block mb-0.5">2. 採集およびCITES許可スケジュール</span>
-            <span class="text-slate-400 leading-relaxed">
+            <span class="font-bold text-slate-100 block mb-0.5" data-i18n="legal_c2_title">2. 採集およびCITES許可スケジュール</span>
+            <span class="text-slate-400 leading-relaxed" data-i18n="legal_c2_desc">
               採集リクエスト生体の捕獲手配および経済産業省の輸出許可申請には数週間を要する場合があります。見積リクエスト時点での到着指定日は確約できません。
             </span>
           </div>
@@ -549,8 +552,8 @@
         <label class="flex items-start space-x-3 p-3.5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
           <input type="checkbox" id="checkLegal3" onchange="validateLegalCheckboxes()" class="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-700">
           <div>
-            <span class="font-bold text-slate-100 block mb-0.5">3. バイヤー側の輸入許可・現地通関責任</span>
-            <span class="text-slate-400 leading-relaxed">
+            <span class="font-bold text-slate-100 block mb-0.5" data-i18n="legal_c3_title">3. バイヤー側の輸入許可・現地通関責任</span>
+            <span class="text-slate-400 leading-relaxed" data-i18n="legal_c3_desc">
               バイヤーは輸入国における輸入許可証の事前所持、動物検疫クリアランス、および現地関税・消費税の支払い責任を単独で負うものとします。
             </span>
           </div>
@@ -558,12 +561,12 @@
       </div>
 
       <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
-        <button onclick="closeCitesModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition touch-btn">
+        <button onclick="closeCitesModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition touch-btn" data-i18n="btn_back">
           戻る
         </button>
         <button id="btnAgreeLegal" onclick="proceedToBuyerForm()" disabled
           class="px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white transition shadow-lg shadow-sky-500/20 touch-btn">
-          同意してバイヤー情報入力へ
+          <span data-i18n="btn_agree_proceed">同意してバイヤー情報入力へ</span>
         </button>
       </div>
     </div>
@@ -580,7 +583,7 @@
           <h2 class="text-base sm:text-lg font-bold text-white font-mono uppercase" data-i18n="order_form_title">
             Proforma Order Request 発行
           </h2>
-          <p class="text-xs text-slate-400">配送先空港および連絡先をご入力ください</p>
+          <p class="text-xs text-slate-400" data-i18n="order_form_sub">配送先空港および連絡先をご入力ください</p>
         </div>
         <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-white p-2">
           <i class="fa-solid fa-xmark text-lg"></i>
@@ -590,56 +593,56 @@
       <form id="orderForm" onsubmit="submitOrder(event)" class="space-y-4 text-xs">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">会社名 / 屋号 *</label>
-            <input type="text" id="buyerCompany" required placeholder="例: Pacific Aquarium Wholesale LLC"
+            <label class="block font-semibold text-slate-300 mb-1" data-i18n="lbl_company">会社名 / 屋号 *</label>
+            <input type="text" id="buyerCompany" required placeholder="例: Pacific Aquarium Wholesale LLC" data-i18n-ph="ph_company"
               class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400">
           </div>
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">ご担当者名 *</label>
-            <input type="text" id="buyerContact" required placeholder="例: Taro Yamada"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">業務Emailアドレス *</label>
-            <input type="email" id="buyerEmail" required placeholder="buyer@example.com"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">連絡ツール (WhatsApp / WeChat / LINE) *</label>
-            <input type="text" id="buyerIM" required placeholder="例: +81-90-XXXX-XXXX / LINE ID"
+            <label class="block font-semibold text-slate-300 mb-1" data-i18n="lbl_contact">ご担当者名 *</label>
+            <input type="text" id="buyerContact" required placeholder="例: Taro Yamada" data-i18n-ph="ph_contact"
               class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400">
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">仕向地 到着空港コード (IATA) *</label>
-            <input type="text" id="buyerAirport" required placeholder="例: LAX, TPE, HKG, FRA, NRT, HND"
+            <label class="block font-semibold text-slate-300 mb-1" data-i18n="lbl_email">業務Emailアドレス *</label>
+            <input type="email" id="buyerEmail" required placeholder="buyer@example.com" data-i18n-ph="ph_email"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1" data-i18n="lbl_im">連絡ツール (WhatsApp / WeChat / LINE) *</label>
+            <input type="text" id="buyerIM" required placeholder="例: +81-90-XXXX-XXXX / LINE ID" data-i18n-ph="ph_im"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1" data-i18n="lbl_airport">仕向地 到着空港コード (IATA) *</label>
+            <input type="text" id="buyerAirport" required placeholder="例: LAX, TPE, HKG, FRA, NRT, HND" data-i18n-ph="ph_airport"
               class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400 font-mono">
           </div>
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">輸入許可証番号 / CITES番号 (任意)</label>
-            <input type="text" id="buyerLicense" placeholder="取得済みの場合入力"
+            <label class="block font-semibold text-slate-300 mb-1" data-i18n="lbl_license">輸入許可証番号 / CITES番号 (任意)</label>
+            <input type="text" id="buyerLicense" placeholder="取得済みの場合入力" data-i18n-ph="ph_license"
               class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-sky-400">
           </div>
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-300 mb-1">梱包・サイズ・特記事項</label>
-          <textarea id="buyerNotes" rows="2" placeholder="例: 酸素増量二重パッキング、保冷剤2個希望 等"
+          <label class="block font-semibold text-slate-300 mb-1" data-i18n="lbl_notes">梱包・サイズ・特記事項</label>
+          <textarea id="buyerNotes" rows="2" placeholder="例: 酸素増量二重パッキング、保冷剤2個希望 等" data-i18n-ph="ph_notes"
             class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-400"></textarea>
         </div>
 
         <div class="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 space-y-1 font-mono text-xs">
           <div class="flex justify-between text-slate-400">
-            <span>生体小計:</span>
+            <span data-i18n="lbl_subtotal">生体小計:</span>
             <span id="reviewSubtotal" class="text-sky-400 font-bold text-sm">¥0</span>
           </div>
           <div class="flex justify-between text-slate-500 text-[11px]">
-            <span>採集リクエスト含む:</span>
+            <span data-i18n="lbl_collect_status">採集リクエスト含む:</span>
             <span id="reviewCollectStatus" class="text-amber-400 font-semibold">なし</span>
           </div>
         </div>
@@ -648,7 +651,7 @@
           <button type="submit" id="btnSubmitOrder"
             class="w-full py-4 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-2xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 touch-btn">
             <i class="fa-solid fa-paper-plane"></i>
-            <span>見積依頼を送信 & PDFをダウンロード</span>
+            <span data-i18n="btn_submit_order">見積依頼を送信 & PDFをダウンロード</span>
           </button>
         </div>
       </form>
@@ -663,22 +666,22 @@
       <div class="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl mx-auto mb-3.5">
         <i class="fa-solid fa-check-double"></i>
       </div>
-      <h3 class="text-lg font-bold text-white uppercase font-mono">見積依頼を受領しました</h3>
-      <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+      <h3 class="text-lg font-bold text-white uppercase font-mono" data-i18n="success_title">見積依頼を受領しました</h3>
+      <p class="text-xs text-slate-300 mt-1.5 leading-relaxed" data-i18n="success_desc">
         川畑水産（石垣島）の輸出管理データベースに記録されました。空輸便の空席状況および正式Proforma Invoiceを24時間以内にご案内いたします。
       </p>
 
       <div class="my-4 p-4 rounded-2xl bg-slate-900 border border-slate-800 text-left space-y-1.5 text-xs font-mono">
         <div class="flex justify-between">
-          <span class="text-slate-400">受付番号:</span>
+          <span class="text-slate-400" data-i18n="lbl_order_ref">受付番号:</span>
           <span id="successOrderRef" class="text-sky-400 font-bold">ISG-202610-001</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-slate-400">生体小計:</span>
+          <span class="text-slate-400" data-i18n="lbl_subtotal">生体小計:</span>
           <span id="successSubtotal" class="text-emerald-400 font-bold">¥0</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-slate-400">到着予定空港:</span>
+          <span class="text-slate-400" data-i18n="lbl_dest_airport">到着予定空港:</span>
           <span id="successAirport" class="text-white">LAX</span>
         </div>
       </div>
@@ -686,9 +689,9 @@
       <div class="space-y-2.5">
         <button onclick="downloadGeneratedPdfAgain()" class="w-full py-3.5 px-4 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-2xl text-xs transition flex items-center justify-center space-x-2 touch-btn">
           <i class="fa-solid fa-file-pdf"></i>
-          <span>PDFを再ダウンロード</span>
+          <span data-i18n="btn_download_pdf_again">PDFを再ダウンロード</span>
         </button>
-        <button onclick="resetAndCloseSuccess()" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-2xl text-xs transition touch-btn">
+        <button onclick="resetAndCloseSuccess()" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-2xl text-xs transition touch-btn" data-i18n="btn_back_to_catalog">
           カタログに戻る
         </button>
       </div>
@@ -752,61 +755,190 @@
       'その他': 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80'
     };
 
-    // 石垣島 生物名・学名・英名辞書
-    const ISHIGAKI_SPECIES_DICT = {
-      'ミナミハタタテダイ': { en: 'Pennant Coralfish', sci: 'Heniochus chrysostomus' },
-      'ハタタテダイ': { en: 'Longfin Bannerfish', sci: 'Heniochus acuminatus' },
-      'ツノダシ': { en: 'Moorish Idol', sci: 'Zanclus cornutus' },
-      'ヒメアイゴ': { en: 'White-Spotted Spinefoot', sci: 'Siganus canaliculatus' },
-      'ミカヅキツバメウオ': { en: 'Golden Batfish', sci: 'Platax boersii' },
-      'トゲチョウチョウウオ': { en: 'Threadfin Butterflyfish', sci: 'Chaetodon auriga' },
-      'フウライチョウチョウウオ': { en: 'Vagabond Butterflyfish', sci: 'Chaetodon vagabundus' },
-      'アミチョウチョウウオ': { en: 'Latticed Butterflyfish', sci: 'Chaetodon rafflesii' },
-      'クラカケチョウチョウウオ': { en: 'Panda Butterflyfish', sci: 'Chaetodon adiergastos' },
-      'セグロチョウチョウウオ': { en: 'Saddle Butterflyfish', sci: 'Chaetodon ephippium' },
-      'カクレクマノミ': { en: 'Ocellaris Clownfish', sci: 'Amphiprion ocellaris' },
-      'ハマクマノミ': { en: 'Tomato Clownfish', sci: 'Amphiprion frenatus' },
-      'クマノミ': { en: 'Clarkii Clownfish', sci: 'Amphiprion clarkii' },
-      'サザナミヤッコ': { en: 'Semicircle Angelfish', sci: 'Pomacanthus semicirculatus' },
-      'タテジマキンチャクダイ': { en: 'Emperor Angelfish', sci: 'Pomacanthus imperator' },
-      'デバスズメダイ': { en: 'Blue Green Chromis', sci: 'Chromis viridis' },
-      'ヒメジャコガイ': { en: 'Crocea Clam (Ultra Blue)', sci: 'Tridacna crocea' },
-      'シラナミガイ': { en: 'Maxima Clam (Color Pattern)', sci: 'Tridacna maxima' },
-      'カラーシラナミガイ': { en: 'Color Maxima Clam', sci: 'Tridacna maxima' },
-      'ヒレジャコガイ': { en: 'Fluted Giant Clam', sci: 'Tridacna squamosa' },
-      'カラーヒレジャコガイ': { en: 'Color Fluted Clam', sci: 'Tridacna squamosa' },
-      'ヒレナシジャコ': { en: 'Smooth Giant Clam', sci: 'Tridacna derasa' },
-      'トガリシラナミ': { en: 'Noah Giant Clam', sci: 'Tridacna noae' },
-      'マガキガイ': { en: 'Strawberry Conch', sci: 'Strombus luhuanus' },
-      'タカセガイ': { en: 'Giant Trochus Shell', sci: 'Trochus niloticus' },
-      'クマサカガイ': { en: 'Carrier Shell', sci: 'Xenophora pallidula' },
-      'ハタゴイソギンチャク': { en: 'Carpet Sea Anemone', sci: 'Stichodactyla gigantea' },
-      'サンゴイソギンチャク': { en: 'Bubble Tip Anemone', sci: 'Entacmaea quadricolor' },
-      'シライトイソギンチャク': { en: 'Ritteri Sea Anemone', sci: 'Heteractis magnifica' },
-      'オキナワミドリイシ': { en: 'Acropora Branching Coral', sci: 'Acropora sp.' },
-      'ナグラカタトサカ': { en: 'Soft Coral Leather Tree', sci: 'Sinularia flexibilis' },
-      'クサビライシ': { en: 'Plate Coral', sci: 'Fungia sp.' },
-      'スベスベサンゴヤドカリ': { en: 'Blue-Eyed Hermit Crab', sci: 'Calcinus tubularis' },
-      'コブヒトデ': { en: 'Chocolate Chip Sea Star', sci: 'Protoreaster nodosus' }
+    /* --------------------------------------------------------
+       1.1 COMPREHENSIVE ISHIGAKIJIMA TAXONOMY & MULTILINGUAL DICTIONARY
+       - Covers all 46 live species from production spreadsheet (1ZiNel8TGJ-e7JMolkRagVOSnr1UczvQzpTa-F-s4p3o)
+       - Supported languages: ja, en, zh-TW, zh-CN, scientific name
+    -------------------------------------------------------- */
+    const SPECIES_TAXONOMY = {
+      'ミナミハタタテダイ': { en: 'Pennant Coralfish', tw: '南方立旗鯛 (關刀)', cn: '南方立旗鲷 (关刀)', sci: 'Heniochus chrysostomus' },
+      'ハタタテダイ': { en: 'Longfin Bannerfish', tw: '白吻雙帶立旗鯛 (長旗關刀)', cn: '白吻双带立旗鲷 (长旗关刀)', sci: 'Heniochus acuminatus' },
+      'シマハタタテダイ': { en: 'Singular Bannerfish', tw: '單角立旗鯛', cn: '单角立旗鲷', sci: 'Heniochus singularius' },
+      'ツノダシ': { en: 'Moorish Idol', tw: '角鐮魚 (白角)', cn: '角镰鱼 (白角)', sci: 'Zanclus cornutus' },
+      'ヒメアイゴ': { en: 'White-Spotted Rabbitfish', tw: '長鰭藍子魚 (星泥猛)', cn: '长鳍蓝子鱼 (星泥猛)', sci: 'Siganus canaliculatus' },
+      'ミカヅキツバメウオ': { en: 'Golden Spadefish', tw: '圓眼燕魚 (黃金蝙蝠)', cn: '圆眼燕鱼 (黄金蝙蝠)', sci: 'Platax boersii' },
+      'ナンヨウツバメウオ': { en: 'Orbicular Batfish', tw: '尖翅燕魚 (南洋蝙蝠)', cn: '尖翅燕鱼 (南洋蝙蝠)', sci: 'Platax orbicularis' },
+      'アカククリ': { en: 'Pinnate Batfish', tw: '紅海燕魚 (圓翅燕魚)', cn: '红海燕鱼 (圆翅燕鱼)', sci: 'Platax pinnatus' },
+      'トゲチョウチョウウオ': { en: 'Threadfin Butterflyfish', tw: '揚旛蝴蝶魚 (人字蝶)', cn: '扬旛蝴蝶鱼 (人字蝶)', sci: 'Chaetodon auriga' },
+      'フウライチョウチョウウオ': { en: 'Vagabond Butterflyfish', tw: '漫遊蝴蝶魚 (假人字蝶)', cn: '漫游蝴蝶鱼 (假人字蝶)', sci: 'Chaetodon vagabundus' },
+      'ニセフウライチョウチョウウオ': { en: 'Lined Butterflyfish', tw: '細紋蝴蝶魚 (大線蝶)', cn: '细纹蝴蝶鱼 (大线蝶)', sci: 'Chaetodon lineolatus' },
+      'アミチョウチョウウオ': { en: 'Latticed Butterflyfish', tw: '網紋蝴蝶魚 (網蝶)', cn: '网纹蝴蝶鱼 (网蝶)', sci: 'Chaetodon rafflesii' },
+      'クラカケチョウチョウウオ': { en: 'Panda Butterflyfish', tw: '鞍斑蝴蝶魚 (熊貓蝶)', cn: '鞍斑蝴蝶鱼 (熊猫蝶)', sci: 'Chaetodon adiergastos' },
+      'アケボノチョウチョウウオ': { en: 'Black-Backed Butterflyfish', tw: '黑背蝴蝶魚 (曙蝶)', cn: '黑背蝴蝶鱼 (曙蝶)', sci: 'Chaetodon melannotus' },
+      'ミスジチョウチョウウオ': { en: 'Redfin Butterflyfish', tw: '三帶蝴蝶魚 (紅尾冬)', cn: '三带蝴蝶鱼 (红尾冬)', sci: 'Chaetodon lunulatus' },
+      'チョウハン': { en: 'Raccoon Butterflyfish', tw: '月斑蝴蝶魚 (紅尾蝶)', cn: '月斑蝴蝶鱼 (红尾蝶)', sci: 'Chaetodon lunula' },
+      'トノサマダイ': { en: 'Mirror Butterflyfish', tw: '鏡斑蝴蝶魚 (殿樣蝶)', cn: '镜斑蝴蝶鱼 (殿样蝶)', sci: 'Chaetodon speculum' },
+      'セグロチョウチョウウオ': { en: 'Saddle Butterflyfish', tw: '鞍斑蝴蝶魚', cn: '鞍斑蝴蝶鱼', sci: 'Chaetodon ephippium' },
+      'ヒレナガハギ': { en: 'Sailfin Tang', tw: '高鰭刺尾鯛 (太平洋天狗)', cn: '高鳍刺尾鲷 (太平洋天狗)', sci: 'Zebrasoma velifer' },
+      'サザナミヤッコ': { en: 'Semicircle Angelfish', tw: '半環刺蓋魚 (藍紋神仙)', cn: '半环刺盖鱼 (蓝纹神仙)', sci: 'Pomacanthus semicirculatus' },
+      'タテジマキンチャクダイ': { en: 'Emperor Angelfish', tw: '條紋刺蓋魚 (皇帝神仙)', cn: '条纹刺盖鱼 (皇帝神仙)', sci: 'Pomacanthus imperator' },
+      'カクレクマノミ': { en: 'Ocellaris Clownfish', tw: '眼斑雙鋸魚 (公子小丑)', cn: '眼斑双锯鱼 (公子小丑)', sci: 'Amphiprion ocellaris' },
+      'ハマクマノミ': { en: 'Tomato Clownfish', tw: '白條雙鋸魚 (紅小丑)', cn: '白条双锯鱼 (红小丑)', sci: 'Amphiprion frenatus' },
+      'クマノミ': { en: "Clark's Anemonefish", tw: '克氏雙鋸魚 (雙帶小丑)', cn: '克氏双锯鱼 (双带小丑)', sci: 'Amphiprion clarkii' },
+      'デバスズメダイ': { en: 'Blue Green Chromis', tw: '青魔雀鯛', cn: '青魔雀鲷', sci: 'Chromis viridis' },
+      'カラーヒメジャコガイ': { en: 'Ultra Color Crocea Clam', tw: '特選彩紋五爪貝', cn: '特选彩纹五爪贝', sci: 'Tridacna crocea' },
+      'ヒメジャコガイ': { en: 'Crocea Clam (Ultra Blue)', tw: '無孔硨磲 (藍紋五爪貝)', cn: '无孔硨磲 (蓝纹五爪贝)', sci: 'Tridacna crocea' },
+      'カラーシラナミガイ': { en: 'Metallic Color Maxima Clam', tw: '金屬綠金花紋五爪貝', cn: '金属绿金花纹五爪贝', sci: 'Tridacna maxima' },
+      'シラナミガイ': { en: 'Maxima Clam', tw: '鱗硨磲 (花紋五爪貝)', cn: '鳞硨磲 (花纹五爪贝)', sci: 'Tridacna maxima' },
+      'カラーヒレジャコガイ': { en: 'Color Fluted Giant Clam', tw: '彩紋鱗片硨磲', cn: '彩纹鳞片硨磲', sci: 'Tridacna squamosa' },
+      'ヒレジャコガイ': { en: 'Fluted Giant Clam', tw: '鱗片硨磲貝', cn: '鳞片硨磲贝', sci: 'Tridacna squamosa' },
+      'ヒレナシジャコ': { en: 'Smooth Giant Clam', tw: '無鱗硨磲貝', cn: '无鳞硨磲贝', sci: 'Tridacna derasa' },
+      'トガリシラナミ': { en: "Noah's Giant Clam", tw: '諾亞硨磲貝 (極品鳳凰紋)', cn: '诺亚硨磲贝 (极品凤凰纹)', sci: 'Tridacna noae' },
+      'マガキガイ': { en: 'Strawberry Conch', tw: '唇滴鳳凰螺 (食藻翻砂螺)', cn: '唇滴凤凰螺 (食藻翻砂螺)', sci: 'Strombus luhuanus' },
+      'タカセガイ': { en: 'Giant Trochus Shell', tw: '金口鐘螺 (大型食藻螺)', cn: '金口钟螺 (大型食藻螺)', sci: 'Trochus niloticus' },
+      'クマサカガイ': { en: 'Carrier Shell', tw: '綴殼螺 (載寶螺)', cn: '缀壳螺 (载宝螺)', sci: 'Xenophora pallidula' },
+      'ハタゴイソギンチャク': { en: 'Carpet Sea Anemone', tw: '地毯海葵 (石垣野生大個體)', cn: '地毯海葵 (石垣野生大个体)', sci: 'Stichodactyla gigantea' },
+      'サンゴイソギンチャク': { en: 'Bubble Tip Anemone', tw: '奶嘴海葵 (紅尖奶嘴)', cn: '奶嘴海葵 (红尖奶嘴)', sci: 'Entacmaea quadricolor' },
+      'シライトイソギンチャク': { en: 'Ritteri Sea Anemone', tw: '白條海葵 (公主海葵)', cn: '白条海葵 (公主海葵)', sci: 'Heteractis magnifica' },
+      'オキナワミドリイシ': { en: 'Okinawa Acropora Coral', tw: '沖繩軸孔珊瑚', cn: '冲绳轴孔珊瑚', sci: 'Acropora sp.' },
+      'ナグラカタトサカ': { en: 'Soft Coral Leather Tree', tw: '名倉軟珊瑚', cn: '名仓软珊瑚', sci: 'Sinularia flexibilis' },
+      'クサビライシ': { en: 'Plate Coral', tw: '石芝珊瑚 (彩色盤珊瑚)', cn: '石芝珊瑚 (彩色盘珊瑚)', sci: 'Fungia sp.' },
+      'スベスベサンゴヤドカリ': { en: 'Blue-Eyed Hermit Crab', tw: '藍眼珊瑚寄居蟹', cn: '蓝眼珊瑚寄居蟹', sci: 'Calcinus tubularis' },
+      'コブヒトデ': { en: 'Chocolate Chip Sea Star', tw: '瘤海星 (巧克力海星)', cn: '瘤海星 (巧克力海星)', sci: 'Protoreaster nodosus' },
+      '【限定】特選擬岩': { en: 'Premium Ceramic Eco Reef Rock', tw: '【特選限定】八重山天然造型擬岩', cn: '【特选限定】八重山天然造型拟岩', sci: 'Artificial Eco-Reef' },
+      '擬岩': { en: 'Handcrafted Eco Reef Rock', tw: '多孔生態擬岩', cn: '多孔生态拟岩', sci: 'Artificial Eco-Reef' },
+      '貝': { en: 'Marine Algae Grazing Snails', tw: '八重山天然除藻螺類', cn: '八重山天然除藻螺类', sci: 'Gastropoda sp.' },
+      'その他': { en: 'Yaeyama Marine Specimen', tw: '八重山天然海洋活體生物', cn: '八重山天然海洋活体生物', sci: 'Marine Specimen' }
     };
 
-    function getSpeciesEnAndSci(name) {
-      if (!name) return { en: 'Ishigaki Marine Specimen', sci: '' };
-      if (ISHIGAKI_SPECIES_DICT[name]) return ISHIGAKI_SPECIES_DICT[name];
-      for (const key in ISHIGAKI_SPECIES_DICT) {
-        if (name.includes(key)) {
-          const base = ISHIGAKI_SPECIES_DICT[key];
-          let prefix = '';
-          if (name.includes('最高峰')) prefix = 'Grade AAA ';
-          else if (name.includes('スペシャル')) prefix = 'Special Selection ';
-          else if (name.includes('ｲﾚｷﾞｭﾗｰﾊﾞﾝﾄﾞ')) prefix = 'Irregular Band ';
+    const MODIFIER_DICTIONARY = [
+      { pattern: /【最高峰】/g, en: '[Top Grade AAA] ', tw: '【最高峰頂級】', cn: '【最高峰顶级】' },
+      { pattern: /【スペシャル】/g, en: '[Special Pick] ', tw: '【特選個體】', cn: '【特选个体】' },
+      { pattern: /《ｲﾚｷﾞｭﾗｰﾊﾞﾝﾄﾞ》/g, en: '[Rare Irregular Band] ', tw: '《罕見不規則紋》', cn: '《罕见不规则纹》' },
+      { pattern: /\(ペア\)/g, en: ' (Mated Pair)', tw: ' (成對公母)', cn: ' (成对公母)' },
+      { pattern: /\(成魚\)/g, en: ' (Adult)', tw: ' (成魚)', cn: ' (成鱼)' },
+      { pattern: /\(幼魚\)/g, en: ' (Juvenile)', tw: ' (幼魚)', cn: ' (幼鱼)' },
+      { pattern: /\(特大\)/g, en: ' (Extra Large)', tw: ' (特大個體)', cn: ' (特大个体)' },
+      { pattern: /\(大型\)/g, en: ' (Large)', tw: ' (大個體)', cn: ' (大个体)' },
+      { pattern: /\(中型\)/g, en: ' (Medium)', tw: ' (中型)', cn: ' (中型)' },
+      { pattern: /\(小型\)/g, en: ' (Small)', tw: ' (小型)', cn: ' (小型)' },
+      { pattern: /\(良個体\)/g, en: ' (Premium Specimen)', tw: ' (優選個體)', cn: ' (优选个体)' },
+      { pattern: /\(メタリックブルー\)/g, en: ' (Ultra Metallic Blue)', tw: ' (金屬亮藍)', cn: ' (金属亮蓝)' },
+      { pattern: /\(グリーンゴールド柄\)/g, en: ' (Green-Gold Pattern)', tw: ' (金綠花紋)', cn: ' (金绿花纹)' },
+      { pattern: /\(オレンジマルチカラー\)/g, en: ' (Orange Multicolor)', tw: ' (亮橘多色)', cn: ' (亮橘多色)' },
+      { pattern: /\(レッドチップ\)/g, en: ' (Red Tip)', tw: ' (紅奶嘴頭)', cn: ' (红奶嘴头)' },
+      { pattern: /\(コケ掃除用・5個\)/g, en: ' (Algae Grazers 5-Pack)', tw: ' (食藻螺 5顆組)', cn: ' (食藻螺 5颗组)' },
+      { pattern: /\(5匹セット\)/g, en: ' (Schooling Pack of 5)', tw: ' (5隻群游組)', cn: ' (5只群游组)' },
+      { pattern: /\(3匹\)/g, en: ' (Pack of 3)', tw: ' (3隻組)', cn: ' (3只组)' },
+      { pattern: /\(石垣産・特大\)/g, en: ' (Ishigaki Wild XL)', tw: ' (石垣天然特大)', cn: ' (石垣天然特大)' },
+      { pattern: /\(養殖活着ブリード\)/g, en: ' (Aquacultured Frag)', tw: ' (人工繁育基座)', cn: ' (人工繁育基座)' },
+      { pattern: /\(シッタカ特大\)/g, en: ' (Large Algae Grazer)', tw: ' (特大除藻)', cn: ' (特大除藻)' }
+    ];
+
+    const CATEGORY_NAMES = {
+      'ALL': { ja: 'すべて', en: 'All Specimens', 'zh-TW': '全部活體', 'zh-CN': '全部活体' },
+      '魚': { ja: '🐟 海水魚', en: '🐟 Marine Fish', 'zh-TW': '🐟 海水魚類', 'zh-CN': '🐟 海水鱼类' },
+      '貝': { ja: '🐚 貝類', en: '🐚 Marine Snails & Shells', 'zh-TW': '🐚 螺貝類', 'zh-CN': '🐚 螺贝类' },
+      'シャコガイ': { ja: '🦪 シャコガイ', en: '🦪 Giant Clams', 'zh-TW': '🦪 硨磲貝', 'zh-CN': '🦪 硨磲贝' },
+      'イソギンチャク': { ja: '🌸 イソギンチャク', en: '🌸 Sea Anemones', 'zh-TW': '🌸 海葵類', 'zh-CN': '🌸 海葵类' },
+      'サンゴ': { ja: '🪸 サンゴ', en: '🪸 Live Corals', 'zh-TW': '🪸 珊瑚類', 'zh-CN': '🪸 珊瑚类' },
+      'その他': { ja: '🦀 その他', en: '🦀 Inverts & Others', 'zh-TW': '🦀 甲殼類及其他', 'zh-CN': '🦀 甲壳类及其他' }
+    };
+
+    function resolveProductLocalization(rawName, category) {
+      if (!rawName) return { en: 'Ishigaki Marine Specimen', tw: '石垣島海洋生物', cn: '石垣岛海洋生物', sci: '' };
+
+      const nameStr = String(rawName).trim();
+
+      // Check exact match first
+      if (SPECIES_TAXONOMY[nameStr]) {
+        const item = SPECIES_TAXONOMY[nameStr];
+        return { en: item.en, tw: item.tw, cn: item.cn, sci: item.sci || '' };
+      }
+
+      // Check extracted modifiers
+      let prefixEn = '', prefixTw = '', prefixCn = '';
+      let suffixEn = '', suffixTw = '', suffixCn = '';
+      let cleanName = nameStr;
+
+      for (const mod of MODIFIER_DICTIONARY) {
+        if (mod.pattern.test(cleanName)) {
+          if (mod.en.startsWith('[')) {
+            prefixEn += mod.en;
+            prefixTw += mod.tw;
+            prefixCn += mod.cn;
+          } else {
+            suffixEn += mod.en;
+            suffixTw += mod.tw;
+            suffixCn += mod.cn;
+          }
+          cleanName = cleanName.replace(mod.pattern, '').trim();
+        }
+      }
+
+      // Match against SPECIES_TAXONOMY keys (sorted by length descending)
+      const sortedKeys = Object.keys(SPECIES_TAXONOMY).sort((a, b) => b.length - a.length);
+      for (const key of sortedKeys) {
+        if (cleanName.includes(key)) {
+          const match = SPECIES_TAXONOMY[key];
           return {
-            en: prefix + base.en,
-            sci: base.sci
+            en: (prefixEn + match.en + suffixEn).trim(),
+            tw: (prefixTw + match.tw + suffixTw).trim(),
+            cn: (prefixCn + match.cn + suffixCn).trim(),
+            sci: match.sci || ''
           };
         }
       }
-      return { en: name, sci: '' };
+
+      // Generic category fallbacks
+      const catMap = {
+        '魚': { en: 'Reef Marine Fish', tw: '礁岩海水魚', cn: '礁岩海水鱼', sci: 'Actinopterygii' },
+        '貝': { en: 'Marine Snail', tw: '海水螺貝', cn: '海水螺贝', sci: 'Gastropoda' },
+        'シャコガイ': { en: 'Tridacna Clam', tw: '硨磲貝', cn: '硨磲贝', sci: 'Tridacna sp.' },
+        'イソギンチャク': { en: 'Sea Anemone', tw: '天然海葵', cn: '天然海葵', sci: 'Actiniaria' },
+        'サンゴ': { en: 'Live Coral', tw: '造礁珊瑚', cn: '造礁珊瑚', sci: 'Scleractinia' },
+        'その他': { en: 'Marine Specimen', tw: '海洋活體生物', cn: '海洋活体生物', sci: 'Invertebrata' }
+      };
+
+      const fallback = catMap[category] || catMap['その他'];
+      return {
+        en: (prefixEn + fallback.en + suffixEn).trim() || nameStr,
+        tw: (prefixTw + fallback.tw + suffixTw).trim() || nameStr,
+        cn: (prefixCn + fallback.cn + suffixCn).trim() || nameStr,
+        sci: fallback.sci || ''
+      };
+    }
+
+    function formatLocalizedSize(sizeStr, lang) {
+      if (!sizeStr) return '';
+      let s = String(sizeStr);
+      if (lang === 'en') {
+        return s.replace(/規格おまかせ/g, 'Assorted Standard')
+                .replace(/開放時/g, 'Expanded')
+                .replace(/直径/g, 'Dia.');
+      } else if (lang === 'zh-TW') {
+        return s.replace(/規格おまかせ/g, '隨機標準規格')
+                .replace(/開放時/g, '伸展時')
+                .replace(/直径/g, '直徑');
+      } else if (lang === 'zh-CN') {
+        return s.replace(/規格おまかせ/g, '随机标准规格')
+                .replace(/開放時/g, '舒展时')
+                .replace(/直径/g, '直径');
+      }
+      return s;
+    }
+
+    function getLocalizedCategory(cat, lang) {
+      const entry = CATEGORY_NAMES[cat] || CATEGORY_NAMES['その他'];
+      return entry[lang] || entry['ja'] || cat;
+    }
+
+    function getLocalizedProductName(product, lang) {
+      if (!product) return '';
+      if (lang === 'en') return product.name_en || product.name || product.name_ja;
+      if (lang === 'zh-TW') return product.name_zh_tw || product.name_en || product.name || product.name_ja;
+      if (lang === 'zh-CN') return product.name_zh_cn || product.name_en || product.name || product.name_ja;
+      return product.name_ja || product.name;
     }
 
     /* --------------------------------------------------------
@@ -997,7 +1129,7 @@
     ];
 
     /* --------------------------------------------------------
-       3. MULTI-LANGUAGE DICTIONARIES
+       3. MULTI-LANGUAGE DICTIONARIES (ja, en, zh-TW, zh-CN)
     -------------------------------------------------------- */
     const I18N = {
       'ja': {
@@ -1011,15 +1143,63 @@
         hero_badge: '沖縄・八重山諸島 天然海水生体 直送',
         hero_title: '石垣島生体 在庫・採集リクエストカタログ',
         hero_desc: '現在の生簀在庫からの即時引当、および在庫以上の数量は現地ダイバーによる「採集リクエスト」として承ります。',
+        search_ph: '生体名・学名・IDで検索...',
+        fx_rate_notice: '為替レート: 1 USD = ¥160 (当日の円安最高値 1の位繰上レート)',
+        btn_refresh_stock: '更新',
         in_stock: '生簀在庫:',
-        unit_price: '単価',
+        unit_price: '卸売単価',
         btn_add: 'カートに追加',
         collect_modal_title: '採集リクエスト（捕獲手配）のご案内',
+        collect_modal_ok: 'OK（採集リクエスト）',
+        collect_modal_cancel: 'キャンセル',
         cart_title: '受発注リクエストカート',
         mov_title: '最低注文金額 (MOV)',
         specimen_subtotal: '生体合計金額:',
+        lbl_freight_est: '空輸運賃・保温箱・検疫費:',
+        lbl_freight_desc: '正式見積時に算出',
         btn_proceed_clearance: '法的免責・配送先入力へ進む',
-        view_cart: 'カート確認'
+        view_cart: 'カート確認',
+        legal_title: '国際輸出入・CITES条約 法的同意確認',
+        legal_sub: '見積依頼書 (Proforma Request) 発行のため、以下3項目の個別同意が必須となります。',
+        legal_c1_title: '1. 価格および付帯費用の分離',
+        legal_c1_desc: '表示合計金額は生体価格のみです。国際航空貨物運賃、厚手発泡スチロール箱代、酸素・保冷温剤費用、CITES輸出許可証申請費は正式Proforma Invoiceにて別途合算されます。',
+        legal_c2_title: '2. 採集およびCITES許可スケジュール',
+        legal_c2_desc: '採集リクエスト生体の捕獲手配および経済産業省の輸出許可申請には数週間を要する場合があります。見積リクエスト時点での到着指定日は確約できません。',
+        legal_c3_title: '3. バイヤー側の輸入許可・現地通関責任',
+        legal_c3_desc: 'バイヤーは輸入国における輸入許可証の事前所持、動物検疫クリアランス、および現地関税・消費税の支払い責任を単独で負うものとします。',
+        btn_back: '戻る',
+        btn_agree_proceed: '同意してバイヤー情報入力へ',
+        order_form_title: 'Proforma Order Request 発行',
+        order_form_sub: '配送先空港および連絡先をご入力ください',
+        lbl_company: '会社名 / 屋号 *',
+        ph_company: '例: Pacific Aquarium Wholesale LLC',
+        lbl_contact: 'ご担当者名 *',
+        ph_contact: '例: Taro Yamada',
+        lbl_email: '業務Emailアドレス *',
+        ph_email: 'buyer@example.com',
+        lbl_im: '連絡ツール (WhatsApp / WeChat / LINE) *',
+        ph_im: '例: +81-90-XXXX-XXXX / LINE ID',
+        lbl_airport: '仕向地 到着空港コード (IATA) *',
+        ph_airport: '例: LAX, TPE, HKG, FRA, NRT, HND',
+        lbl_license: '輸入許可証番号 / CITES番号 (任意)',
+        ph_license: '取得済みの場合入力',
+        lbl_notes: '梱包・サイズ・特記事項',
+        ph_notes: '例: 酸素増量二重パッキング、保冷剤2個希望 等',
+        lbl_subtotal: '生体小計:',
+        lbl_collect_status: '採集リクエスト含む:',
+        btn_submit_order: '見積依頼を送信 & PDFをダウンロード',
+        success_title: '見積依頼を受領しました',
+        success_desc: '川畑水産（石垣島）の輸出管理データベースに記録されました。空輸便の空席状況および正式Proforma Invoiceを24時間以内にご案内いたします。',
+        lbl_order_ref: '受付番号:',
+        lbl_dest_airport: '到着予定空港:',
+        btn_download_pdf_again: 'PDFを再ダウンロード',
+        btn_back_to_catalog: 'カタログに戻る',
+        footer_title: '石垣島観賞魚（川畑水産）海外受発注システム © 2026',
+        footer_sub: '八重山漁協準拠・ワシントン条約(CITES)適格品のみ輸出対応・IATA生体空輸基準適合',
+        pcs_unit: '匹',
+        spec_size_label: '規格サイズ:',
+        empty_title: '該当する生体が見つかりません',
+        empty_desc: '検索キーワードまたはカテゴリを変更してお試しください。'
       },
       'en': {
         nav_lang: 'English',
@@ -1032,15 +1212,63 @@
         hero_badge: 'DIRECT EXPORT FROM ISHIGAKI ISLAND, JAPAN',
         hero_title: 'Marine Specimen & Collection Catalog',
         hero_desc: 'Direct allocation from holding tanks. Quantities exceeding stock are accepted as diver Collection Requests.',
+        search_ph: 'Search species, scientific name, ID...',
+        fx_rate_notice: 'FX Rate: 1 USD = ¥160 (Conservative Daily Round-Up Buffer)',
+        btn_refresh_stock: 'Sync',
         in_stock: 'In Stock:',
-        unit_price: 'Price',
+        unit_price: 'Wholesale Price',
         btn_add: 'Add to Cart',
         collect_modal_title: 'Collection Request Notice',
+        collect_modal_ok: 'Acknowledge & Request (OK)',
+        collect_modal_cancel: 'Cancel',
         cart_title: 'Proforma Request Cart',
         mov_title: 'Minimum Order Value (MOV)',
         specimen_subtotal: 'Specimens Subtotal:',
+        lbl_freight_est: 'Freight, Boxes & Vet Cert:',
+        lbl_freight_desc: 'Calculated on Official Proforma',
         btn_proceed_clearance: 'Proceed to Legal Clearance',
-        view_cart: 'View Cart'
+        view_cart: 'View Cart',
+        legal_title: 'International Air Cargo & CITES Legal Disclaimer',
+        legal_sub: 'To generate official Proforma Request, acknowledging all 3 clauses is mandatory.',
+        legal_c1_title: '1. Specimen Price & Surcharges Separation',
+        legal_c1_desc: 'Displayed total includes specimen prices only. International air cargo freight, insulated styrofoam boxes, oxygen/heat packs, and CITES export permit handling fees are quoted separately on the official Proforma Invoice.',
+        legal_c2_title: '2. Wild Collection & CITES Lead Time',
+        legal_c2_desc: 'Wild diver collection and METI CITES export permit issuance may require several weeks. Delivery arrival dates cannot be guaranteed upon initial request.',
+        legal_c3_title: '3. Buyer Import Clearance & Tariff Liability',
+        legal_c3_desc: 'Buyer is solely responsible for obtaining destination import permits, animal quarantine clearance, and settling all local customs duties and taxes.',
+        btn_back: 'Back to Cart',
+        btn_agree_proceed: 'I Agree All • Enter Consignee Info',
+        order_form_title: 'Proforma Order Request Submission',
+        order_form_sub: 'Please enter your destination airport & commercial contact info',
+        lbl_company: 'Company / Firm Name *',
+        ph_company: 'e.g. Pacific Aquarium Wholesale LLC',
+        lbl_contact: 'Contact Person *',
+        ph_contact: 'e.g. Taro Yamada / John Smith',
+        lbl_email: 'Commercial Email *',
+        ph_email: 'buyer@example.com',
+        lbl_im: 'Instant Messenger (WhatsApp / WeChat / LINE) *',
+        ph_im: 'e.g. +1-555-0199 / WhatsApp ID',
+        lbl_airport: 'Destination Airport Code (IATA) *',
+        ph_airport: 'e.g. LAX, TPE, HKG, FRA, SIN, JFK',
+        lbl_license: 'Import Permit / CITES License No. (Optional)',
+        ph_license: 'Enter if already issued',
+        lbl_notes: 'Packing / Sizing / Special Requests',
+        ph_notes: 'e.g. Extra oxygen double-bagging, 2x heat packs required',
+        lbl_subtotal: 'Specimens Subtotal:',
+        lbl_collect_status: 'Includes Collection Requests:',
+        btn_submit_order: 'Submit Request & Download Proforma PDF',
+        success_title: 'Proforma Request Received',
+        success_desc: 'Recorded in Kawabata Suisan (Ishigaki Island) export system. Cargo flight schedule & official Proforma Invoice will be sent within 24 hours.',
+        lbl_order_ref: 'Request Reference:',
+        lbl_dest_airport: 'Destination Airport:',
+        btn_download_pdf_again: 'Download PDF Again',
+        btn_back_to_catalog: 'Return to Catalog',
+        footer_title: 'Ishigaki Marine Export (Kawabata Suisan) B2B Ordering System © 2026',
+        footer_sub: 'Yaeyama Fisheries Compliant • CITES Appendix II Certified • IATA Live Animals Regulations (LAR) Compliant',
+        pcs_unit: 'pcs',
+        spec_size_label: 'Spec Size:',
+        empty_title: 'No Matching Specimens Found',
+        empty_desc: 'Please try adjusting your search terms or category filter.'
       },
       'zh-TW': {
         nav_lang: '繁體中文',
@@ -1048,20 +1276,68 @@
         auth_subtitle: '僅供合法水族館、批發進口商及商業買家使用',
         enter_pin: '請輸入 4 位數驗證 PIN 碼',
         btn_auth: '驗證並進入批發目錄',
-        cart: '購物車',
+        cart: '採購車',
         mov_short: '最低起訂額 (MOV):',
         hero_badge: '日本沖繩石垣島 八重山天然活體直送',
         hero_title: '石垣島海水活體 現貨與採集目錄',
-        hero_desc: '提供目前蓄養池現貨快速配額。超出庫存數量可作為潛水員「採集申請」進行預約捕撈。',
-        in_stock: '現貨庫存:',
+        hero_desc: '提供蓄養池現貨即時配額。超出庫存數量可作為專業潛水員「採集申請」進行預約捕撈。',
+        search_ph: '搜尋品種、學名、編號...',
+        fx_rate_notice: '匯率說明: 1 USD = ¥160 (當日匯率風險緩衝及個位數進位計價)',
+        btn_refresh_stock: '同步',
+        in_stock: '蓄養現貨:',
         unit_price: '批發單價',
         btn_add: '加入採購單',
         collect_modal_title: '活體採集申請（海捕預約）說明',
+        collect_modal_ok: '同意並登記採集 (OK)',
+        collect_modal_cancel: '取消',
         cart_title: '形式發票採購清單',
-        mov_title: '最低訂單起訂額門檻',
+        mov_title: '最低起訂額門檻 (MOV)',
         specimen_subtotal: '活體商品小計:',
+        lbl_freight_est: '國際空運、保溫箱及檢疫費:',
+        lbl_freight_desc: '正式發票另行核算',
         btn_proceed_clearance: '進入法律聲明與地址填寫',
-        view_cart: '查看採購清單'
+        view_cart: '查看採購清單',
+        legal_title: '國際空運及 CITES 出口合規免責確認',
+        legal_sub: '為生成形式發票 (Proforma Request)，必須個別勾選並同意以下 3 項條款。',
+        legal_c1_title: '1. 活體價格與附加費用分離',
+        legal_c1_desc: '目錄所標示之合計金額僅為活體生物價格。國際航空貨運運費、特厚保溫保冷箱費、高壓氧氣袋費及 CITES 出口許可證申請手續費將於正式 Proforma Invoice 中另行報價合併。',
+        legal_c2_title: '2. 採集排期與 CITES 審批時效',
+        legal_c2_desc: '活體採集申請之捕撈排期以及日本經濟產業省 CITES 出口審批通常需數週時間。於提交初步詢價單時無法保證具體抵達日期。',
+        legal_c3_title: '3. 買方進口許可與清關責任',
+        legal_c3_desc: '買方須自行確認並持有目的國合法水產進口許可證，並承擔目的國動植物檢疫清關以及所有當地關稅、進口增值稅等相關法定責任。',
+        btn_back: '返回採購車',
+        btn_agree_proceed: '全部同意 • 填寫進口商資料',
+        order_form_title: '形式發票採購申請單 (Proforma Request)',
+        order_form_sub: '請填寫目的港機場代碼及商業聯絡資訊',
+        lbl_company: '公司名稱 / 商號 *',
+        ph_company: '例: 太平洋水族貿易有限公司',
+        lbl_contact: '負責人 / 聯絡人 *',
+        ph_contact: '例: 陳大明 / John Chen',
+        lbl_email: '商業 Email 地址 *',
+        ph_email: 'buyer@example.com',
+        lbl_im: '即時通訊軟體 (WhatsApp / 微信 / LINE) *',
+        ph_im: '例: +886-912-345-678 / WeChat ID',
+        lbl_airport: '目的港機場代碼 (IATA 3字碼) *',
+        ph_airport: '例: TPE (桃園), HKG (香港), KHH (高雄)',
+        lbl_license: '進口許可證號 / CITES 登記號 (選填)',
+        ph_license: '若已取得請填寫',
+        lbl_notes: '包裝規格 / 尺寸 / 特殊要求',
+        ph_notes: '例: 雙層高壓充氧包裝、加放保冷劑等',
+        lbl_subtotal: '活體小計:',
+        lbl_collect_status: '包含採集申請品項:',
+        btn_submit_order: '提交採購申請並下載 PDF 發票',
+        success_title: '已成功接收形式發票申請',
+        success_desc: '訂單已記錄於川畑水產（石垣島）外貿出口數據庫。空運航班艙位及正式 Proforma Invoice 將於 24 小時內發送至您的聯絡信箱。',
+        lbl_order_ref: '申請單號:',
+        lbl_dest_airport: '目的港機場:',
+        btn_download_pdf_again: '重新下載 PDF',
+        btn_back_to_catalog: '返回批發目錄',
+        footer_title: '石垣島觀賞魚（川畑水產）海外出口採購系統 © 2026',
+        footer_sub: '八重山漁業協同組合註冊 • 華盛頓公約 (CITES) 合法出口 • 符合 IATA 國際航空活體運輸標準',
+        pcs_unit: '隻',
+        spec_size_label: '規格尺寸:',
+        empty_title: '查無符合條件之活體項目',
+        empty_desc: '請嘗試更換搜尋關鍵字或分類篩選。'
       },
       'zh-CN': {
         nav_lang: '简体中文',
@@ -1074,20 +1350,68 @@
         hero_badge: '日本冲绳石垣岛 八重山天然活体直航',
         hero_title: '石垣岛海水活体 现货与采集目录',
         hero_desc: '提供暂养池现货即时配额。超出库存之数量自动转为专业潜水员“采集申请”进行捕捞排期。',
+        search_ph: '搜索品种、学名、编号...',
+        fx_rate_notice: '汇率说明: 1 USD = ¥160 (当日汇率风险缓冲及个位数进位计价)',
+        btn_refresh_stock: '同步',
         in_stock: '暂养现货:',
         unit_price: '批发单价',
         btn_add: '加入采购单',
         collect_modal_title: '活体采集申请（海捕预约）说明',
+        collect_modal_ok: '同意并登记采集 (OK)',
+        collect_modal_cancel: '取消',
         cart_title: '形式发票采购清单',
-        mov_title: '最低订单起订门槛',
+        mov_title: '最低起订额门槛 (MOV)',
         specimen_subtotal: '活体商品小计:',
+        lbl_freight_est: '国际空运、保温箱及检疫费:',
+        lbl_freight_desc: '正式发票另行核算',
         btn_proceed_clearance: '进入法律声明与信息填写',
-        view_cart: '查看采购清单'
+        view_cart: '查看采购清单',
+        legal_title: '国际空运及 CITES 出口合规免责确认',
+        legal_sub: '为生成形式发票 (Proforma Request)，必须单独勾选并同意以下 3 项条款。',
+        legal_c1_title: '1. 活体价格与附加费用分离',
+        legal_c1_desc: '目录所标示之合计金额仅为活体生物价格。国际航空货运运费、特厚保温保冷箱费、高压充氧袋费及 CITES 出口许可证申请手续费将于正式 Proforma Invoice 中另行报价合并。',
+        legal_c2_title: '2. 采集排期与 CITES 审批时效',
+        legal_c2_desc: '活体采集申请之捕捞排期以及日本经济产业省 CITES 出口审批通常需数周时间。于提交初步询价单时无法保证具体到达日期。',
+        legal_c3_title: '3. 买方进口许可与清关责任',
+        legal_c3_desc: '买方须自行确认并持有目的国合法水产进口许可证，并承担目的国动植物检疫清关以及所有当地关税、进口增值税等相关法定责任。',
+        btn_back: '返回采购车',
+        btn_agree_proceed: '全部同意 • 填写收货人信息',
+        order_form_title: '形式发票采购申请单 (Proforma Request)',
+        order_form_sub: '请填写目的港机场代码及商业联络信息',
+        lbl_company: '公司名称 / 商号 *',
+        ph_company: '例: 太平洋水族贸易有限公司',
+        lbl_contact: '负责人 / 联络人 *',
+        ph_contact: '例: 陈大明 / John Chen',
+        lbl_email: '商业 Email 地址 *',
+        ph_email: 'buyer@example.com',
+        lbl_im: '即时通讯软件 (微信 / WhatsApp / LINE) *',
+        ph_im: '例: WeChat ID / 手机号码',
+        lbl_airport: '目的港机场代码 (IATA 3字码) *',
+        ph_airport: '例: PVG (上海), CAN (广州), PEK (北京)',
+        lbl_license: '进口许可证号 / CITES 登记号 (选填)',
+        ph_license: '若已取得请填写',
+        lbl_notes: '包装规格 / 尺寸 / 特殊要求',
+        ph_notes: '例: 双层高压充氧包装、加放保冷剂等',
+        lbl_subtotal: '活体小计:',
+        lbl_collect_status: '包含采集申请品项:',
+        btn_submit_order: '提交采购申请并下载 PDF 发票',
+        success_title: '已成功接收形式发票申请',
+        success_desc: '订单已记录于川畑水产（石垣岛）外贸出口数据库。空运航班舱位及正式 Proforma Invoice 将于 24 小时内发送至您的联络邮箱。',
+        lbl_order_ref: '申请单号:',
+        lbl_dest_airport: '目的港机场:',
+        btn_download_pdf_again: '重新下载 PDF',
+        btn_back_to_catalog: '返回批发目录',
+        footer_title: '石垣岛观赏鱼（川畑水产）海外出口采购系统 © 2026',
+        footer_sub: '八重山渔业协同组合注册 • 华盛顿公约 (CITES) 合法出口 • 符合 IATA 国际航空活体运输标准',
+        pcs_unit: '只',
+        spec_size_label: '规格尺寸:',
+        empty_title: '查无符合条件之活体项目',
+        empty_desc: '请尝试更换搜索关键字或分类筛选。'
       }
     };
 
     /* --------------------------------------------------------
-       4. LANGUAGE SELECTION HANDLING
+       4. LANGUAGE SELECTION HANDLING & GLOBAL LOCALIZATION
     -------------------------------------------------------- */
     function selectInitialLang(langKey) {
       appState.lang = langKey;
@@ -1111,13 +1435,49 @@
 
     function applyLanguage(langKey) {
       const dict = I18N[langKey] || I18N['ja'];
+
+      // 1. Text elements with data-i18n
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const k = el.getAttribute('data-i18n');
         if (dict[k]) el.textContent = dict[k];
       });
 
-      document.getElementById('currentLangTag').textContent = dict.nav_lang;
-      document.getElementById('navLangTag').textContent = dict.nav_lang;
+      // 2. Input/Textarea placeholder elements with data-i18n-ph
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const k = el.getAttribute('data-i18n-ph');
+        if (dict[k]) el.setAttribute('placeholder', dict[k]);
+      });
+
+      // 3. Header language tags
+      const currentLangTag = document.getElementById('currentLangTag');
+      if (currentLangTag) currentLangTag.textContent = dict.nav_lang;
+      const navLangTag = document.getElementById('navLangTag');
+      if (navLangTag) navLangTag.textContent = dict.nav_lang;
+
+      // 4. Search input placeholder
+      const searchInp = document.getElementById('searchInput');
+      if (searchInp && dict.search_ph) searchInp.placeholder = dict.search_ph;
+
+      // 5. FX Rate notice text
+      const fxNotice = document.getElementById('fxRateNotice');
+      if (fxNotice && dict.fx_rate_notice) fxNotice.textContent = dict.fx_rate_notice;
+
+      // 6. Category tab bar labels
+      updateCategoryTabLabels(langKey);
+
+      // 7. Re-render catalog and cart UI immediately!
+      renderProducts();
+      updateCartUI();
+    }
+
+    function updateCategoryTabLabels(langKey) {
+      const cats = ['ALL', '魚', '貝', 'シャコガイ', 'イソギンチャク', 'サンゴ', 'その他'];
+      cats.forEach(c => {
+        const tab = document.getElementById(`catTab-${c}`);
+        if (tab && CATEGORY_NAMES[c]) {
+          tab.textContent = CATEGORY_NAMES[c][langKey] || CATEGORY_NAMES[c]['ja'];
+        }
+      });
     }
 
     /* --------------------------------------------------------
@@ -1342,12 +1702,18 @@
     /* --------------------------------------------------------
        7. CATALOG LOADING (GAS SPREADSHEET LIVE INVENTORY)
        - Fetches live 111 items from Google Spreadsheet: 1ZiNel8TGJ-e7JMolkRagVOSnr1UczvQzpTa-F-s4p3o
+       - Maps all species to multi-language names & taxonomy
     -------------------------------------------------------- */
     async function loadCatalog() {
       const loading = document.getElementById('catalogLoading');
       const badgeText = document.getElementById('liveStockCountText');
+      const lang = appState.lang || 'ja';
       if (loading) loading.classList.remove('hidden');
-      if (badgeText) badgeText.textContent = "スプレッドシート在庫 取得中...";
+      if (badgeText) {
+        badgeText.textContent = (lang === 'ja' ? "スプレッドシート在庫 取得中..." :
+                                lang === 'en' ? "Fetching live inventory..." :
+                                lang === 'zh-TW' ? "正在取得現貨庫存..." : "正在获取现货库存...");
+      }
 
       let successLoaded = false;
       const endpoint = appState.gasEndpoint || DEFAULT_GAS_ENDPOINT;
@@ -1390,13 +1756,17 @@
               }
 
               const cites = (cat === 'シャコガイ' || cat === 'サンゴ') ? 'CITES App. II' : 'Non-CITES';
-              const names = getSpeciesEnAndSci(item.name);
+              const rawName = String(item.name || '石垣島生体');
+              const loc = resolveProductLocalization(rawName, cat);
 
               return {
                 id: String(item.id || ('ISG-' + (idx + 1))),
-                name: String(item.name || '石垣島生体'),
-                name_en: names.en,
-                scientific_name: names.sci,
+                name: rawName,
+                name_ja: rawName,
+                name_en: loc.en,
+                name_zh_tw: loc.tw,
+                name_zh_cn: loc.cn,
+                scientific_name: loc.sci || String(item.scientific_name || ''),
                 category: cat,
                 size: sizeStr,
                 stock: safeStock,
@@ -1407,7 +1777,13 @@
             });
 
             successLoaded = true;
-            if (badgeText) badgeText.textContent = `本番在庫: ${appState.catalog.length} 種 同期中`;
+            if (badgeText) {
+              const count = appState.catalog.length;
+              if (lang === 'ja') badgeText.textContent = `本番在庫: ${count} 種 同期中`;
+              else if (lang === 'en') badgeText.textContent = `Live Stock: ${count} species synced`;
+              else if (lang === 'zh-TW') badgeText.textContent = `現貨在庫: ${count} 種 即時同步中`;
+              else badgeText.textContent = `现货库存: ${count} 种 实时同步中`;
+            }
           }
         }
       } catch (err) {
@@ -1415,8 +1791,21 @@
       }
 
       if (!successLoaded) {
-        appState.catalog = ISHIGAKI_DEFAULT_CATALOG.map(p => ({ ...p, id: String(p.id) }));
-        if (badgeText) badgeText.textContent = `オフライン (基本カタログ)`;
+        appState.catalog = ISHIGAKI_DEFAULT_CATALOG.map(p => {
+          const loc = resolveProductLocalization(p.name, p.category);
+          return {
+            ...p,
+            id: String(p.id),
+            name_ja: p.name,
+            name_en: loc.en || p.name_en,
+            name_zh_tw: loc.tw,
+            name_zh_cn: loc.cn,
+            scientific_name: loc.sci || p.scientific_name
+          };
+        });
+        if (badgeText) {
+          badgeText.textContent = (lang === 'ja') ? `オフライン (基本カタログ)` : `Offline (Catalog)`;
+        }
       }
 
       renderProducts();
@@ -1424,12 +1813,16 @@
     }
 
     /* --------------------------------------------------------
-       8. PRODUCT RENDERING WITH IN-STOCK BADGE & QUANTITY STEPPER
+       8. PRODUCT RENDERING (FULL MULTILINGUAL LOCALIZATION)
     -------------------------------------------------------- */
     function renderProducts() {
       const grid = document.getElementById('productGrid');
       const empty = document.getElementById('catalogEmpty');
+      if (!grid) return;
       grid.innerHTML = '';
+
+      const lang = appState.lang || 'ja';
+      const dict = I18N[lang] || I18N['ja'];
 
       let filtered = appState.catalog.filter(p => {
         const matchCat = (appState.currentCategory === 'ALL' || p.category === appState.currentCategory);
@@ -1437,16 +1830,24 @@
         const matchSearch = !q || 
           p.name.toLowerCase().includes(q) || 
           (p.name_en && p.name_en.toLowerCase().includes(q)) || 
+          (p.name_zh_tw && p.name_zh_tw.toLowerCase().includes(q)) || 
+          (p.name_zh_cn && p.name_zh_cn.toLowerCase().includes(q)) || 
           (p.scientific_name && p.scientific_name.toLowerCase().includes(q)) ||
           String(p.id).toLowerCase().includes(q);
         return matchCat && matchSearch;
       });
 
       if (filtered.length === 0) {
-        empty.classList.remove('hidden');
+        if (empty) {
+          empty.classList.remove('hidden');
+          const emptyTitle = empty.querySelector('h4');
+          const emptyDesc = empty.querySelector('p');
+          if (emptyTitle) emptyTitle.textContent = dict.empty_title || '該当する生体が見つかりません';
+          if (emptyDesc) emptyDesc.textContent = dict.empty_desc || '検索キーワードまたはカテゴリを変更してお試しください。';
+        }
         return;
       } else {
-        empty.classList.add('hidden');
+        if (empty) empty.classList.add('hidden');
       }
 
       filtered.forEach(p => {
@@ -1462,13 +1863,67 @@
 
         const fallbackImg = categoryFallbackImages[p.category] || categoryFallbackImages['その他'];
 
+        // Localized product strings
+        const displayName = getLocalizedProductName(p, lang);
+        const displayCategory = getLocalizedCategory(p.category, lang);
+        const displaySize = formatLocalizedSize(p.size, lang);
+
+        // In-stock badge string
+        let inStockBadgeHtml = '';
+        if (p.stock > 0) {
+          const inStockText = (lang === 'ja') ? `生簀在庫: <strong>${p.stock}</strong> 匹` :
+                              (lang === 'en') ? `Holding Stock: <strong>${p.stock}</strong> pcs` :
+                              (lang === 'zh-TW') ? `蓄養現貨: <strong>${p.stock}</strong> 隻` :
+                              `暂养现货: <strong>${p.stock}</strong> 只`;
+          inStockBadgeHtml = `
+            <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-950/90 text-emerald-300 border border-emerald-800 flex items-center space-x-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span>${inStockText}</span>
+            </span>
+          `;
+        } else {
+          const zeroStockText = (lang === 'ja') ? `採集リクエスト受付 (在庫0)` :
+                                (lang === 'en') ? `Collection Request Only (0 Stock)` :
+                                (lang === 'zh-TW') ? `採集申請受理 (無現貨)` :
+                                `采集申请受理 (无现货)`;
+          inStockBadgeHtml = `
+            <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-amber-950/90 text-amber-300 border border-amber-800">
+              ${zeroStockText}
+            </span>
+          `;
+        }
+
+        // Stepper extra collection request text
+        let overStockBadgeHtml = '';
+        if (initialOverStock > 0) {
+          const overText = (lang === 'ja') ? `★ 採集リクエスト: +${initialOverStock}匹 含む` :
+                           (lang === 'en') ? `★ Collection Request: +${initialOverStock} pcs` :
+                           (lang === 'zh-TW') ? `★ 採集預約: 含 +${initialOverStock} 隻` :
+                           `★ 采集预约: 含 +${initialOverStock} 只`;
+          overStockBadgeHtml = overText;
+        }
+
+        // In-cart badge inside card
+        let inCartBadgeHtml = '';
+        if (inCartQty > 0) {
+          const inCartText = (lang === 'ja') ? `カートに ${inCartQty} 匹 選択中` :
+                             (lang === 'en') ? `${inCartQty} pcs in cart` :
+                             (lang === 'zh-TW') ? `已選購 ${inCartQty} 隻` :
+                             `已选购 ${inCartQty} 只`;
+          inCartBadgeHtml = `
+            <div class="text-[10px] text-sky-400 text-center font-mono font-semibold">
+              <i class="fa-solid fa-check mr-1"></i>${inCartText}
+            </div>
+          `;
+        }
+
         const card = document.createElement('div');
         card.className = "bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-slate-700 transition flex flex-col group shadow-lg";
 
         card.innerHTML = `
           <!-- Image -->
           <div class="relative h-44 sm:h-48 bg-slate-950 overflow-hidden">
-            <img src="${p.image_url}" alt="${p.name}" 
+            <img src="${p.image_url}" alt="${displayName}" 
               onerror="this.onerror=null; this.src='${fallbackImg}';"
               class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
@@ -1476,7 +1931,7 @@
             <!-- Badges -->
             <div class="absolute top-2.5 left-2.5 flex flex-wrap gap-1">
               <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-slate-950/80 text-sky-400 border border-slate-700">
-                ${p.category}
+                ${displayCategory}
               </span>
               ${isCites ? `
                 <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-amber-950/90 text-amber-300 border border-amber-800">
@@ -1487,16 +1942,7 @@
 
             <!-- In-Stock Badge -->
             <div class="absolute top-2.5 right-2.5">
-              ${p.stock > 0 ? `
-                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-950/90 text-emerald-300 border border-emerald-800 flex items-center space-x-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  <span>生簀在庫: <strong>${p.stock}</strong> 匹</span>
-                </span>
-              ` : `
-                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-amber-950/90 text-amber-300 border border-amber-800">
-                  採集リクエスト受付 (在庫0)
-                </span>
-              `}
+              ${inStockBadgeHtml}
             </div>
           </div>
 
@@ -1505,21 +1951,21 @@
             <div>
               <div class="flex items-start justify-between gap-1">
                 <h3 class="font-bold text-sm sm:text-base text-white group-hover:text-sky-400 transition leading-snug">
-                  ${p.name}
+                  ${displayName}
                 </h3>
               </div>
-              <p class="text-xs text-slate-400 italic mt-0.5 truncate">${p.scientific_name || p.name_en}</p>
+              <p class="text-xs text-slate-400 italic mt-0.5 truncate">${p.scientific_name || (lang === 'ja' ? p.name_en : p.name_ja)}</p>
               
               <div class="mt-3 flex items-center justify-between text-xs font-mono text-slate-400 bg-slate-950/50 p-2 rounded-xl">
-                <span>規格サイズ:</span>
-                <span class="text-slate-200 font-semibold">${p.size}</span>
+                <span>${dict.spec_size_label || '規格サイズ:'}</span>
+                <span class="text-slate-200 font-semibold">${displaySize}</span>
               </div>
             </div>
 
             <!-- Price & Quantity Stepper & Add Button -->
             <div class="mt-4 pt-3 border-t border-slate-800/80 space-y-2.5">
               <div class="flex items-baseline justify-between">
-                <span class="text-[10px] text-slate-500 uppercase font-mono">卸売単価</span>
+                <span class="text-[10px] text-slate-500 uppercase font-mono">${dict.unit_price || '卸売単価'}</span>
                 <span class="text-base sm:text-lg font-black text-white font-mono">${priceFormatted}</span>
               </div>
 
@@ -1541,21 +1987,17 @@
                 <!-- Add to Cart Button -->
                 <button type="button" onclick="handleAddToCart('${pId}')" class="flex-1 py-2.5 px-3 bg-sky-500 hover:bg-sky-400 active:scale-95 text-white font-bold rounded-xl text-xs transition flex items-center justify-center space-x-1.5 touch-btn shadow-lg shadow-sky-500/20">
                   <i class="fa-solid fa-cart-plus text-sm"></i>
-                  <span data-i18n="btn_add">カートに追加</span>
+                  <span>${dict.btn_add || 'カートに追加'}</span>
                 </button>
               </div>
 
               <!-- Card Collection badge status if exceeds stock -->
               <div id="card-badge-${pId}" class="text-[10px] text-amber-400 text-center font-mono font-semibold min-h-[14px]">
-                ${initialOverStock > 0 ? `★ 採集リクエスト: +${initialOverStock}匹 含む` : ''}
+                ${overStockBadgeHtml}
               </div>
 
               <!-- Cart badge status inside card if present -->
-              ${inCartQty > 0 ? `
-                <div class="text-[10px] text-sky-400 text-center font-mono font-semibold">
-                  <i class="fa-solid fa-check mr-1"></i>カートに ${inCartQty} 匹 選択中
-                </div>
-              ` : ''}
+              ${inCartBadgeHtml}
             </div>
           </div>
         `;
@@ -1590,9 +2032,14 @@
     function updateCardBadge(pId, qty, stock) {
       const badge = document.getElementById(`card-badge-${pId}`);
       if (!badge) return;
+      const lang = appState.lang || 'ja';
       if (qty > stock) {
         const extra = qty - stock;
-        badge.innerHTML = `★ 採集リクエスト: +${extra}匹 含む`;
+        const txt = (lang === 'ja') ? `★ 採集リクエスト: +${extra}匹 含む` :
+                    (lang === 'en') ? `★ Collection Request: +${extra} pcs` :
+                    (lang === 'zh-TW') ? `★ 採集預約: 含 +${extra} 隻` :
+                    `★ 采集预约: 含 +${extra} 只`;
+        badge.innerHTML = txt;
       } else {
         badge.innerHTML = ``;
       }
@@ -1663,10 +2110,24 @@
 
       const modal = document.getElementById('collectionRequestModal');
       const stockNum = Math.max(0, product.stock || 0);
+      const lang = appState.lang || 'ja';
 
-      document.getElementById('collectModalStockNum').textContent = stockNum;
-      document.getElementById('collectModalMessage').innerHTML = 
-        `（現在の在庫数は <strong class="text-amber-400 font-bold">${stockNum}</strong> 匹ですが、これ以上の注文は八重山諸島での採集リクエストとして受け付けます）`;
+      let msgHtml = '';
+      if (lang === 'ja') {
+        msgHtml = `（現在の在庫数は <strong class="text-amber-400 font-bold">${stockNum}</strong> 匹ですが、これ以上の注文は八重山諸島での採集リクエストとして受け付けます）`;
+      } else if (lang === 'en') {
+        msgHtml = `(Current holding stock is <strong class="text-amber-400 font-bold">${stockNum}</strong> pcs. Quantities exceeding this will be accepted as wild diver collection requests in Yaeyama Islands)`;
+      } else if (lang === 'zh-TW') {
+        msgHtml = `（目前蓄養池現貨為 <strong class="text-amber-400 font-bold">${stockNum}</strong> 隻，超出庫存數量將作為八重山群島海捕採集預約申請進行受理）`;
+      } else {
+        msgHtml = `（目前暂养池现货为 <strong class="text-amber-400 font-bold">${stockNum}</strong> 只，超出库存数量将作为八重山群岛海捕采集预约申请进行受理）`;
+      }
+
+      const msgEl = document.getElementById('collectModalMessage');
+      if (msgEl) msgEl.innerHTML = msgHtml;
+
+      const numEl = document.getElementById('collectModalStockNum');
+      if (numEl) numEl.textContent = stockNum;
 
       modal.classList.remove('hidden');
     }
@@ -1700,7 +2161,14 @@
       }
 
       closeCollectionModal();
-      showToast(`「${product.name}」採集リクエスト数量（${targetQty}匹）を設定しました`);
+      const lang = appState.lang || 'ja';
+      const name = getLocalizedProductName(product, lang);
+      const pcs = (lang === 'ja') ? '匹' : (lang === 'en') ? 'pcs' : (lang === 'zh-TW') ? '隻' : '只';
+      const toastMsg = (lang === 'ja') ? `「${name}」採集リクエスト数量（${targetQty}${pcs}）を設定しました` :
+                       (lang === 'en') ? `Set collection request qty for "${name}" to ${targetQty} ${pcs}` :
+                       (lang === 'zh-TW') ? `已為「${name}」設定採集申請數量（${targetQty} ${pcs}）` :
+                       `已为“${name}”设定采集申请数量（${targetQty} ${pcs}）`;
+      showToast(toastMsg);
     }
 
     /* --------------------------------------------------------
@@ -1732,7 +2200,15 @@
 
       updateCartUI();
       renderProducts();
-      showToast(`「${product.name}」を ${qty}匹 カートに追加しました`);
+      
+      const lang = appState.lang || 'ja';
+      const name = getLocalizedProductName(product, lang);
+      const pcs = (lang === 'ja') ? '匹' : (lang === 'en') ? 'pcs' : (lang === 'zh-TW') ? '隻' : '只';
+      const toastMsg = (lang === 'ja') ? `「${name}」を ${qty}${pcs} カートに追加しました` :
+                       (lang === 'en') ? `Added ${qty} ${pcs} of "${name}" to cart` :
+                       (lang === 'zh-TW') ? `已將「${name}」共 ${qty} ${pcs} 加入採購單` :
+                       `已将“${name}”共 ${qty} ${pcs} 加入采购单`;
+      showToast(toastMsg);
     }
 
     function updateCartItemQty(productId, newQty) {
@@ -1775,11 +2251,18 @@
       const totalJpy = getCartTotalJpy();
       const movTargetJpy = appState.movTargetJpy;
       const movMet = (totalJpy >= movTargetJpy);
+      const lang = appState.lang || 'ja';
+      const dict = I18N[lang] || I18N['ja'];
 
       // 1. Header & Mobile Sticky Bar Counter
       document.getElementById('headerCartCount').textContent = totalCount;
       document.getElementById('mobileCartStickyBadge').textContent = totalCount;
-      document.getElementById('cartSummaryCount').textContent = `${totalCount} 匹選択中`;
+      
+      const countLabel = (lang === 'ja') ? `${totalCount} 匹選択中` :
+                         (lang === 'en') ? `${totalCount} pcs selected` :
+                         (lang === 'zh-TW') ? `已選 ${totalCount} 隻` :
+                         `已选 ${totalCount} 只`;
+      document.getElementById('cartSummaryCount').textContent = countLabel;
 
       // Formatted subtotal in active currency
       const formattedSubtotal = formatPrice(totalJpy);
@@ -1804,18 +2287,34 @@
       if (movMet) {
         progressBar.className = "bg-emerald-400 h-full transition-all duration-300 rounded-full";
         cartMovStatus.className = "text-emerald-400 font-bold text-[11px]";
-        cartMovStatus.textContent = "✅ 最低注文額(MOV)を満たしました！発注可能です。";
+        
+        const metText = (lang === 'ja') ? "✅ 最低注文額(MOV)を満たしました！発注可能です。" :
+                        (lang === 'en') ? "✅ Minimum Order Value (MOV) met! Ready to order." :
+                        (lang === 'zh-TW') ? "✅ 已達到最低起訂額 (MOV)！可以提交訂單。" :
+                        "✅ 已达到最低起订额 (MOV)！可以提交订单。";
+        cartMovStatus.textContent = metText;
         mobileCartStickyMovStatus.className = "text-[10px] text-emerald-400 font-bold";
-        mobileCartStickyMovStatus.textContent = "MOV達成済み (発注可能)";
+        mobileCartStickyMovStatus.textContent = (lang === 'ja') ? "MOV達成済み (発注可能)" :
+                                                (lang === 'en') ? "MOV Met (Order Ready)" :
+                                                (lang === 'zh-TW') ? "MOV已達成 (可下單)" :
+                                                "MOV已达成 (可下单)";
         btnProceed.disabled = (appState.cart.length === 0);
       } else {
         const diff = movTargetJpy - totalJpy;
         const diffFormatted = formatPrice(diff);
         progressBar.className = "bg-amber-400 h-full transition-all duration-300 rounded-full";
         cartMovStatus.className = "text-amber-400/90 text-[11px]";
-        cartMovStatus.textContent = `最低注文額まであと ${diffFormatted} 必要です。`;
+
+        const unmetText = (lang === 'ja') ? `最低注文額まであと ${diffFormatted} 必要です。` :
+                          (lang === 'en') ? `Remaining for Minimum Order (MOV): ${diffFormatted}` :
+                          (lang === 'zh-TW') ? `距離最低起訂額尚差: ${diffFormatted}` :
+                          `距离最低起订额尚差: ${diffFormatted}`;
+        cartMovStatus.textContent = unmetText;
         mobileCartStickyMovStatus.className = "text-[10px] text-amber-400";
-        mobileCartStickyMovStatus.textContent = `MOVまで残り: ${diffFormatted}`;
+        mobileCartStickyMovStatus.textContent = (lang === 'ja') ? `MOVまで残り: ${diffFormatted}` :
+                                                (lang === 'en') ? `Remaining: ${diffFormatted}` :
+                                                (lang === 'zh-TW') ? `距離MOV尚差: ${diffFormatted}` :
+                                                `距离MOV尚差: ${diffFormatted}`;
         btnProceed.disabled = true;
       }
 
@@ -1824,10 +2323,14 @@
       listEl.innerHTML = '';
 
       if (appState.cart.length === 0) {
+        const emptyCartMsg = (lang === 'ja') ? "カートに生体がありません。" :
+                             (lang === 'en') ? "Your request cart is empty." :
+                             (lang === 'zh-TW') ? "採購清單目前尚無活體項目。" :
+                             "采购清单目前暂无活体项目。";
         listEl.innerHTML = `
           <div class="text-center py-16 text-slate-500">
             <i class="fa-solid fa-cart-shopping text-3xl mb-2 text-slate-700"></i>
-            <p class="text-xs">カートに生体がありません。</p>
+            <p class="text-xs">${emptyCartMsg}</p>
           </div>
         `;
       } else {
@@ -1837,6 +2340,21 @@
           const lineTotalStr = formatPrice(p.price_jpy * item.quantity);
           const inStockPart = Math.min(item.quantity, p.stock);
           const collectionPart = Math.max(0, item.quantity - p.stock);
+          const displayName = getLocalizedProductName(p, lang);
+
+          const stockPartLabel = (lang === 'ja') ? `現物: ${inStockPart}` :
+                                 (lang === 'en') ? `Stock: ${inStockPart}` :
+                                 (lang === 'zh-TW') ? `現貨: ${inStockPart}` :
+                                 `现货: ${inStockPart}`;
+
+          const collectPartLabel = (lang === 'ja') ? `★採集: +${collectionPart}` :
+                                   (lang === 'en') ? `★Req: +${collectionPart}` :
+                                   (lang === 'zh-TW') ? `★採集: +${collectionPart}` :
+                                   `★采集: +${collectionPart}`;
+
+          const perPiece = (lang === 'ja') ? '匹' :
+                           (lang === 'en') ? 'pc' :
+                           (lang === 'zh-TW') ? '隻' : '只';
 
           const row = document.createElement('div');
           row.className = "bg-slate-900 border border-slate-800 rounded-2xl p-3 flex flex-col gap-2";
@@ -1844,8 +2362,8 @@
             <div class="flex items-center justify-between gap-2.5">
               <img src="${p.image_url}" class="w-12 h-12 rounded-xl object-cover bg-slate-950 flex-shrink-0">
               <div class="flex-1 min-w-0">
-                <h4 class="text-xs font-bold text-white truncate">${p.name}</h4>
-                <div class="text-[10px] text-slate-400 font-mono">${unitPriceStr} / 匹</div>
+                <h4 class="text-xs font-bold text-white truncate">${displayName}</h4>
+                <div class="text-[10px] text-slate-400 font-mono">${unitPriceStr} / ${perPiece}</div>
               </div>
               <div class="text-right">
                 <span class="font-mono font-bold text-xs text-white">${lineTotalStr}</span>
@@ -1856,19 +2374,19 @@
             <div class="flex items-center justify-between pt-1 border-t border-slate-800/80 text-[11px]">
               <!-- Breakdown status -->
               <div class="flex items-center space-x-1.5 font-mono">
-                <span class="text-emerald-400">現物: ${inStockPart}</span>
+                <span class="text-emerald-400">${stockPartLabel}</span>
                 ${collectionPart > 0 ? `
                   <span class="text-amber-400 font-bold bg-amber-950/60 px-1.5 py-0.5 rounded border border-amber-900">
-                    ★採集: +${collectionPart}
+                    ${collectPartLabel}
                   </span>
                 ` : ''}
               </div>
 
               <!-- Stepper -->
               <div class="flex items-center space-x-1.5">
-                <button onclick="updateCartItemQty('${p.id}', ${item.quantity - 1})" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 text-xs flex items-center justify-center">-</button>
+                <button onclick="updateCartItemQty('${p.id}', ${item.quantity - 1})" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 text-xs flex items-center justify-center touch-btn">-</button>
                 <span class="text-xs font-mono font-bold text-white w-5 text-center">${item.quantity}</span>
-                <button onclick="updateCartItemQty('${p.id}', ${item.quantity + 1})" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 text-xs flex items-center justify-center">+</button>
+                <button onclick="updateCartItemQty('${p.id}', ${item.quantity + 1})" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 text-xs flex items-center justify-center touch-btn">+</button>
                 <button onclick="removeCartItem('${p.id}')" class="text-slate-500 hover:text-red-400 p-1 ml-1"><i class="fa-regular fa-trash-can"></i></button>
               </div>
             </div>
@@ -1920,7 +2438,20 @@
       document.getElementById('reviewSubtotal').textContent = formatPrice(totalJpy);
 
       const hasCollection = appState.cart.some(c => c.quantity > c.product.stock);
-      document.getElementById('reviewCollectStatus').textContent = hasCollection ? "あり (採集リクエスト品目含む)" : "なし (全量生簀在庫引当)";
+      const lang = appState.lang || 'ja';
+      let collectText = '';
+      if (hasCollection) {
+        collectText = (lang === 'ja') ? "あり (採集リクエスト品目含む)" :
+                      (lang === 'en') ? "Yes (Includes wild collection items)" :
+                      (lang === 'zh-TW') ? "有 (含海捕採集預約項目)" :
+                      "有 (含海捕采集预约项目)";
+      } else {
+        collectText = (lang === 'ja') ? "なし (全量生簀在庫引当)" :
+                      (lang === 'en') ? "None (100% Holding Tank Stock)" :
+                      (lang === 'zh-TW') ? "無 (全數現貨庫存配額)" :
+                      "无 (全数现货库存配额)";
+      }
+      document.getElementById('reviewCollectStatus').textContent = collectText;
     }
 
     function closeCheckoutModal() {
@@ -1956,6 +2487,10 @@
         items: appState.cart.map(item => ({
           id: item.product.id,
           name: item.product.name,
+          name_ja: item.product.name_ja || item.product.name,
+          name_en: item.product.name_en || item.product.name,
+          name_zh_tw: item.product.name_zh_tw || item.product.name,
+          name_zh_cn: item.product.name_zh_cn || item.product.name,
           scientific_name: item.product.scientific_name,
           category: item.product.category,
           size: item.product.size,
@@ -2059,16 +2594,20 @@
       doc.text(`Currency: ${order.currency}`, 115, 71);
 
       // Table Rows
-      const tableRows = order.items.map((it, idx) => [
-        (idx + 1).toString(),
-        it.id,
-        `${it.name}\n${it.scientific_name}`,
-        it.size,
-        it.quantity.toString(),
-        it.collectionQty > 0 ? `Stock: ${it.inStockQty}\nReq: ${it.collectionQty}` : 'Stock',
-        `JPY ${it.unitPriceJpy.toLocaleString()}`,
-        `JPY ${it.lineTotalJpy.toLocaleString()}`
-      ]);
+      const tableRows = order.items.map((it, idx) => {
+        const specName = it.name_en || it.name;
+        const sciName = it.scientific_name ? ` (${it.scientific_name})` : '';
+        return [
+          (idx + 1).toString(),
+          it.id,
+          `${specName}${sciName}`,
+          it.size,
+          it.quantity.toString(),
+          it.collectionQty > 0 ? `Stock: ${it.inStockQty}\nReq: ${it.collectionQty}` : 'Stock',
+          `JPY ${it.unitPriceJpy.toLocaleString()}`,
+          `JPY ${it.lineTotalJpy.toLocaleString()}`
+        ];
+      });
 
       doc.autoTable({
         startY: 77,
