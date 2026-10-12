@@ -120,24 +120,16 @@ flowchart TD
   gasEndpoint: localStorage.getItem(GAS_ENDPOINT_STORAGE_KEY) || "https://script.google.com/macros/s/AKfycb.../exec"
   ```
 
-### ステップ 4-2: GitHub リポジトリへのプッシュ
-1. GitHub で新しいプライベートまたはパブリックリポジトリ（例: `aqua-export-b2b`）を作成します。
-2. 作業ディレクトリで Git コマンドを実行します:
-   ```bash
-   git init
-   git add .
-   git commit -m "feat: Initial commit for Aqua Export Overseas B2B Portal"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/aqua-export-b2b.git
-   git push -u origin main
-   ```
+### ステップ 4-2: GitHub リポジトリへのプッシュ（設定完了済み）
+本プロジェクトは、GitHubアカウント **`katoakira1114-png`** 配下の以下のリポジトリへ登録・プッシュが完了しています:
+- リポジトリ: [https://github.com/katoakira1114-png/aqua-export-b2b](https://github.com/katoakira1114-png/aqua-export-b2b)
+- ブランチ: `main`
 
-### ステップ 4-3: GitHub Pages の有効化
-1. GitHub リポジトリの **「Settings」 > 「Pages」** に移動します。
-2. **Build and deployment** の **Source** で **「Deploy from a branch」** を選択。
-3. **Branch** を `main`、フォルダを `/ (root)` に設定して **「Save」** をクリック。
-4. 数分後、`https://YOUR_USERNAME.github.io/aqua-export-b2b/` にて公開完了となります。
-   ※ `index.html` がルートに配置されているため、URLを叩くだけで即座にB2Bゲートウェイ認証画面が表示されます。
+### ステップ 4-3: GitHub Pages の公開（稼働中）
+GitHub Pages はすでに有効化されており、以下の本番URLでアクセス可能です:
+👉 **本番WebサイトURL**: [https://katoakira1114-png.github.io/aqua-export-b2b/](https://katoakira1114-png.github.io/aqua-export-b2b/)
+
+※ `index.html` がメインとして自動配信されるため、アクセスするだけで即座にB2BゲートウェイPIN認証（初期: `9876`）画面が表示されます。
 
 ---
 

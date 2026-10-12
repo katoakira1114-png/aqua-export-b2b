@@ -3,6 +3,9 @@
 海外アクアリウムバイヤー向け B2B オンラインカタログ・受発注リクエスト（Proforma Request）システムです。
 国内店舗向け受発注システム（Googleスプレッドシート本番データベース）と連携し、ゼロトラスト（機密隠蔽・在庫非連動・ブルートフォース防御）に基づいて構築されています。
 
+🌐 **本番公開URL (GitHub Pages)**: [https://katoakira1114-png.github.io/aqua-export-b2b/](https://katoakira1114-png.github.io/aqua-export-b2b/)  
+📦 **GitHub リポジトリ**: [https://github.com/katoakira1114-png/aqua-export-b2b](https://github.com/katoakira1114-png/aqua-export-b2b)
+
 ---
 
 ## 📁 構成ファイル一覧
